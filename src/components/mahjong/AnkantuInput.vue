@@ -58,39 +58,41 @@
     </b-table-simple>
   </div>
 </template>
- 
+
 <script>
-import BlockButton from "./BlockButton.vue";
 import {
   Tile,
   ManzuTiles,
   PinzuTiles,
   SozuTiles,
   ZihaiTiles,
+  MeldType
 } from "@/mahjong.js";
+
+import BlockButton from "./BlockButton.vue";
 
 export default {
   name: "AnkantuInput",
   components: {
-    BlockButton,
+    BlockButton
   },
   props: {
-    n_left_tiles: {
+    tile_counts: {
       type: Array,
-      required: true,
+      required: true
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
+    n_hand_tiles: {
+      type: Number,
+      required: true
+    }
   },
-  data: function () {
+  data: function() {
     return {
       Tile: Tile,
       ManzuTiles: ManzuTiles,
       PinzuTiles: PinzuTiles,
       SozuTiles: SozuTiles,
-      ZihaiTiles: ZihaiTiles,
+      ZihaiTiles: ZihaiTiles
     };
   },
   methods: {
@@ -98,10 +100,10 @@ export default {
       let tiles = Array(4).fill(tile);
 
       return {
-        type: "Ankan",
+        type: MeldType.Ankan,
         tiles: tiles,
-        discarded_tile: tiles[0],
-        from: 3 /* 上家 */,
+        discarded_tile: tiles[0] /* 1個目の牌を鳴いた */,
+        from: 3 /* 上家 */
       };
     },
 
@@ -110,15 +112,12 @@ export default {
     },
 
     is_disabled(block) {
-      if (this.disabled) return true;
-
-      for (let tile of block.tiles) {
-        if (this.n_left_tiles[tile] == 0) return true;
-      }
-
-      return false;
-    },
-  },
+      return (
+        this.n_hand_tiles >= 12 ||
+        block.tiles.some(x => this.tile_counts[x] === 0)
+      );
+    }
+  }
 };
 </script>
 

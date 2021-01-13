@@ -39,6 +39,86 @@ const Tile = Object.freeze({
   AkaSozu5: 36 /*! 赤五索 */
 });
 
+const Tile2String = new Map([
+  [Tile.Manzu1, "一萬"],
+  [Tile.Manzu2, "二萬"],
+  [Tile.Manzu3, "三萬"],
+  [Tile.Manzu4, "四萬"],
+  [Tile.Manzu5, "五萬"],
+  [Tile.Manzu6, "六萬"],
+  [Tile.Manzu7, "七萬"],
+  [Tile.Manzu8, "八萬"],
+  [Tile.Manzu9, "九萬"],
+  [Tile.Pinzu1, "一筒"],
+  [Tile.Pinzu2, "二筒"],
+  [Tile.Pinzu3, "三筒"],
+  [Tile.Pinzu4, "四筒"],
+  [Tile.Pinzu5, "五筒"],
+  [Tile.Pinzu6, "六筒"],
+  [Tile.Pinzu7, "七筒"],
+  [Tile.Pinzu8, "八筒"],
+  [Tile.Pinzu9, "九筒"],
+  [Tile.Sozu1, "一索"],
+  [Tile.Sozu2, "二索"],
+  [Tile.Sozu3, "三索"],
+  [Tile.Sozu4, "四索"],
+  [Tile.Sozu5, "五索"],
+  [Tile.Sozu6, "六索"],
+  [Tile.Sozu7, "七索"],
+  [Tile.Sozu8, "八索"],
+  [Tile.Sozu9, "九索"],
+  [Tile.Ton, "東"],
+  [Tile.Nan, "南"],
+  [Tile.Sya, "西"],
+  [Tile.Pe, "北"],
+  [Tile.Haku, "白"],
+  [Tile.Hatu, "発"],
+  [Tile.Tyun, "中"],
+  [Tile.AkaManzu5, "赤五萬"],
+  [Tile.AkaPinzu5, "赤五筒"],
+  [Tile.AkaSozu5, "赤五索"]
+]);
+
+const Tile2MPSString = new Map([
+  [Tile.Manzu1, "1"],
+  [Tile.Manzu2, "2"],
+  [Tile.Manzu3, "3"],
+  [Tile.Manzu4, "4"],
+  [Tile.Manzu5, "5"],
+  [Tile.Manzu6, "6"],
+  [Tile.Manzu7, "7"],
+  [Tile.Manzu8, "8"],
+  [Tile.Manzu9, "9"],
+  [Tile.Pinzu1, "1"],
+  [Tile.Pinzu2, "2"],
+  [Tile.Pinzu3, "3"],
+  [Tile.Pinzu4, "4"],
+  [Tile.Pinzu5, "5"],
+  [Tile.Pinzu6, "6"],
+  [Tile.Pinzu7, "7"],
+  [Tile.Pinzu8, "8"],
+  [Tile.Pinzu9, "9"],
+  [Tile.Sozu1, "1"],
+  [Tile.Sozu2, "2"],
+  [Tile.Sozu3, "3"],
+  [Tile.Sozu4, "4"],
+  [Tile.Sozu5, "5"],
+  [Tile.Sozu6, "6"],
+  [Tile.Sozu7, "7"],
+  [Tile.Sozu8, "8"],
+  [Tile.Sozu9, "9"],
+  [Tile.Ton, "東"],
+  [Tile.Nan, "南"],
+  [Tile.Sya, "西"],
+  [Tile.Pe, "北"],
+  [Tile.Haku, "白"],
+  [Tile.Hatu, "発"],
+  [Tile.Tyun, "中"],
+  [Tile.AkaManzu5, "r5"],
+  [Tile.AkaPinzu5, "r5"],
+  [Tile.AkaSozu5, "r5"]
+]);
+
 const ManzuTiles = [
   Tile.Manzu1,
   Tile.Manzu2,
@@ -92,7 +172,7 @@ const Seat = Object.freeze({
   Simotya: 3 /*! 下家 */
 });
 
-const order = Object.freeze({
+const TileOrder = Object.freeze({
   0: 0, // 萬子
   1: 1,
   2: 2,
@@ -132,9 +212,49 @@ const order = Object.freeze({
   36: 22
 });
 
+const TilePriority = Object.freeze({
+  0: 1, // 萬子
+  1: 2,
+  2: 3,
+  3: 4,
+  4: 5,
+  5: 4,
+  6: 3,
+  7: 2,
+  8: 1,
+  9: 1, // 筒子
+  10: 2,
+  11: 3,
+  12: 4,
+  13: 5,
+  14: 4,
+  15: 3,
+  16: 2,
+  17: 1,
+  18: 1, // 索子
+  19: 2,
+  20: 3,
+  21: 4,
+  22: 5,
+  23: 4,
+  24: 3,
+  25: 2,
+  26: 1,
+  27: 1,
+  28: 1,
+  29: 1,
+  30: 1,
+  31: 1,
+  32: 1,
+  33: 1,
+  34: 5,
+  35: 5,
+  36: 5
+});
+
 function sort_tiles(tiles) {
   tiles.sort(function(a, b) {
-    return order[a] - order[b];
+    return TileOrder[a] - TileOrder[b];
   });
 }
 
@@ -215,6 +335,72 @@ const DoraHyozi2Dora = {
   36: 23
 };
 
+const SyantenType = Object.freeze({
+  Normal: 1 /*! 一般手 */,
+  Tiitoi: 2 /*! 七対子手 */,
+  Kokusi: 4 /*! 国士無双手 */
+});
+
+const SyantenType2String = new Map([
+  [SyantenType.Normal, "一般手"],
+  [SyantenType.Tiitoi, "七対子手"],
+  [SyantenType.Kokusi, "国士無双手"]
+]);
+
+const MeldType = Object.freeze({
+  Pon: 0 /* ポン */,
+  Ti: 1 /* チー */,
+  Ankan: 2 /* 暗槓 */,
+  Minkan: 3 /* 明槓 */,
+  Kakan: 4 /* 加槓 */
+});
+
+const MeldType2String = new Map([
+  [MeldType.Pon, "ポン"],
+  [MeldType.Ti, "チー"],
+  [MeldType.Ankan, "暗槓"],
+  [MeldType.Minkan, "明槓"],
+  [MeldType.Kakan, "加槓"]
+]);
+
+let hand2string = function(tiles) {
+  tiles.concat().sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
+
+  let manzu = [];
+  let pinzu = [];
+  let sozu = [];
+  let zihai = [];
+  for (let tile of tiles) {
+    if (tile <= Tile.Manzu9 || tile == Tile.AkaManzu5) {
+      manzu.push(tile);
+    } else if (tile <= Tile.Pinzu9 || tile == Tile.AkaPinzu5) {
+      pinzu.push(tile);
+    } else if (tile <= Tile.Sozu9 || tile == Tile.AkaSozu5) {
+      sozu.push(tile);
+    } else {
+      zihai.push(tile);
+    }
+  }
+
+  let str = "";
+  if (manzu.length) {
+    str += manzu.map(x => Tile2MPSString.get(x)).join("") + "m";
+  }
+  if (pinzu.length) {
+    str += pinzu.map(x => Tile2MPSString.get(x)).join("") + "p";
+  }
+  if (sozu.length) {
+    str += sozu.map(x => Tile2MPSString.get(x)).join("") + "s";
+  }
+  str += zihai.map(x => Tile2MPSString.get(x)).join("");
+
+  return str;
+};
+
+let meld2string = function(meld) {
+  return `[${MeldType2String.get(meld.type)}, ${hand2string(meld.tiles)}]`;
+};
+
 export {
   Tile,
   ManzuTiles,
@@ -223,6 +409,16 @@ export {
   ZihaiTiles,
   Seat,
   sort_tiles,
+  TileOrder,
   Dora2DoraHyozi,
-  DoraHyozi2Dora
+  DoraHyozi2Dora,
+  Tile2String,
+  SyantenType,
+  SyantenType2String,
+  Tile2MPSString,
+  hand2string,
+  MeldType,
+  MeldType2String,
+  meld2string,
+  TilePriority
 };

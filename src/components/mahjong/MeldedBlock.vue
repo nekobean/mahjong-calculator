@@ -1,4 +1,3 @@
-
 <template>
   <div :class="get_classes()">
     <TileImage
@@ -13,23 +12,23 @@
 
 <script>
 import TileImage from "./TileImage.vue";
-import { Tile, Seat } from "@/mahjong.js";
+import { Tile, Seat, MeldType } from "@/mahjong.js";
 
 export default {
   name: "MeldedBlock",
   props: {
     block: {
       type: Object,
-      required: true,
+      required: true
     },
     seat: {
       type: Number,
-      required: true,
+      required: true
     },
     size: {
       type: String,
-      default: "sm",
-    },
+      default: "sm"
+    }
   },
   components: { TileImage },
   methods: {
@@ -42,15 +41,15 @@ export default {
       let tiles = [];
       tiles.push({
         tile: block.tiles[0],
-        type: Seat.Kamitya == from ? "rotate1" : "upright",
+        type: Seat.Kamitya == from ? "rotate1" : "upright"
       });
       tiles.push({
         tile: block.tiles[1],
-        type: Seat.Toimen == from ? "rotate1" : "upright",
+        type: Seat.Toimen == from ? "rotate1" : "upright"
       });
       tiles.push({
         tile: block.tiles[2],
-        type: Seat.Simotya == from ? "rotate1" : "upright",
+        type: Seat.Simotya == from ? "rotate1" : "upright"
       });
 
       return tiles;
@@ -65,7 +64,7 @@ export default {
       }
       tiles.splice(from - 1, 0, {
         tile: block.discarded_tile,
-        type: "rotate1",
+        type: "rotate1"
       });
 
       return tiles;
@@ -76,7 +75,7 @@ export default {
       for (const [i, tile] of block.tiles.entries()) {
         tiles.push({
           tile: i == 0 || i == 3 ? Tile.Null : tile,
-          type: "upright",
+          type: "upright"
         });
       }
 
@@ -87,16 +86,16 @@ export default {
       let tiles = [];
       tiles.push({
         tile: block.tiles[0],
-        type: Seat.Kamitya == from ? "rotate1" : "upright",
+        type: Seat.Kamitya == from ? "rotate1" : "upright"
       });
       tiles.push({
         tile: block.tiles[1],
-        type: Seat.Toimen == from ? "rotate1" : "upright",
+        type: Seat.Toimen == from ? "rotate1" : "upright"
       });
       tiles.push({ tile: block.tiles[2], type: "upright" });
       tiles.push({
         tile: block.tiles[3],
-        type: Seat.Simotya == from ? "rotate1" : "upright",
+        type: Seat.Simotya == from ? "rotate1" : "upright"
       });
 
       return tiles;
@@ -108,17 +107,17 @@ export default {
         if (i == from - 1) {
           tiles.push({
             tile: tile,
-            type: "rotate1",
+            type: "rotate1"
           });
         } else if (i == from) {
           tiles.push({
             tile: tile,
-            type: "rotate2",
+            type: "rotate2"
           });
         } else {
           tiles.push({
             tile: tile,
-            type: "upright",
+            type: "upright"
           });
         }
       }
@@ -130,15 +129,15 @@ export default {
       let from = this.get_relative_seat(seat, block.from);
 
       switch (block.type) {
-        case "Pon":
+        case MeldType.Pon:
           return this.create_pon_block(block, from);
-        case "Ti":
+        case MeldType.Ti:
           return this.create_ti_block(block, from);
-        case "Ankan":
+        case MeldType.Ankan:
           return this.create_ankan_block(block);
-        case "Minkan":
+        case MeldType.Minkan:
           return this.create_minkan_block(block, from);
-        case "Kakan":
+        case MeldType.Kakan:
           return this.create_kakan_block(block, from);
       }
     },
@@ -152,8 +151,8 @@ export default {
       }
 
       return classes.join(" ");
-    },
-  },
+    }
+  }
 };
 </script>
 

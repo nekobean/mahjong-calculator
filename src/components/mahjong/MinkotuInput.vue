@@ -73,7 +73,7 @@
     </b-table-simple>
   </div>
 </template>
- 
+
 <script>
 import BlockButton from "./BlockButton.vue";
 import {
@@ -82,30 +82,31 @@ import {
   PinzuTiles,
   SozuTiles,
   ZihaiTiles,
+  MeldType
 } from "@/mahjong.js";
 
 export default {
   name: "MinkotuInput",
   components: {
-    BlockButton,
+    BlockButton
   },
   props: {
-    n_left_tiles: {
+    tile_counts: {
       type: Array,
-      required: true,
+      required: true
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
+    n_hand_tiles: {
+      type: Number,
+      required: true
+    }
   },
-  data: function () {
+  data: function() {
     return {
       Tile: Tile,
       ManzuTiles: ManzuTiles,
       PinzuTiles: PinzuTiles,
       SozuTiles: SozuTiles,
-      ZihaiTiles: ZihaiTiles,
+      ZihaiTiles: ZihaiTiles
     };
   },
   methods: {
@@ -119,10 +120,10 @@ export default {
       }
 
       return {
-        type: "Pon",
+        type: MeldType.Pon,
         tiles: tiles,
         discarded_tile: tiles[0],
-        from: 3 /* 上家 */,
+        from: 3 /* 上家 */
       };
     },
 
@@ -131,15 +132,12 @@ export default {
     },
 
     is_disabled(block) {
-      if (this.disabled) return true;
-
-      for (let tile of block.tiles) {
-        if (this.n_left_tiles[tile] == 0) return true;
-      }
-
-      return false;
-    },
-  },
+      return (
+        this.n_hand_tiles >= 12 ||
+        block.tiles.some(x => this.tile_counts[x] === 0)
+      );
+    }
+  }
 };
 </script>
 

@@ -73,39 +73,43 @@
     </b-table-simple>
   </div>
 </template>
- 
+
 <script>
 import {
   Tile,
   ManzuTiles,
   PinzuTiles,
   SozuTiles,
-  ZihaiTiles,
+  ZihaiTiles
 } from "@/mahjong.js";
 import TileButton from "./TileButton.vue";
 
 export default {
   name: "HandTileInput",
   components: {
-    TileButton,
+    TileButton
   },
   props: {
-    n_left_tiles: {
+    tile_counts: {
       type: Array,
-      required: true,
+      required: true
     },
-    disabled: {
-      type: Boolean,
-      default: false,
+    n_hand_tiles: {
+      type: Number,
+      default: null
     },
+    n_dora_tiles: {
+      type: Number,
+      default: null
+    }
   },
-  data: function () {
+  data: function() {
     return {
       Tile: Tile,
       ManzuTiles: ManzuTiles,
       PinzuTiles: PinzuTiles,
       SozuTiles: SozuTiles,
-      ZihaiTiles: ZihaiTiles,
+      ZihaiTiles: ZihaiTiles
     };
   },
   methods: {
@@ -114,9 +118,11 @@ export default {
     },
 
     is_disabled(tile) {
-      return this.disabled || this.n_left_tiles[tile] == 0;
-    },
-  },
+      if (this.n_hand_tiles)
+        return this.n_hand_tiles >= 14 || this.tile_counts[tile] == 0;
+      else return this.n_dora_tiles >= 5 || this.tile_counts[tile] == 0;
+    }
+  }
 };
 </script>
 

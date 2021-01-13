@@ -1,8 +1,7 @@
 <template>
   <div id="simulator" class="p-3">
-    <h1>麻雀何切るシミュレーター</h1>
-    <Description class="mb-3" />
-    <Calculator class="mb-3" />
+    <Description />
+    <Calculator />
   </div>
 </template>
 
@@ -14,13 +13,13 @@ export default {
   name: "Home",
   components: {
     Description,
-    Calculator,
-  },
+    Calculator
+  }
 };
 </script>
 
 <style scoped>
 #simulator {
-  max-width: 900px;
+  width: 900px;
 }
 </style>

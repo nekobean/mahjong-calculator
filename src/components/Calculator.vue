@@ -1,110 +1,121 @@
 <template>
   <b-container fluid class="border border-gray p-3">
+    <!-- 設定入力欄 -->
     <b-row>
-      <b-col cols="6">
+      <b-col>
         <!-- 場風 -->
         <b-form-group
-          label-cols="6"
-          label="場風:"
-          label-for="bakaze"
+          label-cols="2"
+          content-cols="4"
+          label="場風"
+          label-for="input-bakaze"
           label-align="right"
         >
-          <b-form-select
-            id="bakaze"
+          <b-form-radio-group
+            id="input-bakaze"
             v-model="bakaze"
-            :options="kazehai"
+            :options="input_bakaze_options"
+            button-variant="outline-primary"
             size="sm"
-          ></b-form-select>
+            buttons
+          ></b-form-radio-group>
         </b-form-group>
 
         <!-- 自風 -->
         <b-form-group
-          label-cols="6"
-          label="自風:"
-          label-for="zikaze"
+          label-cols="2"
+          content-cols="4"
+          label="自風"
+          label-for="input-zikaze"
           label-align="right"
         >
-          <b-form-select
+          <b-form-radio-group
+            id="input-zikaze"
             v-model="zikaze"
-            :options="kazehai"
-            id="zikaze"
+            :options="input_zikaze_options"
+            button-variant="outline-primary"
             size="sm"
-          ></b-form-select>
+            buttons
+          ></b-form-radio-group>
         </b-form-group>
 
         <!-- 巡目 -->
         <b-form-group
-          label-cols="6"
-          label="巡目:"
-          label-for="turn"
+          label-cols="2"
+          content-cols="2"
+          label="現在の巡目"
+          label-for="input-turn"
           label-align="right"
         >
-          <b-form-select v-model="turn" id="turn" size="sm">
-            <b-form-select-option v-for="i in 18" :key="i" :value="i"
+          <b-form-select v-model="turn" id="input-turn" size="sm">
+            <b-form-select-option v-for="i in 17" :key="i" :value="i"
               >{{ i }} 巡目</b-form-select-option
             >
           </b-form-select>
         </b-form-group>
 
-        <!-- 親・子 -->
-        <b-form-group
-          label-cols="6"
-          label="親・子:"
-          label-for="parent_or_child"
-          label-align="right"
-        >
-          <b-form-select v-model="is_parent" id="parent_or_child" size="sm">
-            <b-form-select-option :value="true">親</b-form-select-option>
-            <b-form-select-option :value="false">子</b-form-select-option>
-          </b-form-select>
-        </b-form-group>
-
         <!-- 手牌の種類 -->
         <b-form-group
-          label-cols="6"
-          label="手牌の種類:"
-          label-for="syanten_type"
+          label-cols="2"
+          content-cols="4"
+          label="手牌の種類"
+          label-for="input-syanten-type"
           label-align="right"
         >
-          <b-form-select v-model="syanten_type" id="syanten_type" size="sm">
-            <b-form-select-option :value="0">一般手</b-form-select-option>
-            <b-form-select-option :value="1">七対子手</b-form-select-option>
-            <b-form-select-option :value="2">国士無双手</b-form-select-option>
-          </b-form-select>
+          <b-form-radio-group
+            id="input-syanten-type"
+            v-model="syanten_type"
+            :options="input_syanten_type_options"
+            button-variant="outline-primary"
+            size="sm"
+            buttons
+          ></b-form-radio-group>
         </b-form-group>
 
         <!-- ドラ -->
         <b-form-group
-          label-cols="6"
-          label="ドラ表示牌:"
-          label-for="dora_tiles"
+          label-cols="2"
+          content-cols="4"
+          label="ドラ表示牌"
+          label-for="input-dora-indicators"
           label-align="right"
         >
-          <DoraTiles v-on:remove-dora="remove_dora" :dora_tiles="dora_tiles" />
+          <DoraTiles
+            v-on:remove-dora="remove_dora"
+            :dora_tiles="dora_indicators"
+          />
+        </b-form-group>
+
+        <!-- フラグ -->
+        <b-form-group
+          label-cols="2"
+          label="考慮する項目"
+          label-for="input-flag"
+          label-align="right"
+        >
+          <b-form-checkbox-group
+            v-model="flag"
+            :options="input_flag_options"
+            size="sm"
+            switches
+          ></b-form-checkbox-group>
         </b-form-group>
 
         <!-- 牌の枚数 -->
         <b-form-group
-          label-cols="6"
-          label="牌の枚数:"
-          label-for="n_hand_tiles"
+          label-cols="2"
+          content-cols="2"
+          label="牌の枚数"
+          label-for="input-n-hand-tiles"
           label-align="right"
         >
           <b-form-input
             v-model="n_hand_tiles"
-            id="input-n-tiles"
+            id="input-n-hand-tiles"
             size="sm"
             :readonly="true"
           ></b-form-input>
         </b-form-group>
-      </b-col>
-    </b-row>
-
-    <b-row>
-      <b-col>
-        <b-alert v-model="show_alert" variant="danger" dismissible>
-          {{ alert_msg }}
-        </b-alert>
       </b-col>
     </b-row>
 
@@ -113,7 +124,7 @@
       <b-col>
         <HandAndMeldedBlocks
           v-on:remove-tile="remove_tile"
-          v-on:remove-block="remove_block"
+          v-on:remove-block="remove_meld"
           :hand_tiles="hand_tiles"
           :melded_blocks="melded_blocks"
           size="lg"
@@ -128,46 +139,46 @@
           <b-tab title="手牌" active>
             <HandTileInput
               v-on:add-tile="add_tile"
-              :n_left_tiles="n_left_tiles"
-              :disabled="calc_num_hand_tiles() >= 14"
-            />
-          </b-tab>
-          <b-tab title="明刻子">
-            <MinkotuInput
-              v-on:add-block="add_block"
-              :n_left_tiles="n_left_tiles"
-              :disabled="calc_num_hand_tiles() >= 12"
-            />
-          </b-tab>
-          <b-tab title="明順子">
-            <MinsyuntuInput
-              v-on:add-block="add_block"
-              :n_left_tiles="n_left_tiles"
-              :disabled="calc_num_hand_tiles() >= 12"
-            />
-          </b-tab>
-          <b-tab title="明槓子">
-            <MinkantuInput
-              v-on:add-block="add_block"
-              :n_left_tiles="n_left_tiles"
-              :disabled="calc_num_hand_tiles() >= 12"
-            />
-          </b-tab>
-          <b-tab title="暗槓子">
-            <AnkantuInput
-              v-on:add-block="add_block"
-              :n_left_tiles="n_left_tiles"
-              :disabled="calc_num_hand_tiles() >= 12"
+              :tile_counts="tile_counts"
+              :n_hand_tiles="n_hand_tiles"
             />
           </b-tab>
           <b-tab title="ドラ表示牌">
             <p class="m-2">
-              ドラの指定は、ドラ表示牌で行うので注意してください。最大5枚まで設定できます。
+              ドラはドラ表示牌で指定するので注意してください。槓ドラも含め、最大5枚まで設定できます。
             </p>
             <HandTileInput
               v-on:add-tile="add_dora"
-              :n_left_tiles="n_left_tiles"
-              :disabled="dora_tiles.length >= 5"
+              :tile_counts="tile_counts"
+              :n_dora_tiles="dora_indicators.length"
+            />
+          </b-tab>
+          <b-tab title="明刻子">
+            <MinkotuInput
+              v-on:add-block="add_meld"
+              :tile_counts="tile_counts"
+              :n_hand_tiles="n_hand_tiles"
+            />
+          </b-tab>
+          <b-tab title="明順子">
+            <MinsyuntuInput
+              v-on:add-block="add_meld"
+              :tile_counts="tile_counts"
+              :n_hand_tiles="n_hand_tiles"
+            />
+          </b-tab>
+          <b-tab title="明槓子">
+            <MinkantuInput
+              v-on:add-block="add_meld"
+              :tile_counts="tile_counts"
+              :n_hand_tiles="n_hand_tiles"
+            />
+          </b-tab>
+          <b-tab title="暗槓子">
+            <AnkantuInput
+              v-on:add-block="add_meld"
+              :tile_counts="tile_counts"
+              :n_hand_tiles="n_hand_tiles"
             />
           </b-tab>
         </b-tabs>
@@ -176,35 +187,39 @@
 
     <!-- ボタン -->
     <b-row class="mb-3">
-      <b-col cols="auto">
+      <b-col>
         <b-button
-          block
+          class="mr-2"
           variant="primary"
-          v-on:click="calculate"
-          :disabled="calc_num_hand_tiles() != 13 && calc_num_hand_tiles() != 14"
-          >計算</b-button
+          @click="calculate"
+          :disabled="
+            (n_hand_tiles != 13 && n_hand_tiles != 14) || is_calculating
+          "
+          >計算を実行</b-button
         >
-      </b-col>
-      <b-col cols="auto">
-        <b-button block variant="primary" v-on:click="clear_hand"
-          >手牌をクリア</b-button
+        <b-button class="mr-2" variant="primary" @click="clear_hand"
+          >手牌を初期化</b-button
         >
-      </b-col>
-      <b-col cols="auto">
-        <b-button block variant="primary" v-on:click="clear_all"
-          >設定をクリア</b-button
-        >
+        <b-button variant="primary" @click="clear_all">設定を初期化</b-button>
       </b-col>
     </b-row>
 
     <!-- 計算結果 -->
-    <DrawResult v-if="true" :result="true" />
-    <DiscardResult v-else :result="true" />
+    <Result :result="result" />
   </b-container>
 </template>
 
 <script>
-import { sort_tiles, Tile, DoraHyozi2Dora } from "@/mahjong.js";
+import axios from "axios";
+import {
+  sort_tiles,
+  Tile,
+  DoraHyozi2Dora,
+  Tile2String,
+  SyantenType,
+  SyantenType2String
+} from "@/mahjong.js";
+
 import HandAndMeldedBlocks from "@/components/mahjong/HandAndMeldedBlocks.vue";
 import DoraTiles from "@/components/mahjong/DoraTiles.vue";
 import HandTileInput from "@/components/mahjong/HandTileInput.vue";
@@ -212,8 +227,7 @@ import MinkotuInput from "@/components/mahjong/MinkotuInput.vue";
 import MinsyuntuInput from "@/components/mahjong/MinsyuntuInput.vue";
 import MinkantuInput from "@/components/mahjong/MinkantuInput.vue";
 import AnkantuInput from "@/components/mahjong/AnkantuInput.vue";
-import DrawResult from "./DrawResult.vue";
-import DiscardResult from "./DiscardResult.vue";
+import Result from "./Result.vue";
 
 export default {
   name: "Calculator",
@@ -225,194 +239,189 @@ export default {
     MinsyuntuInput,
     MinkantuInput,
     AnkantuInput,
-    DrawResult,
-    DiscardResult,
+    Result
   },
-  data: function () {
+  data: function() {
     return {
-      result: null,
-      Tile: Tile,
-      hand_tiles: [],
-      melded_blocks: [],
-      bakaze: Tile.Ton,
-      zikaze: Tile.Ton,
-      is_parent: true,
-      syanten_type: 0,
-      turn: 1,
-      dora_tiles: [Tile.Ton],
-      kazehai: [
-        { value: Tile.Ton, text: "東" },
-        { value: Tile.Nan, text: "南" },
-        { value: Tile.Sya, text: "西" },
-        { value: Tile.Pe, text: "北" },
+      bakaze: Tile.Ton, // 場風
+      zikaze: Tile.Ton, // 自風
+      turn: 1, // 現在の巡目
+      syanten_type: SyantenType.Normal, // 手牌の種類
+      dora_indicators: [Tile.Ton], // ドラ
+      flag: [1, 4, 16, 8, 32], // フラグ
+      hand_tiles: [2, 3, 3, 4, 5, 5, 6, 8, 8, 15, 16, 16, 24, 26], // 手牌
+      melded_blocks: [], // 副露ブロックの一覧
+      result: null, // 結果
+      is_calculating: false,
+
+      // オプション
+      // 場風
+      input_bakaze_options: [
+        { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
+        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
+        { value: Tile.Sya, text: Tile2String.get(Tile.Sya) },
+        { value: Tile.Pe, text: Tile2String.get(Tile.Pe) }
       ],
-      n_hand_tiles: 0,
-      n_left_tiles: Array(34).fill(4).concat([1, 1, 1]),
-      show_alert: false,
-      alert_msg: "",
+      // 自風
+      input_zikaze_options: [
+        { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
+        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
+        { value: Tile.Sya, text: Tile2String.get(Tile.Sya) },
+        { value: Tile.Pe, text: Tile2String.get(Tile.Pe) }
+      ],
+      // 手牌の種類
+      input_syanten_type_options: [
+        {
+          value: SyantenType.Normal,
+          text: SyantenType2String.get(SyantenType.Normal)
+        },
+        {
+          value: SyantenType.Tiitoi,
+          text: SyantenType2String.get(SyantenType.Tiitoi)
+        },
+        {
+          value: SyantenType.Kokusi,
+          text: SyantenType2String.get(SyantenType.Kokusi)
+        }
+      ],
+      // フラグ
+      input_flag_options: [
+        { value: 1, text: "向聴落とし" },
+        { value: 2, text: "手変わり (実装中)", disabled: true },
+        { value: 4, text: "ダブル立直" },
+        { value: 8, text: "一発" },
+        { value: 16, text: "海底自摸" },
+        { value: 32, text: "裏ドラ" }
+      ]
     };
   },
+
+  computed: {
+    // 手牌の枚数
+    n_hand_tiles: function() {
+      return this.hand_tiles.length + this.melded_blocks.length * 3;
+    },
+
+    // 各牌の残り枚数
+    tile_counts: function() {
+      // 初期化する。
+      let counts = Array(34)
+        .fill(4)
+        .concat([1, 1, 1]);
+
+      let minus_tile = tile => {
+        counts[tile] -= 1;
+        // 赤ドラの場合は対応する牌も減らす。
+        if (tile == Tile.AkaManzu5) counts[Tile.Manzu5] -= 1;
+        else if (tile == Tile.AkaPinzu5) counts[Tile.Pinzu5] -= 1;
+        else if (tile == Tile.AkaSozu5) counts[Tile.Sozu5] -= 1;
+      };
+
+      // ドラ表示牌を除く
+      this.dora_indicators.forEach(minus_tile);
+      // 手牌を除く
+      this.hand_tiles.forEach(minus_tile);
+      // 副露ブロックを除く
+      this.melded_blocks.forEach(block => block.tiles.forEach(minus_tile));
+
+      return counts;
+    }
+  },
+
+  created: function() {
+    this.calculate();
+  },
+
   methods: {
     calculate() {
+      this.is_calculating = true;
+
+      // JSON を作成する。
       let data = JSON.stringify({
         zikaze: this.zikaze,
         bakaze: this.bakaze,
         turn: this.turn,
-        is_parent: this.is_parent,
         syanten_type: this.syanten_type,
-        dora_tiles: this.dora_tiles.map((x) => DoraHyozi2Dora[x]),
+        dora_tiles: this.dora_indicators.map(x => DoraHyozi2Dora[x]),
+        flag: this.flag.reduce((a, x) => (a += x), 0),
         hand_tiles: this.hand_tiles,
-        melded_blocks: this.melded_blocks,
+        melded_blocks: this.melded_blocks
       });
+      console.log(data);
 
-      this.result = true;
+      // POST する。
+      axios
+        .post("http://localhost:8888", data)
+        .then(response => {
+          //console.log(JSON.stringify(response.data.response));
+          this.result = response.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
 
-      return console.log(data);
+      this.is_calculating = false;
     },
 
+    /// 手牌を初期化する。
     clear_hand() {
       this.hand_tiles = [];
       this.melded_blocks = [];
-      this.n_hand_tiles = 0;
-      this.n_left_tiles = this.calc_num_left_tiles();
+      this.result = null;
     },
 
+    /// 設定を初期化する。
     clear_all() {
       this.clear_hand();
       this.zikaze = Tile.Ton;
       this.bakaze = Tile.Ton;
       this.turn = 1;
-      this.is_parent = true;
-      this.syanten_type = 0;
-      this.dora_tiles = [Tile.Ton];
+      this.syanten_type = 1;
+      this.dora_indicators = [Tile.Ton];
+      this.flag = [
+        1, // 向聴落とし
+        4, // ダブル立直
+        8, // 一発
+        16, // 海底自摸
+        32 // 裏ドラ
+      ];
     },
 
+    /// 牌を手牌に追加する。
     add_tile(tile) {
-      if (this.calc_num_hand_tiles() >= 14) {
-        this.show_alert = true;
-        this.alert_msg = "14枚を超えるため、牌を追加できません。";
-        return;
-      } else {
-        this.show_alert = false;
-        this.alert_msg = "";
-      }
-
       this.hand_tiles.push(tile);
       sort_tiles(this.hand_tiles);
-      this.n_hand_tiles = this.calc_num_hand_tiles();
-      this.n_left_tiles = this.calc_num_left_tiles();
     },
 
+    /// 牌を手牌から削除する。
     remove_tile(tile) {
-      this.show_alert = false;
-      this.alert_msg = "";
       let i = this.hand_tiles.indexOf(tile);
-      this.hand_tiles.splice(i, 1);
-      this.n_hand_tiles = this.calc_num_hand_tiles();
-      this.n_left_tiles = this.calc_num_left_tiles();
+      if (i > -1) this.hand_tiles.splice(i, 1);
     },
 
-    add_block(block) {
-      if (this.calc_num_hand_tiles() >= 12) {
-        this.show_alert = true;
-        this.alert_msg = "14枚を超えるため、牌を追加できません。";
-        return;
-      } else {
-        this.show_alert = false;
-        this.alert_msg = "";
-      }
-
+    /// 牌を副露ブロックの一覧に追加する。
+    add_meld(block) {
       this.melded_blocks.push(block);
-      this.n_hand_tiles = this.calc_num_hand_tiles();
-      this.n_left_tiles = this.calc_num_left_tiles();
     },
 
-    remove_block(block) {
-      this.show_alert = false;
-      this.alert_msg = "";
-
+    /// 牌を副露ブロックの一覧から削除する。
+    remove_meld(block) {
       let i = this.melded_blocks.findIndex(
-        (x) => JSON.stringify(x) == JSON.stringify(block)
+        x => JSON.stringify(x) == JSON.stringify(block)
       );
-      this.melded_blocks.splice(i, 1);
-      this.n_hand_tiles = this.calc_num_hand_tiles();
-      this.n_left_tiles = this.calc_num_left_tiles();
+      if (i > -1) this.melded_blocks.splice(i, 1);
     },
 
+    /// 牌をドラ表示牌の一覧に追加する。
     add_dora(tile) {
-      if (this.dora_tiles.length >= 5) {
-        this.show_alert = true;
-        this.alert_msg = "5枚を超えるため、ドラを追加できません。";
-        return;
-      } else {
-        this.show_alert = false;
-        this.alert_msg = "";
-      }
-
-      console.log("ドラ", tile);
-      this.dora_tiles.push(tile);
-      this.n_left_tiles = this.calc_num_left_tiles();
+      this.dora_indicators.push(tile);
     },
 
+    /// 牌をドラ表示牌の一覧から削除する。
     remove_dora(tile) {
-      if (this.dora_tiles.length == 1) {
-        this.show_alert = true;
-        this.alert_msg = "ドラをこれ以上削除できません。";
-        return;
-      } else {
-        this.show_alert = false;
-        this.alert_msg = "";
-      }
-
-      this.show_alert = false;
-      this.alert_msg = "";
-      let i = this.dora_tiles.indexOf(tile);
-      this.dora_tiles.splice(i, 1);
-      this.n_left_tiles = this.calc_num_left_tiles();
-    },
-
-    calc_num_left_tiles() {
-      let counts = Array(34).fill(4).concat([1, 1, 1]);
-
-      let minus_tile = (counts, tile) => {
-        if (tile === -1) return;
-
-        counts[tile] -= 1;
-        if (tile == Tile.AkaManzu5) {
-          counts[Tile.Manzu5] -= 1;
-        } else if (tile == Tile.AkaPinzu5) {
-          counts[Tile.Pinzu5] -= 1;
-        } else if (tile == Tile.AkaSozu5) {
-          counts[Tile.Sozu5] -= 1;
-        }
-      };
-
-      // ドラ表示牌を除く
-      for (let tile of this.dora_tiles) {
-        minus_tile(counts, tile);
-      }
-
-      // 手牌を除く
-      for (let tile of this.hand_tiles) {
-        minus_tile(counts, tile);
-      }
-
-      // 副露ブロックを除く
-      for (let block of this.melded_blocks) {
-        for (let tile of block.tiles) {
-          minus_tile(counts, tile);
-        }
-      }
-
-      console.log(counts);
-
-      return counts;
-    },
-
-    calc_num_hand_tiles() {
-      return this.hand_tiles.length + this.melded_blocks.length * 3;
-    },
-  },
+      let i = this.dora_indicators.indexOf(tile);
+      if (i > -1) this.dora_indicators.splice(i, 1);
+    }
+  }
 };
 </script>
-
