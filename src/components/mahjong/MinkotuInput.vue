@@ -134,7 +134,8 @@ export default {
     is_disabled(block) {
       return (
         this.n_hand_tiles >= 12 ||
-        block.tiles.some(x => this.tile_counts[x] === 0)
+        this.tile_counts[block.tiles[0]] == 0 ||
+        this.tile_counts[block.tiles[2]] < 3
       );
     }
   }

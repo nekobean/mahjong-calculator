@@ -188,19 +188,31 @@
     <!-- ボタン -->
     <b-row class="mb-3">
       <b-col>
-        <b-button
-          class="mr-2"
-          variant="primary"
-          @click="calculate"
-          :disabled="
-            (n_hand_tiles != 13 && n_hand_tiles != 14) || is_calculating
-          "
-          >計算を実行</b-button
-        >
-        <b-button class="mr-2" variant="primary" @click="clear_hand"
-          >手牌を初期化</b-button
-        >
-        <b-button variant="primary" @click="clear_all">設定を初期化</b-button>
+        <b-overlay :show="is_calculating" rounded="sm">
+          <b-button
+            class="mr-2"
+            variant="primary"
+            @click="calculate"
+            :disabled="
+              (n_hand_tiles != 13 && n_hand_tiles != 14) || is_calculating
+            "
+            >計算を実行</b-button
+          >
+          <b-button class="mr-2" variant="primary" @click="clear_hand"
+            >手牌を初期化</b-button
+          >
+          <b-button class="mr-2" variant="primary" @click="clear_all"
+            >設定を初期化</b-button
+          >
+          <b-button variant="primary" @click="set_random_hand"
+            >ランダムの手牌入力</b-button
+          >
+
+          <template #overlay>
+            <b-icon icon="three-dots" animation="cylon" font-scale="4"></b-icon>
+            <p>計算中</p>
+          </template>
+        </b-overlay>
       </b-col>
     </b-row>
 
@@ -249,7 +261,7 @@ export default {
       syanten_type: SyantenType.Normal, // 手牌の種類
       dora_indicators: [Tile.Ton], // ドラ
       flag: [1, 4, 16, 8, 32], // フラグ
-      hand_tiles: [2, 3, 3, 4, 5, 5, 6, 8, 8, 15, 16, 16, 24, 26], // 手牌
+      hand_tiles: [], // 手牌
       melded_blocks: [], // 副露ブロックの一覧
       result: null, // 結果
       is_calculating: false,
@@ -328,13 +340,14 @@ export default {
     }
   },
 
-  created: function() {
-    this.calculate();
-  },
+  // created: function() {
+  //   this.calculate();
+  // },
 
   methods: {
     calculate() {
       this.is_calculating = true;
+      this.result = null;
 
       // JSON を作成する。
       let data = JSON.stringify({
@@ -347,20 +360,23 @@ export default {
         hand_tiles: this.hand_tiles,
         melded_blocks: this.melded_blocks
       });
-      console.log(data);
 
       // POST する。
       axios
         .post("http://localhost:8888", data)
         .then(response => {
-          //console.log(JSON.stringify(response.data.response));
           this.result = response.data;
         })
-        .catch(err => {
-          console.log(err);
+        .catch(() => {
+          this.result = {
+            success: false,
+            err_msg:
+              "サーバーとの通信に失敗しました。サービス停止中は利用できません。"
+          };
+        })
+        .finally(() => {
+          this.is_calculating = false;
         });
-
-      this.is_calculating = false;
     },
 
     /// 手牌を初期化する。
@@ -421,6 +437,40 @@ export default {
     remove_dora(tile) {
       let i = this.dora_indicators.indexOf(tile);
       if (i > -1) this.dora_indicators.splice(i, 1);
+    },
+
+    set_random_hand() {
+      this.clear_hand();
+      const shuffle = ([...array]) => {
+        for (let i = array.length - 1; i >= 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      };
+
+      // 牌山を作成する。
+      let yama = [];
+      for (let i = 0; i < 27; ++i) {
+        yama = yama.concat(Array(4).fill(i));
+      }
+      yama[Tile.Manzu5 * 4] = Tile.AkaManzu5;
+      yama[Tile.Pinzu5 * 4] = Tile.AkaPinzu5;
+      yama[Tile.Sozu5 * 4] = Tile.AkaSozu5;
+
+      // ドラ表示牌は削除する。
+      for (let tile of this.dora_indicators) {
+        let i = yama.indexOf(tile);
+        yama.splice(i, 1);
+      }
+
+      // 先牌する。
+      yama = shuffle(yama);
+
+      let hand_tiles = yama.slice(0, 14);
+      sort_tiles(hand_tiles);
+
+      this.hand_tiles = hand_tiles;
     }
   }
 };

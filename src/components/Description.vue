@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron
       class="pt-3 pb-3"
-      header="麻雀何切るシミュレーター"
+      header="麻雀何切るシミュレーター (version 0.1.0)"
       header-level="5"
       bg-variant="dark"
       text-variant="white"
@@ -38,25 +38,36 @@
 
       <hr style="border:1px solid white;" />
 
-      <p>
-        <mark
-          >現在開発中のため、不具合があったり、メンテナンス中は動かなかったりします。</mark
-        >
-        PC 版 Chrome ブラウザでのみ動作確認をしています。ご意見や不具合報告は
-        <b-link
-          href="https://pystyle.info/mahjong-nanikiru-calculator/"
-          target="_blank"
-          >ブログ記事</b-link
-        >
-        または
-        <b-link href="https://github.com/nekobean/mahjong-cpp" target="_blank"
-          >GitHub</b-link
-        >
-        にお願いします。(使用している牌画像の配布元
-        <b-link href="https://casinoconcierge.cc/mahjong-images" target="_blank"
-          >カジノコンシェルジュ</b-link
-        >)
-      </p>
+      <ul>
+        <li>
+          <mark
+            >現在開発中のため、不具合があるかもしれません。ご意見や不具合報告は
+            <b-link
+              href="https://pystyle.info/mahjong-nanikiru-calculator/"
+              target="_blank"
+              >ブログ記事</b-link
+            >
+            または
+            <b-link
+              href="https://github.com/nekobean/mahjong-cpp"
+              target="_blank"
+              >GitHub</b-link
+            >
+            にお願いします。</mark
+          >
+        </li>
+        <li>
+          PC 版 Chrome ブラウザでのみ動作確認をしています。
+        </li>
+        <li>
+          使用している牌画像の配布元:
+          <b-link
+            href="https://casinoconcierge.cc/mahjong-images"
+            target="_blank"
+            >カジノコンシェルジュ</b-link
+          >
+        </li>
+      </ul>
     </b-jumbotron>
   </div>
 </template>

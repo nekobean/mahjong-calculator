@@ -112,10 +112,7 @@ export default {
     },
 
     is_disabled(block) {
-      return (
-        this.n_hand_tiles >= 12 ||
-        block.tiles.some(x => this.tile_counts[x] === 0)
-      );
+      return this.n_hand_tiles >= 12 || this.tile_counts[block.tiles[3]] != 4;
     }
   }
 };

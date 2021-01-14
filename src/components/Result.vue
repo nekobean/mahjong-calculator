@@ -1,54 +1,65 @@
 <template>
-  <div v-if="result && result.success">
-    <!-- <pre>{{ copy_result }}</pre> -->
-    <b-row class="p-2">
-      <b-col
-        >計算時間: {{ calc_time }}, {{ syanten }}
-        <span style="color: red;">※ 青色は向聴戻しとなる打牌です。</span></b-col
-      >
-    </b-row>
-    <b-row>
-      <b-col>
-        <!--
+  <div>
+    <template v-if="result && result.success">
+      <!-- <pre>{{ copy_result }}</pre> -->
+      <b-row class="p-2">
+        <b-col
+          >計算時間: {{ calc_time }}, {{ syanten }}
+          <span style="color: red;"
+            >※ 青色は向聴戻しとなる打牌です。</span
+          ></b-col
+        >
+      </b-row>
+      <b-row>
+        <b-col>
+          <!--
           手牌が14枚の場合
          -->
-        <b-table
-          :items="items"
-          :fields="fields"
-          :sort-compare="sortCompare"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-        >
-          <!-- 打牌 -->
-          <template #cell(tile)="data">
-            <TileImage :tile="data.item.tile" />
-          </template>
-          <!-- 打牌 -->
-          <template #cell(n_required_tiles)="data">
-            {{ data.item.required_tiles.length }}種{{
-              data.item.n_required_tiles
-            }}枚
-          </template>
-          <!-- 打牌 -->
-          <template #cell(required_tiles)="data">
-            <TileImage
-              v-for="(tile, j) in data.item.required_tiles"
-              :key="j"
-              :tile="tile.tile"
-            />
-          </template>
-        </b-table>
-      </b-col>
-    </b-row>
+          <b-table
+            :items="items"
+            :fields="fields"
+            :sort-compare="sortCompare"
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
+          >
+            <!-- 打牌 -->
+            <template #cell(tile)="data">
+              <TileImage :tile="data.item.tile" />
+            </template>
+            <!-- 打牌 -->
+            <template #cell(n_required_tiles)="data">
+              {{ data.item.required_tiles.length }}種{{
+                data.item.n_required_tiles
+              }}枚
+            </template>
+            <!-- 打牌 -->
+            <template #cell(required_tiles)="data">
+              <TileImage
+                v-for="(tile, j) in data.item.required_tiles"
+                :key="j"
+                :tile="tile.tile"
+              />
+            </template>
+          </b-table>
+        </b-col>
+      </b-row>
 
-    <!-- ボタン -->
-    <b-row class="mb-3">
-      <b-col cols="auto">
-        <b-button block variant="primary" v-clipboard:copy="copy_result"
-          >テキスト形式で結果をコピー</b-button
-        >
-      </b-col>
-    </b-row>
+      <!-- ボタン -->
+      <b-row class="mb-3">
+        <b-col cols="auto">
+          <b-button block variant="primary" v-clipboard:copy="copy_result"
+            >テキスト形式で結果をコピー</b-button
+          >
+        </b-col>
+      </b-row>
+    </template>
+    <b-alert
+      v-else-if="result && !result.success"
+      show
+      variant="danger"
+      dismissible
+      >{{ result.err_msg }}
+    </b-alert>
   </div>
 </template>
 
@@ -99,9 +110,9 @@ export default {
       }
 
       if (key === "exp_value") {
-        return a != b
+        return Math.round(a) != Math.round(b)
           ? a - b
-          : TilePriority[aRow["tile"]] - TilePriority[bRow["tile"]];
+          : TilePriority[bRow["tile"]] - TilePriority[aRow["tile"]];
       }
 
       // デフォルト
@@ -231,6 +242,9 @@ export default {
             item.tenpai_prob = candidate.tenpai_probs[turn - 1];
 
             this.sortBy = "exp_value";
+            this.sortDesc = true;
+          } else {
+            this.sortBy = "n_required_tiles";
             this.sortDesc = true;
           }
 
