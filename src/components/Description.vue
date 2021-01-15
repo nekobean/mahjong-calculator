@@ -2,13 +2,13 @@
   <div>
     <b-jumbotron
       class="pt-3 pb-3"
-      header="麻雀何切るシミュレーター (version 0.1.0)"
+      header="何切るシミュレーター (version 0.1.0)"
       header-level="5"
       bg-variant="dark"
       text-variant="white"
     >
       <p>
-        「麻雀何切るシミュレーター」は入力された手牌に対して、以下の情報を表示するツールです。
+        「何切るシミュレーター」は入力された手牌に対して、以下の情報を表示するツールです。
       </p>
 
       <ul>
