@@ -1,29 +1,29 @@
 <template>
   <img :src="get_src()" :class="get_classes()" />
 </template>
- 
+
 <script>
 export default {
   name: "TileImage",
   props: {
     tile: {
       type: Number,
-      required: true,
+      required: true
     },
     size: {
       type: String,
-      default: "sm",
+      default: "sm"
     },
     type: {
       type: String,
-      default: "upright",
-    },
+      default: "upright"
+    }
   },
   methods: {
     get_src() {
       return this.size == "sm"
-        ? `/tiles/${this.tile}_small.png`
-        : `/tiles/${this.tile}.png`;
+        ? `./tiles/${this.tile}_small.png`
+        : `./tiles/${this.tile}.png`;
     },
 
     get_classes() {
@@ -39,8 +39,8 @@ export default {
       }
 
       return classes.join(" ");
-    },
-  },
+    }
+  }
 };
 </script>
 

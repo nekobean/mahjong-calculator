@@ -13,6 +13,10 @@ export default {
   name: "App",
   components: {
     Home
+  },
+  metaInfo: {
+    title: "麻雀何切るシミュレーター",
+    titleTemplate: "pystyle - %s"
   }
 };
 </script>

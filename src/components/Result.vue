@@ -210,6 +210,7 @@ export default {
       let turn = this.result.request.turn;
       let syanten = this.result.response.syanten;
       let result_type = this.result.response.result_type;
+      let maximie_win_prob = this.result.request.flag & 64;
       let items = [];
 
       if (result_type == 1) {
@@ -241,7 +242,7 @@ export default {
             // 現状の巡目の聴牌確率
             item.tenpai_prob = candidate.tenpai_probs[turn - 1];
 
-            this.sortBy = "exp_value";
+            this.sortBy = maximie_win_prob ? "win_prob" : "exp_value";
             this.sortDesc = true;
           } else {
             this.sortBy = "n_required_tiles";

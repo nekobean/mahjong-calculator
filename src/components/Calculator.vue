@@ -86,7 +86,7 @@
           />
         </b-form-group>
 
-        <!-- フラグ -->
+        <!-- 考慮する項目 -->
         <b-form-group
           label-cols="2"
           label="考慮する項目"
@@ -99,6 +99,24 @@
             size="sm"
             switches
           ></b-form-checkbox-group>
+        </b-form-group>
+
+        <!-- 考慮する項目 -->
+        <b-form-group
+          label-cols="2"
+          content-cols="4"
+          label="重視する項目"
+          label-for="input-maximize-target"
+          label-align="right"
+        >
+          <b-form-radio-group
+            id="input-maximize-target"
+            v-model="maximize_target"
+            :options="input_maximize_target_options"
+            button-variant="outline-primary"
+            size="sm"
+            buttons
+          ></b-form-radio-group>
         </b-form-group>
 
         <!-- 牌の枚数 -->
@@ -260,7 +278,8 @@ export default {
       turn: 1, // 現在の巡目
       syanten_type: SyantenType.Normal, // 手牌の種類
       dora_indicators: [Tile.Ton], // ドラ
-      flag: [1, 4, 16, 8, 32], // フラグ
+      flag: [1, 2, 4, 16, 8, 32], // フラグ
+      maximize_target: 0,
       hand_tiles: [], // 手牌
       melded_blocks: [], // 副露ブロックの一覧
       result: null, // 結果
@@ -296,14 +315,25 @@ export default {
           text: SyantenType2String.get(SyantenType.Kokusi)
         }
       ],
-      // フラグ
+      // 考慮する項目
       input_flag_options: [
         { value: 1, text: "向聴落とし" },
-        { value: 2, text: "手変わり (実装中)", disabled: true },
+        { value: 2, text: "手変わり" },
         { value: 4, text: "ダブル立直" },
         { value: 8, text: "一発" },
         { value: 16, text: "海底自摸" },
         { value: 32, text: "裏ドラ" }
+      ],
+      // 重視する項目
+      input_maximize_target_options: [
+        {
+          value: 0,
+          text: "期待値最大化"
+        },
+        {
+          value: 64,
+          text: "和了確率最大化"
+        }
       ]
     };
   },
@@ -356,14 +386,15 @@ export default {
         turn: this.turn,
         syanten_type: this.syanten_type,
         dora_tiles: this.dora_indicators.map(x => DoraHyozi2Dora[x]),
-        flag: this.flag.reduce((a, x) => (a += x), 0),
+        flag: this.flag.reduce((a, x) => (a += x), 0) + this.maximize_target,
         hand_tiles: this.hand_tiles,
         melded_blocks: this.melded_blocks
       });
 
       // POST する。
       axios
-        .post("http://localhost:8888", data)
+        .post("/apps/mahjong-nanikiru-simulator/post.py", data)
+        //.post("http://localhost:8888", data)
         .then(response => {
           this.result = response.data;
         })

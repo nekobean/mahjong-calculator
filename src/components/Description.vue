@@ -2,13 +2,13 @@
   <div>
     <b-jumbotron
       class="pt-3 pb-3"
-      header="何切るシミュレーター (version 0.1.0)"
+      header="麻雀何切るシミュレーター (version 0.2.0)"
       header-level="5"
       bg-variant="dark"
       text-variant="white"
     >
       <p>
-        「何切るシミュレーター」は入力された手牌に対して、以下の情報を表示するツールです。
+        「麻雀何切るシミュレーター」は入力された手牌に対して、受け入れ枚数、聴牌確率、和了確率、期待値などの情報を表示するツールです。
       </p>
 
       <ul>
@@ -38,36 +38,22 @@
 
       <hr style="border:1px solid white;" />
 
-      <ul>
-        <li>
-          <mark
-            >現在開発中のため、不具合があるかもしれません。ご意見や不具合報告は
-            <b-link
-              href="https://pystyle.info/mahjong-nanikiru-calculator/"
-              target="_blank"
-              >ブログ記事</b-link
-            >
-            または
-            <b-link
-              href="https://github.com/nekobean/mahjong-cpp"
-              target="_blank"
-              >GitHub</b-link
-            >
-            にお願いします。</mark
-          >
-        </li>
-        <li>
-          PC 版 Chrome ブラウザでのみ動作確認をしています。
-        </li>
-        <li>
-          使用している牌画像の配布元:
-          <b-link
-            href="https://casinoconcierge.cc/mahjong-images"
-            target="_blank"
-            >カジノコンシェルジュ</b-link
-          >
-        </li>
-      </ul>
+      <p>
+        ご意見や不具合報告は
+        <b-link
+          href="https://pystyle.info/mahjong-nanikiru-problem/"
+          target="_blank"
+          >ブログ記事</b-link
+        >
+        または
+        <b-link href="https://github.com/nekobean/mahjong-cpp" target="_blank"
+          >GitHub</b-link
+        >
+        にお願いします。 (作成者
+        <b-link href="https://pystyle.info/mahjong-nanikiru-problem/"
+          >pystyle</b-link
+        >)
+      </p>
     </b-jumbotron>
   </div>
 </template>
