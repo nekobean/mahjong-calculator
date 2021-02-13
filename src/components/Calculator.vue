@@ -153,7 +153,7 @@
     <!-- 手牌及び副露ブロックの入力欄 -->
     <b-row>
       <b-col>
-        <b-tabs>
+        <b-tabs v-model="select_tab">
           <b-tab title="手牌" active>
             <HandTileInput
               v-on:add-tile="add_tile"
@@ -284,14 +284,13 @@ export default {
       melded_blocks: [], // 副露ブロックの一覧
       result: null, // 結果
       is_calculating: false,
+      select_tab: 0,
 
       // オプション
       // 場風
       input_bakaze_options: [
         { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
-        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
-        { value: Tile.Sya, text: Tile2String.get(Tile.Sya) },
-        { value: Tile.Pe, text: Tile2String.get(Tile.Pe) }
+        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) }
       ],
       // 自風
       input_zikaze_options: [
@@ -317,7 +316,7 @@ export default {
       ],
       // 考慮する項目
       input_flag_options: [
-        { value: 1, text: "向聴落とし" },
+        { value: 1, text: "向聴戻し" },
         { value: 2, text: "手変わり" },
         { value: 4, text: "ダブル立直" },
         { value: 8, text: "一発" },
@@ -426,12 +425,14 @@ export default {
       this.syanten_type = 1;
       this.dora_indicators = [Tile.Ton];
       this.flag = [
-        1, // 向聴落とし
+        1, // 向聴戻し
+        2, // 手変わり
         4, // ダブル立直
         8, // 一発
         16, // 海底自摸
         32 // 裏ドラ
       ];
+      this.select_tab = 0;
     },
 
     /// 牌を手牌に追加する。

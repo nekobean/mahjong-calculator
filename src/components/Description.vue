@@ -41,7 +41,7 @@
       <p>
         ご意見や不具合報告は
         <b-link
-          href="https://pystyle.info/mahjong-nanikiru-problem/"
+          href="https://pystyle.info/mahjong-nanikiru-simulator/"
           target="_blank"
           >ブログ記事</b-link
         >
@@ -50,9 +50,7 @@
           >GitHub</b-link
         >
         にお願いします。 (作成者
-        <b-link href="https://pystyle.info/mahjong-nanikiru-problem/"
-          >pystyle</b-link
-        >)
+        <b-link href="https://pystyle.info/">pystyle</b-link>)
       </p>
     </b-jumbotron>
   </div>

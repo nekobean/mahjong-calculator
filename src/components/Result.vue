@@ -6,7 +6,8 @@
         <b-col
           >計算時間: {{ calc_time }}, {{ syanten }}
           <span style="color: red;"
-            >※ 青色は向聴戻しとなる打牌です。</span
+            >※
+            青色は向聴戻しとなる打牌です。副露している場合、役なしの和了は期待値0として計算します。</span
           ></b-col
         >
       </b-row>
@@ -111,6 +112,12 @@ export default {
 
       if (key === "exp_value") {
         return Math.round(a) != Math.round(b)
+          ? a - b
+          : TilePriority[bRow["tile"]] - TilePriority[aRow["tile"]];
+      }
+
+      if (key === "win_prob") {
+        return Math.round(a * 10000) != Math.round(b * 10000)
           ? a - b
           : TilePriority[bRow["tile"]] - TilePriority[aRow["tile"]];
       }
@@ -318,6 +325,30 @@ export default {
       str += `## 計算結果\n`;
 
       if (res.result_type == 1) {
+        if (res.syanten >= 4) {
+          res.candidates.sort(function(a, b) {
+            let a_sum = a.required_tiles.reduce((s, e) => s + e.count, 0);
+            let b_sum = b.required_tiles.reduce((s, e) => s + e.count, 0);
+
+            return a_sum != b_sum
+              ? b_sum - a_sum
+              : TilePriority[a.tile] - TilePriority[b.tile];
+          });
+        } else if (req.flag & 64) {
+          res.candidates.sort((a, b) =>
+            Math.round(a.win_probs[0] * 10000) !=
+            Math.round(b.win_probs[0] * 10000)
+              ? b.win_probs[0] - a.win_probs[0]
+              : TilePriority[a.tile] - TilePriority[b.tile]
+          );
+        } else {
+          res.candidates.sort((a, b) =>
+            Math.round(a.exp_values[0]) != Math.round(b.exp_values[0])
+              ? b.exp_values[0] - a.exp_values[0]
+              : TilePriority[a.tile] - TilePriority[b.tile]
+          );
+        }
+
         for (let candidate of res.candidates) {
           // 有効牌の合計枚数
           let n_required_tiles = candidate.required_tiles.reduce(
@@ -332,6 +363,7 @@ export default {
           str += `打: ${Tile2String.get(candidate.tile)}, `;
           str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚, `;
           str += `有効牌: [${hand2string(required_tiles.map(x => x.tile))}]`;
+          str += candidate.syanten_down ? " 向聴戻し" : "";
           str += "\n";
 
           if (res.syanten <= 3) {
