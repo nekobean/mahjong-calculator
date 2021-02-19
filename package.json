@@ -1,6 +1,6 @@
 {
   "name": "mahjong-calculator",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,8 +9,11 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "chart.js": "^2.9.4",
+    "chartjs-plugin-annotation": "^0.5.7",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
+    "vue-chartjs": "^3.5.1",
     "vue-clipboard2": "^0.3.1",
     "vue-meta": "^2.4.0"
   },
