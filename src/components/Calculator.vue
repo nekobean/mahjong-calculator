@@ -1,242 +1,248 @@
 <template>
-  <b-container fluid class="border border-gray p-3">
-    <!-- 設定入力欄 -->
-    <b-row>
-      <b-col>
-        <!-- 場風 -->
-        <b-form-group
-          label-cols="2"
-          content-cols="4"
-          label="場風"
-          label-for="input-bakaze"
-          label-align="right"
-        >
-          <b-form-radio-group
-            id="input-bakaze"
-            v-model="bakaze"
-            :options="input_bakaze_options"
-            button-variant="outline-primary"
-            size="sm"
-            buttons
-          ></b-form-radio-group>
-        </b-form-group>
+  <div>
+    <b-container fluid class="border border-gray p-3">
+      <!-- 設定入力欄 -->
+      <b-row>
+        <b-col>
+          <!-- 場風 -->
+          <b-form-group
+            label-cols="2"
+            content-cols="4"
+            label="場風"
+            label-for="input-bakaze"
+            label-align="right"
+          >
+            <b-form-radio-group
+              id="input-bakaze"
+              v-model="bakaze"
+              :options="input_bakaze_options"
+              button-variant="outline-primary"
+              size="sm"
+              buttons
+            ></b-form-radio-group>
+          </b-form-group>
 
-        <!-- 自風 -->
-        <b-form-group
-          label-cols="2"
-          content-cols="4"
-          label="自風"
-          label-for="input-zikaze"
-          label-align="right"
-        >
-          <b-form-radio-group
-            id="input-zikaze"
-            v-model="zikaze"
-            :options="input_zikaze_options"
-            button-variant="outline-primary"
-            size="sm"
-            buttons
-          ></b-form-radio-group>
-        </b-form-group>
+          <!-- 自風 -->
+          <b-form-group
+            label-cols="2"
+            content-cols="4"
+            label="自風"
+            label-for="input-zikaze"
+            label-align="right"
+          >
+            <b-form-radio-group
+              id="input-zikaze"
+              v-model="zikaze"
+              :options="input_zikaze_options"
+              button-variant="outline-primary"
+              size="sm"
+              buttons
+            ></b-form-radio-group>
+          </b-form-group>
 
-        <!-- 巡目 -->
-        <b-form-group
-          label-cols="2"
-          content-cols="2"
-          label="現在の巡目"
-          label-for="input-turn"
-          label-align="right"
-        >
-          <b-form-select v-model="turn" id="input-turn" size="sm">
-            <b-form-select-option v-for="i in 17" :key="i" :value="i"
-              >{{ i }} 巡目</b-form-select-option
-            >
-          </b-form-select>
-        </b-form-group>
+          <!-- 巡目 -->
+          <b-form-group
+            label-cols="2"
+            content-cols="2"
+            label="現在の巡目"
+            label-for="input-turn"
+            label-align="right"
+          >
+            <b-form-select v-model="turn" id="input-turn" size="sm">
+              <b-form-select-option v-for="i in 17" :key="i" :value="i"
+                >{{ i }} 巡目</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
 
-        <!-- 手牌の種類 -->
-        <b-form-group
-          label-cols="2"
-          content-cols="4"
-          label="手牌の種類"
-          label-for="input-syanten-type"
-          label-align="right"
-        >
-          <b-form-radio-group
-            id="input-syanten-type"
-            v-model="syanten_type"
-            :options="input_syanten_type_options"
-            button-variant="outline-primary"
-            size="sm"
-            buttons
-          ></b-form-radio-group>
-        </b-form-group>
+          <!-- 手牌の種類 -->
+          <b-form-group
+            label-cols="2"
+            content-cols="4"
+            label="手牌の種類"
+            label-for="input-syanten-type"
+            label-align="right"
+          >
+            <b-form-radio-group
+              id="input-syanten-type"
+              v-model="syanten_type"
+              :options="input_syanten_type_options"
+              button-variant="outline-primary"
+              size="sm"
+              buttons
+            ></b-form-radio-group>
+          </b-form-group>
 
-        <!-- ドラ -->
-        <b-form-group
-          label-cols="2"
-          content-cols="4"
-          label="ドラ表示牌"
-          label-for="input-dora-indicators"
-          label-align="right"
-        >
-          <DoraTiles
-            v-on:remove-dora="remove_dora"
-            :dora_tiles="dora_indicators"
+          <!-- ドラ -->
+          <b-form-group
+            label-cols="2"
+            content-cols="4"
+            label="ドラ表示牌"
+            label-for="input-dora-indicators"
+            label-align="right"
+          >
+            <DoraTiles
+              v-on:remove-dora="remove_dora"
+              :dora_tiles="dora_indicators"
+            />
+          </b-form-group>
+
+          <!-- 考慮する項目 -->
+          <b-form-group
+            label-cols="2"
+            label="考慮する項目"
+            label-for="input-flag"
+            label-align="right"
+          >
+            <b-form-checkbox-group
+              v-model="flag"
+              :options="input_flag_options"
+              size="sm"
+              switches
+            ></b-form-checkbox-group>
+          </b-form-group>
+
+          <!-- 考慮する項目 -->
+          <b-form-group
+            label-cols="2"
+            content-cols="4"
+            label="重視する項目"
+            label-for="input-maximize-target"
+            label-align="right"
+          >
+            <b-form-radio-group
+              id="input-maximize-target"
+              v-model="maximize_target"
+              :options="input_maximize_target_options"
+              button-variant="outline-primary"
+              size="sm"
+              buttons
+            ></b-form-radio-group>
+          </b-form-group>
+
+          <!-- 牌の枚数 -->
+          <b-form-group
+            label-cols="2"
+            content-cols="2"
+            label="牌の枚数"
+            label-for="input-n-hand-tiles"
+            label-align="right"
+          >
+            <b-form-input
+              v-model="n_hand_tiles"
+              id="input-n-hand-tiles"
+              size="sm"
+              :readonly="true"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <!-- 手牌及び副露ブロックの一覧 -->
+      <b-row class="mb-3">
+        <b-col>
+          <HandAndMeldedBlocks
+            v-on:remove-tile="remove_tile"
+            v-on:remove-block="remove_meld"
+            :hand_tiles="hand_tiles"
+            :melded_blocks="melded_blocks"
+            size="lg"
           />
-        </b-form-group>
+        </b-col>
+      </b-row>
 
-        <!-- 考慮する項目 -->
-        <b-form-group
-          label-cols="2"
-          label="考慮する項目"
-          label-for="input-flag"
-          label-align="right"
-        >
-          <b-form-checkbox-group
-            v-model="flag"
-            :options="input_flag_options"
-            size="sm"
-            switches
-          ></b-form-checkbox-group>
-        </b-form-group>
+      <!-- 手牌及び副露ブロックの入力欄 -->
+      <b-row>
+        <b-col>
+          <b-tabs v-model="select_tab">
+            <b-tab title="手牌" active>
+              <HandTileInput
+                v-on:add-tile="add_tile"
+                :tile_counts="tile_counts"
+                :n_hand_tiles="n_hand_tiles"
+              />
+            </b-tab>
+            <b-tab title="ドラ表示牌">
+              <p class="m-2">
+                ドラはドラ表示牌で指定するので注意してください。槓ドラも含め、最大5枚まで設定できます。
+              </p>
+              <HandTileInput
+                v-on:add-tile="add_dora"
+                :tile_counts="tile_counts"
+                :n_dora_tiles="dora_indicators.length"
+              />
+            </b-tab>
+            <b-tab title="明刻子">
+              <MinkotuInput
+                v-on:add-block="add_meld"
+                :tile_counts="tile_counts"
+                :n_hand_tiles="n_hand_tiles"
+              />
+            </b-tab>
+            <b-tab title="明順子">
+              <MinsyuntuInput
+                v-on:add-block="add_meld"
+                :tile_counts="tile_counts"
+                :n_hand_tiles="n_hand_tiles"
+              />
+            </b-tab>
+            <b-tab title="明槓子">
+              <MinkantuInput
+                v-on:add-block="add_meld"
+                :tile_counts="tile_counts"
+                :n_hand_tiles="n_hand_tiles"
+              />
+            </b-tab>
+            <b-tab title="暗槓子">
+              <AnkantuInput
+                v-on:add-block="add_meld"
+                :tile_counts="tile_counts"
+                :n_hand_tiles="n_hand_tiles"
+              />
+            </b-tab>
+          </b-tabs>
+        </b-col>
+      </b-row>
 
-        <!-- 考慮する項目 -->
-        <b-form-group
-          label-cols="2"
-          content-cols="4"
-          label="重視する項目"
-          label-for="input-maximize-target"
-          label-align="right"
-        >
-          <b-form-radio-group
-            id="input-maximize-target"
-            v-model="maximize_target"
-            :options="input_maximize_target_options"
-            button-variant="outline-primary"
-            size="sm"
-            buttons
-          ></b-form-radio-group>
-        </b-form-group>
+      <!-- ボタン -->
+      <b-row class="mb-3">
+        <b-col>
+          <b-overlay :show="is_calculating" rounded="sm">
+            <b-button
+              class="mr-2"
+              variant="primary"
+              @click="calculate"
+              :disabled="
+                (n_hand_tiles != 13 && n_hand_tiles != 14) || is_calculating
+              "
+              >計算を実行</b-button
+            >
+            <b-button class="mr-2" variant="primary" @click="clear_hand"
+              >手牌を初期化</b-button
+            >
+            <b-button class="mr-2" variant="primary" @click="clear_all"
+              >設定を初期化</b-button
+            >
+            <b-button variant="primary" @click="set_random_hand"
+              >ランダムの手牌入力</b-button
+            >
 
-        <!-- 牌の枚数 -->
-        <b-form-group
-          label-cols="2"
-          content-cols="2"
-          label="牌の枚数"
-          label-for="input-n-hand-tiles"
-          label-align="right"
-        >
-          <b-form-input
-            v-model="n_hand_tiles"
-            id="input-n-hand-tiles"
-            size="sm"
-            :readonly="true"
-          ></b-form-input>
-        </b-form-group>
-      </b-col>
-    </b-row>
-
-    <!-- 手牌及び副露ブロックの一覧 -->
-    <b-row class="mb-3">
-      <b-col>
-        <HandAndMeldedBlocks
-          v-on:remove-tile="remove_tile"
-          v-on:remove-block="remove_meld"
-          :hand_tiles="hand_tiles"
-          :melded_blocks="melded_blocks"
-          size="lg"
-        />
-      </b-col>
-    </b-row>
-
-    <!-- 手牌及び副露ブロックの入力欄 -->
-    <b-row>
-      <b-col>
-        <b-tabs v-model="select_tab">
-          <b-tab title="手牌" active>
-            <HandTileInput
-              v-on:add-tile="add_tile"
-              :tile_counts="tile_counts"
-              :n_hand_tiles="n_hand_tiles"
-            />
-          </b-tab>
-          <b-tab title="ドラ表示牌">
-            <p class="m-2">
-              ドラはドラ表示牌で指定するので注意してください。槓ドラも含め、最大5枚まで設定できます。
-            </p>
-            <HandTileInput
-              v-on:add-tile="add_dora"
-              :tile_counts="tile_counts"
-              :n_dora_tiles="dora_indicators.length"
-            />
-          </b-tab>
-          <b-tab title="明刻子">
-            <MinkotuInput
-              v-on:add-block="add_meld"
-              :tile_counts="tile_counts"
-              :n_hand_tiles="n_hand_tiles"
-            />
-          </b-tab>
-          <b-tab title="明順子">
-            <MinsyuntuInput
-              v-on:add-block="add_meld"
-              :tile_counts="tile_counts"
-              :n_hand_tiles="n_hand_tiles"
-            />
-          </b-tab>
-          <b-tab title="明槓子">
-            <MinkantuInput
-              v-on:add-block="add_meld"
-              :tile_counts="tile_counts"
-              :n_hand_tiles="n_hand_tiles"
-            />
-          </b-tab>
-          <b-tab title="暗槓子">
-            <AnkantuInput
-              v-on:add-block="add_meld"
-              :tile_counts="tile_counts"
-              :n_hand_tiles="n_hand_tiles"
-            />
-          </b-tab>
-        </b-tabs>
-      </b-col>
-    </b-row>
-
-    <!-- ボタン -->
-    <b-row class="mb-3">
-      <b-col>
-        <b-overlay :show="is_calculating" rounded="sm">
-          <b-button
-            class="mr-2"
-            variant="primary"
-            @click="calculate"
-            :disabled="
-              (n_hand_tiles != 13 && n_hand_tiles != 14) || is_calculating
-            "
-            >計算を実行</b-button
-          >
-          <b-button class="mr-2" variant="primary" @click="clear_hand"
-            >手牌を初期化</b-button
-          >
-          <b-button class="mr-2" variant="primary" @click="clear_all"
-            >設定を初期化</b-button
-          >
-          <b-button variant="primary" @click="set_random_hand"
-            >ランダムの手牌入力</b-button
-          >
-
-          <template #overlay>
-            <b-icon icon="three-dots" animation="cylon" font-scale="4"></b-icon>
-            <p>計算中</p>
-          </template>
-        </b-overlay>
-      </b-col>
-    </b-row>
+            <template #overlay>
+              <b-icon
+                icon="three-dots"
+                animation="cylon"
+                font-scale="4"
+              ></b-icon>
+              <p>計算中</p>
+            </template>
+          </b-overlay>
+        </b-col>
+      </b-row>
+    </b-container>
 
     <!-- 計算結果 -->
     <Result :result="result" />
-  </b-container>
+  </div>
 </template>
 
 <script>

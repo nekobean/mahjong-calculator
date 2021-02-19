@@ -1,21 +1,22 @@
 <template>
-  <div>
+  <b-container fluid class="border border-gray p-3">
+    <!-- 成功時 -->
     <template v-if="result && result.success">
-      <!-- <pre>{{ copy_result }}</pre> -->
-      <b-row class="p-2">
-        <b-col
-          >計算時間: {{ calc_time }}, {{ syanten }}
-          <span style="color: red;"
-            >※
-            青色は向聴戻しとなる打牌です。副露している場合、役なしの和了は期待値0として計算します。</span
-          ></b-col
-        >
-      </b-row>
+      <!-- 結果の概要 -->
       <b-row>
         <b-col>
-          <!--
-          手牌が14枚の場合
-         -->
+          計算時間: {{ calcTime }} 向聴数: {{ syanten }}
+
+          <br />
+          <span style="color: red;">
+            ※青色は向聴戻しとなる打牌です。副露している場合、役なしの和了は点数0として計算します。
+          </span>
+        </b-col>
+      </b-row>
+
+      <!-- 打牌一覧 -->
+      <b-row class="mt-2">
+        <b-col>
           <b-table
             :items="items"
             :fields="fields"
@@ -27,13 +28,12 @@
             <template #cell(tile)="data">
               <TileImage :tile="data.item.tile" />
             </template>
-            <!-- 打牌 -->
+            <!-- 受入枚数 -->
             <template #cell(n_required_tiles)="data">
-              {{ data.item.required_tiles.length }}種{{
-                data.item.n_required_tiles
-              }}枚
+              {{ data.item.required_tiles.length }}種
+              {{ data.item.n_required_tiles }}枚
             </template>
-            <!-- 打牌 -->
+            <!-- 有効牌 -->
             <template #cell(required_tiles)="data">
               <TileImage
                 v-for="(tile, j) in data.item.required_tiles"
@@ -46,35 +46,30 @@
       </b-row>
 
       <!-- ボタン -->
-      <b-row class="mb-3">
+      <b-row class="mt-2">
         <b-col cols="auto">
           <b-button block variant="primary" v-clipboard:copy="copy_result"
-            >テキスト形式で結果をコピー</b-button
-          >
+            >クリップボードにコピー
+          </b-button>
         </b-col>
       </b-row>
     </template>
-    <b-alert
-      v-else-if="result && !result.success"
-      show
-      variant="danger"
-      dismissible
+
+    <!-- 失敗時 -->
+    <b-alert v-else-if="result && !result.success" show variant="danger"
       >{{ result.err_msg }}
     </b-alert>
-  </div>
+  </b-container>
 </template>
 
 <script>
 /*eslint-disable */
 import TileImage from "@/components/mahjong/TileImage.vue";
 import {
-  Tile,
   TileOrder,
   TilePriority,
   Tile2String,
-  SyantenType,
   SyantenType2String,
-  Tile2MPSString,
   hand2string,
   meld2string
 } from "@/mahjong.js";
@@ -87,8 +82,7 @@ export default {
 
   data() {
     return {
-      sortBy: "tile",
-      sortDesc: false
+      sortDesc: true
     };
   },
 
@@ -137,7 +131,9 @@ export default {
       }
     }
   },
+
   computed: {
+    // 打牌一覧のヘッダー
     fields() {
       if (!this.result || !this.result.success) return [];
 
@@ -145,6 +141,7 @@ export default {
       let result_type = this.result.response.result_type;
 
       if (result_type == 1) {
+        // 打牌時
         let fields = [
           {
             key: "tile",
@@ -193,6 +190,7 @@ export default {
 
         return fields;
       } else {
+        // 自摸時
         let fields = [
           {
             key: "n_required_tiles",
@@ -211,89 +209,112 @@ export default {
       }
     },
 
+    // 打牌一覧のコンテンツ
     items() {
       if (!this.result || !this.result.success) return [];
 
-      let turn = this.result.request.turn;
-      let syanten = this.result.response.syanten;
-      let result_type = this.result.response.result_type;
-      let maximie_win_prob = this.result.request.flag & 64;
-      let items = [];
+      let req = this.result.request;
+      let res = this.result.response;
 
-      if (result_type == 1) {
-        for (let candidate of this.result.response.candidates) {
-          // 有効牌の合計枚数
-          let n_required_tiles = candidate.required_tiles.reduce(
-            (s, e) => s + e.count,
-            0
-          );
-          // 有効牌の一覧
+      let sumRequiredTiles = x => x.reduce((s, e) => s + e.count, 0);
+
+      let items = [];
+      if (res.result_type == 1) {
+        for (let candidate of res.candidates) {
+          // 有効牌をソートする。
           let required_tiles = candidate.required_tiles
             .concat()
             .sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
 
           let item = {};
 
+          // 打牌
           item.tile = candidate.tile;
-          if (candidate.syanten_down) {
-            item._cellVariants = { tile: "info" };
-          }
-          item.n_required_tiles = n_required_tiles;
+
+          // 向聴戻しは背景を青くする。
+          if (candidate.syanten_down) item._cellVariants = { tile: "info" };
+
+          // 受入枚数
+          item.n_required_tiles = sumRequiredTiles(candidate.required_tiles);
+
+          // 有効牌の一覧
           item.required_tiles = required_tiles;
 
-          if (syanten <= 3) {
+          if (res.syanten <= 3) {
             // 現状の巡目の期待値
-            item.exp_value = candidate.exp_values[turn - 1];
+            item.exp_value = candidate.exp_values[req.turn - 1];
             // 現状の巡目の和了確率
-            item.win_prob = candidate.win_probs[turn - 1];
+            item.win_prob = candidate.win_probs[req.turn - 1];
             // 現状の巡目の聴牌確率
-            item.tenpai_prob = candidate.tenpai_probs[turn - 1];
-
-            this.sortBy = maximie_win_prob ? "win_prob" : "exp_value";
-            this.sortDesc = true;
-          } else {
-            this.sortBy = "n_required_tiles";
-            this.sortDesc = true;
+            item.tenpai_prob = candidate.tenpai_probs[req.turn - 1];
           }
 
           items.push(item);
         }
       } else {
-        // 有効牌の合計枚数
-        let n_required_tiles = this.result.response.required_tiles.reduce(
-          (s, e) => s + e.count,
-          0
-        );
+        let item = {};
+
+        // 受入枚数
+        item.n_required_tiles = sumRequiredTiles(res.required_tiles);
+
         // 有効牌の一覧
-        let required_tiles = this.result.response.required_tiles
+        item.required_tiles = res.required_tiles
           .concat()
           .sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
 
-        items.push({
-          n_required_tiles: n_required_tiles,
-          required_tiles: required_tiles
-        });
+        items.push(item);
       }
 
       return items;
     },
 
+    // ソート方法
+    sortBy() {
+      if (!this.result || !this.result.success) return null;
+
+      let req = this.result.request;
+      let res = this.result.response;
+
+      if (res.result_type == 1) {
+        // 14枚
+        if (res.syanten <= 3 && req.flag & 64) {
+          // 「3向聴以上、和了確率最大化」の場合は和了確率が高い順にソートする。
+          return "win_prob";
+        } else if (res.syanten <= 3 && !(req.flag & 64)) {
+          // 「3向聴以上かつ期待値最大化」の場合は期待値が高い順にソートする。
+          return "exp_value";
+        } else {
+          // 「4向聴以上」の場合は受入枚数が多い順にソートする。
+          return "n_required_tiles";
+        }
+      } else {
+        // 13枚
+        return "";
+      }
+    },
+
+    // 向聴数
     syanten() {
       if (!this.result || !this.result.success) return "";
 
       let syanten = this.result.response.syanten;
 
-      return syanten > 0 ? `${syanten}向聴` : "聴牌";
+      return syanten == 0 ? "聴牌" : `${syanten}向聴`;
     },
 
-    calc_time() {
+    // 計算時間
+    calcTime() {
       if (!this.result) return "";
 
-      if (this.result.response.time.toString().length > 3)
-        return Math.floor(this.result.response.time / 1000).toString() + "ms";
-      else return this.result.response.time.toString() + "μs";
+      let time = this.result.response.time;
+
+      if (time.toString().length > 6) return (time / 1000000).toFixed(2) + "s";
+      else if (time.toString().length > 3)
+        return Math.floor(time / 1000) + "ms";
+      else return time.toString() + "μs";
     },
 
+    // コピーする文字列
     copy_result() {
       if (!this.result || !this.result.success) return "";
 
@@ -396,7 +417,7 @@ export default {
         str += "\n\n";
       }
 
-      str += `Powered by 何切るシミュレーター (https://pystyle.info/apps/nanikiru-simulator)\n`;
+      str += `Powered by 何切るシミュレーター https://pystyle.info/apps/mahjong-nanikiru-simulator\n`;
 
       return str;
     }
