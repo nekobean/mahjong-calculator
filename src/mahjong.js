@@ -363,7 +363,7 @@ const MeldType2String = new Map([
   [MeldType.Kakan, "加槓"]
 ]);
 
-let hand2string = function(tiles) {
+let Hand2String = function(tiles) {
   tiles.concat().sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
 
   let manzu = [];
@@ -397,8 +397,8 @@ let hand2string = function(tiles) {
   return str;
 };
 
-let meld2string = function(meld) {
-  return `[${MeldType2String.get(meld.type)}, ${hand2string(meld.tiles)}]`;
+let Meld2String = function(meld) {
+  return `[${MeldType2String.get(meld.type)}, ${Hand2String(meld.tiles)}]`;
 };
 
 export {
@@ -416,9 +416,9 @@ export {
   SyantenType,
   SyantenType2String,
   Tile2MPSString,
-  hand2string,
+  Hand2String,
   MeldType,
   MeldType2String,
-  meld2string,
+  Meld2String,
   TilePriority
 };

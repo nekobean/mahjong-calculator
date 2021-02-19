@@ -70,12 +70,13 @@ import {
   TilePriority,
   Tile2String,
   SyantenType2String,
-  hand2string,
-  meld2string
+  Hand2String,
+  Meld2String
 } from "@/mahjong.js";
 
 export default {
   name: "Result",
+
   components: {
     TileImage
   },
@@ -337,9 +338,9 @@ export default {
       }
       str += "\n";
 
-      str += `手牌: ${hand2string(req.hand_tiles)}`;
+      str += `手牌: ${Hand2String(req.hand_tiles)}`;
       if (req.melded_blocks.length) {
-        str += " " + req.melded_blocks.map(meld2string).join("");
+        str += " " + req.melded_blocks.map(Meld2String).join("");
       }
       str += ` (${res.syanten}向聴)\n\n`;
 
@@ -383,7 +384,7 @@ export default {
 
           str += `打: ${Tile2String.get(candidate.tile)}, `;
           str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚, `;
-          str += `有効牌: [${hand2string(required_tiles.map(x => x.tile))}]`;
+          str += `有効牌: [${Hand2String(required_tiles.map(x => x.tile))}]`;
           str += candidate.syanten_down ? " 向聴戻し" : "";
           str += "\n";
 
@@ -422,6 +423,7 @@ export default {
       return str;
     }
   },
+
   props: ["result"]
 };
 </script>
