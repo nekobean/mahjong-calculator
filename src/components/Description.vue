@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron
       class="pt-3 pb-3"
-      header="麻雀何切るシミュレーター (version 0.3.0)"
+      header="麻雀何切るシミュレーター (version 0.4.0)"
       header-level="5"
       bg-variant="dark"
       text-variant="white"
@@ -50,8 +50,8 @@
           PC 版 Google Chrome で動作確認しています。
         </li>
         <li>
-          更新履歴: ver 0.3.0
-          各巡目ごとの期待値、和了確率、聴牌確率のグラフ表示を追加
+          更新履歴: ver 0.4.0 ドラ表示牌が1枚 (槓ドラなし)
+          の場合は、裏ドラの乗る確率を厳密に計算するように修正しました。2枚以上の場合は平和形を仮定した場合の統計データによる近似になります。
         </li>
       </ul>
 

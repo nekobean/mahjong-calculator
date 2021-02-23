@@ -398,8 +398,8 @@ export default {
 
       // POST する。
       axios
-        //.post("/apps/mahjong-nanikiru-simulator/post.py", data)
-        .post("http://localhost:8888", data)
+        .post("/apps/mahjong-nanikiru-simulator/post.py", data)
+        //.post("http://localhost:8888", data)
         .then(response => {
           this.result = response.data;
         })
