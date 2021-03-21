@@ -37,7 +37,7 @@ const Tile = Object.freeze({
   AkaManzu5: 34 /*! 赤五萬 */,
   AkaPinzu5: 35 /*! 赤五筒 */,
   AkaSozu5: 36 /*! 赤五索 */
-});
+})
 
 const Tile2String = new Map([
   [Tile.Manzu1, "一萬"],
@@ -77,7 +77,7 @@ const Tile2String = new Map([
   [Tile.AkaManzu5, "赤五萬"],
   [Tile.AkaPinzu5, "赤五筒"],
   [Tile.AkaSozu5, "赤五索"]
-]);
+])
 
 const Tile2MPSString = new Map([
   [Tile.Manzu1, "1"],
@@ -117,7 +117,7 @@ const Tile2MPSString = new Map([
   [Tile.AkaManzu5, "r5"],
   [Tile.AkaPinzu5, "r5"],
   [Tile.AkaSozu5, "r5"]
-]);
+])
 
 const ManzuTiles = [
   Tile.Manzu1,
@@ -129,7 +129,7 @@ const ManzuTiles = [
   Tile.Manzu7,
   Tile.Manzu8,
   Tile.Manzu9
-];
+]
 
 const PinzuTiles = [
   Tile.Pinzu1,
@@ -141,7 +141,7 @@ const PinzuTiles = [
   Tile.Pinzu7,
   Tile.Pinzu8,
   Tile.Pinzu9
-];
+]
 
 const SozuTiles = [
   Tile.Sozu1,
@@ -153,7 +153,7 @@ const SozuTiles = [
   Tile.Sozu7,
   Tile.Sozu8,
   Tile.Sozu9
-];
+]
 
 const ZihaiTiles = [
   Tile.Ton,
@@ -163,14 +163,14 @@ const ZihaiTiles = [
   Tile.Haku,
   Tile.Hatu,
   Tile.Tyun
-];
+]
 
 const Seat = Object.freeze({
   Zitya: 0 /*! 自家 */,
   Kamitya: 1 /*! 上家 */,
   Toimen: 2 /*! 対面 */,
   Simotya: 3 /*! 下家 */
-});
+})
 
 const TileOrder = Object.freeze({
   0: 0, // 萬子
@@ -210,7 +210,7 @@ const TileOrder = Object.freeze({
   34: 4,
   35: 13,
   36: 22
-});
+})
 
 const TilePriority = Object.freeze({
   0: 1, // 萬子
@@ -250,12 +250,12 @@ const TilePriority = Object.freeze({
   34: 5,
   35: 5,
   36: 5
-});
+})
 
 function sort_tiles(tiles) {
-  tiles.sort(function(a, b) {
-    return TileOrder[a] - TileOrder[b];
-  });
+  tiles.sort(function (a, b) {
+    return TileOrder[a] - TileOrder[b]
+  })
 }
 
 const Dora2DoraHyozi = Object.freeze({
@@ -293,7 +293,7 @@ const Dora2DoraHyozi = Object.freeze({
   31: 33,
   32: 31,
   33: 32
-});
+})
 
 const DoraHyozi2Dora = {
   0: 1,
@@ -333,19 +333,19 @@ const DoraHyozi2Dora = {
   34: 5,
   35: 14,
   36: 23
-};
+}
 
 const SyantenType = Object.freeze({
   Normal: 1 /*! 一般手 */,
   Tiitoi: 2 /*! 七対子手 */,
   Kokusi: 4 /*! 国士無双手 */
-});
+})
 
 const SyantenType2String = new Map([
   [SyantenType.Normal, "一般手"],
   [SyantenType.Tiitoi, "七対子手"],
   [SyantenType.Kokusi, "国士無双手"]
-]);
+])
 
 const MeldType = Object.freeze({
   Pon: 0 /* ポン */,
@@ -353,7 +353,7 @@ const MeldType = Object.freeze({
   Ankan: 2 /* 暗槓 */,
   Minkan: 3 /* 明槓 */,
   Kakan: 4 /* 加槓 */
-});
+})
 
 const MeldType2String = new Map([
   [MeldType.Pon, "ポン"],
@@ -361,45 +361,45 @@ const MeldType2String = new Map([
   [MeldType.Ankan, "暗槓"],
   [MeldType.Minkan, "明槓"],
   [MeldType.Kakan, "加槓"]
-]);
+])
 
-let Hand2String = function(tiles) {
-  tiles.concat().sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
+let Hand2String = function (tiles) {
+  tiles.concat().sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile])
 
-  let manzu = [];
-  let pinzu = [];
-  let sozu = [];
-  let zihai = [];
+  let manzu = []
+  let pinzu = []
+  let sozu = []
+  let zihai = []
   for (let tile of tiles) {
     if (tile <= Tile.Manzu9 || tile == Tile.AkaManzu5) {
-      manzu.push(tile);
+      manzu.push(tile)
     } else if (tile <= Tile.Pinzu9 || tile == Tile.AkaPinzu5) {
-      pinzu.push(tile);
+      pinzu.push(tile)
     } else if (tile <= Tile.Sozu9 || tile == Tile.AkaSozu5) {
-      sozu.push(tile);
+      sozu.push(tile)
     } else {
-      zihai.push(tile);
+      zihai.push(tile)
     }
   }
 
-  let str = "";
+  let str = ""
   if (manzu.length) {
-    str += manzu.map(x => Tile2MPSString.get(x)).join("") + "m";
+    str += manzu.map(x => Tile2MPSString.get(x)).join("") + "m"
   }
   if (pinzu.length) {
-    str += pinzu.map(x => Tile2MPSString.get(x)).join("") + "p";
+    str += pinzu.map(x => Tile2MPSString.get(x)).join("") + "p"
   }
   if (sozu.length) {
-    str += sozu.map(x => Tile2MPSString.get(x)).join("") + "s";
+    str += sozu.map(x => Tile2MPSString.get(x)).join("") + "s"
   }
-  str += zihai.map(x => Tile2MPSString.get(x)).join("");
+  str += zihai.map(x => Tile2MPSString.get(x)).join("")
 
-  return str;
-};
+  return str
+}
 
-let Meld2String = function(meld) {
-  return `[${MeldType2String.get(meld.type)}, ${Hand2String(meld.tiles)}]`;
-};
+let Meld2String = function (meld) {
+  return `[${MeldType2String.get(meld.type)}, ${Hand2String(meld.tiles)}]`
+}
 
 export {
   Tile,
@@ -421,4 +421,4 @@ export {
   MeldType2String,
   Meld2String,
   TilePriority
-};
+}
