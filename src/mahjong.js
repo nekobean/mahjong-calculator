@@ -119,6 +119,86 @@ const Tile2MPSString = new Map([
   [Tile.AkaSozu5, "r5"]
 ])
 
+const Tile2TenhoMPSString = new Map([
+  [Tile.Manzu1, "1"],
+  [Tile.Manzu2, "2"],
+  [Tile.Manzu3, "3"],
+  [Tile.Manzu4, "4"],
+  [Tile.Manzu5, "5"],
+  [Tile.Manzu6, "6"],
+  [Tile.Manzu7, "7"],
+  [Tile.Manzu8, "8"],
+  [Tile.Manzu9, "9"],
+  [Tile.Pinzu1, "1"],
+  [Tile.Pinzu2, "2"],
+  [Tile.Pinzu3, "3"],
+  [Tile.Pinzu4, "4"],
+  [Tile.Pinzu5, "5"],
+  [Tile.Pinzu6, "6"],
+  [Tile.Pinzu7, "7"],
+  [Tile.Pinzu8, "8"],
+  [Tile.Pinzu9, "9"],
+  [Tile.Sozu1, "1"],
+  [Tile.Sozu2, "2"],
+  [Tile.Sozu3, "3"],
+  [Tile.Sozu4, "4"],
+  [Tile.Sozu5, "5"],
+  [Tile.Sozu6, "6"],
+  [Tile.Sozu7, "7"],
+  [Tile.Sozu8, "8"],
+  [Tile.Sozu9, "9"],
+  [Tile.Ton, "1"],
+  [Tile.Nan, "2"],
+  [Tile.Sya, "3"],
+  [Tile.Pe, "4"],
+  [Tile.Haku, "5"],
+  [Tile.Hatu, "6"],
+  [Tile.Tyun, "7"],
+  [Tile.AkaManzu5, "0"],
+  [Tile.AkaPinzu5, "0"],
+  [Tile.AkaSozu5, "0"]
+])
+
+const Tile2TumoProbString = new Map([
+  [Tile.Manzu1, "1m"],
+  [Tile.Manzu2, "2m"],
+  [Tile.Manzu3, "3m"],
+  [Tile.Manzu4, "4m"],
+  [Tile.Manzu5, "5m"],
+  [Tile.Manzu6, "6m"],
+  [Tile.Manzu7, "7m"],
+  [Tile.Manzu8, "8m"],
+  [Tile.Manzu9, "9m"],
+  [Tile.Pinzu1, "1p"],
+  [Tile.Pinzu2, "2p"],
+  [Tile.Pinzu3, "3p"],
+  [Tile.Pinzu4, "4p"],
+  [Tile.Pinzu5, "5p"],
+  [Tile.Pinzu6, "6p"],
+  [Tile.Pinzu7, "7p"],
+  [Tile.Pinzu8, "8p"],
+  [Tile.Pinzu9, "9p"],
+  [Tile.Sozu1, "1s"],
+  [Tile.Sozu2, "2s"],
+  [Tile.Sozu3, "3s"],
+  [Tile.Sozu4, "4s"],
+  [Tile.Sozu5, "5s"],
+  [Tile.Sozu6, "6s"],
+  [Tile.Sozu7, "7s"],
+  [Tile.Sozu8, "8s"],
+  [Tile.Sozu9, "9s"],
+  [Tile.Ton, "東"],
+  [Tile.Nan, "南"],
+  [Tile.Sya, "西"],
+  [Tile.Pe, "北"],
+  [Tile.Haku, "白"],
+  [Tile.Hatu, "発"],
+  [Tile.Tyun, "中"],
+  [Tile.AkaManzu5, "r5m"],
+  [Tile.AkaPinzu5, "r5p"],
+  [Tile.AkaSozu5, "r5s"]
+])
+
 const ManzuTiles = [
   Tile.Manzu1,
   Tile.Manzu2,
@@ -397,8 +477,51 @@ let Hand2String = function (tiles) {
   return str
 }
 
+let Hand2TenhoString = function (tiles) {
+  tiles.concat().sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile])
+
+  let manzu = []
+  let pinzu = []
+  let sozu = []
+  let zihai = []
+  for (let tile of tiles) {
+    if (tile <= Tile.Manzu9 || tile == Tile.AkaManzu5) {
+      manzu.push(tile)
+    } else if (tile <= Tile.Pinzu9 || tile == Tile.AkaPinzu5) {
+      pinzu.push(tile)
+    } else if (tile <= Tile.Sozu9 || tile == Tile.AkaSozu5) {
+      sozu.push(tile)
+    } else {
+      zihai.push(tile)
+    }
+  }
+
+  let str = ""
+  if (manzu.length) {
+    str += manzu.map(x => Tile2TenhoMPSString.get(x)).join("") + "m"
+  }
+  if (pinzu.length) {
+    str += pinzu.map(x => Tile2TenhoMPSString.get(x)).join("") + "p"
+  }
+  if (sozu.length) {
+    str += sozu.map(x => Tile2TenhoMPSString.get(x)).join("") + "s"
+  }
+  if (zihai.length) {
+    str += zihai.map(x => Tile2TenhoMPSString.get(x)).join("") + "z"
+  }
+
+  return str
+}
+
 let Meld2String = function (meld) {
   return `[${MeldType2String.get(meld.type)}, ${Hand2String(meld.tiles)}]`
+}
+
+let Aka2Normal = function (tile) {
+  if (tile == Tile.AkaManzu5) return Tile.Manzu5
+  else if (tile == Tile.AkaPinzu5) return Tile.Pinzu5
+  else if (tile == Tile.AkaSozu5) return Tile.Sozu5
+  else return tile
 }
 
 export {
@@ -420,5 +543,8 @@ export {
   MeldType,
   MeldType2String,
   Meld2String,
-  TilePriority
+  TilePriority,
+  Hand2TenhoString,
+  Aka2Normal,
+  Tile2TumoProbString
 }

@@ -20,6 +20,15 @@
               size="sm"
               buttons
             ></b-form-radio-group>
+
+            <b-tooltip
+              target="input-bakaze"
+              triggers="hover"
+              custom-class="custom-tooltip"
+              placement="topright"
+            >
+              東家の場合は親、それ以外の場合は子として点数計算します。
+            </b-tooltip>
           </b-form-group>
 
           <!-- 自風 -->
@@ -71,6 +80,15 @@
               size="sm"
               buttons
             ></b-form-radio-group>
+
+            <b-tooltip
+              target="input-syanten-type"
+              triggers="hover"
+              custom-class="custom-tooltip"
+              placement="topright"
+            >
+              手牌の種類を選択します。現在の実装では、「一般手」を選択した場合、七対子は考慮されません。
+            </b-tooltip>
           </b-form-group>
 
           <!-- ドラ -->
@@ -95,11 +113,40 @@
             label-align="right"
           >
             <b-form-checkbox-group
+              id="input-flag"
               v-model="flag"
               :options="input_flag_options"
               size="sm"
               switches
             ></b-form-checkbox-group>
+
+            <b-tooltip
+              target="input-flag"
+              triggers="hover"
+              custom-class="custom-tooltip"
+              placement="topright"
+            >
+              <ul>
+                <li>
+                  向聴戻し:
+                  向聴戻しの打牌も計算対象に含めるかどうかを設定します。
+                </li>
+                <li>
+                  手変わり:
+                  向聴数が変化しない手変わりも計算対象に含めるかどうかを設定します。
+                </li>
+                <li>
+                  ダブル立直: 有効の場合、1巡目の場合はダブル立直になります。
+                </li>
+                <li>
+                  一発、海底撈月:
+                  有効の場合、一発、海底撈月が点数期待値に考慮されます。
+                </li>
+                <li>
+                  裏ドラ: 有効の場合、裏ドラが点数期待値に考慮されます。
+                </li>
+              </ul>
+            </b-tooltip>
           </b-form-group>
 
           <!-- 考慮する項目 -->
@@ -118,6 +165,25 @@
               size="sm"
               buttons
             ></b-form-radio-group>
+
+            <b-tooltip
+              target="input-maximize-target"
+              triggers="hover"
+              custom-class="custom-tooltip"
+              placement="topright"
+            >
+              一向聴以上の手牌の場合に、シミュレーション途中の打牌選択の方針を設定します。
+
+              <ul>
+                <li>
+                  期待値最大化: 期待値が最大となる打牌を選択します。
+                </li>
+                <li>
+                  和了確率最大化:
+                  和了確率が最大となる打牌を選択します。点数関係なく、和了重視する場合はこちらを選択してください。
+                </li>
+              </ul>
+            </b-tooltip>
           </b-form-group>
 
           <!-- 牌の枚数 -->
@@ -212,20 +278,18 @@
               class="mr-2"
               variant="primary"
               @click="calculate"
-              :disabled="
-                (n_hand_tiles != 13 && n_hand_tiles != 14) || is_calculating
-              "
-              >計算を実行</b-button
-            >
+              :disabled="n_hand_tiles < 13 || is_calculating"
+              >計算を実行
+            </b-button>
             <b-button class="mr-2" variant="primary" @click="clear_hand"
-              >手牌を初期化</b-button
-            >
+              >手牌を初期化
+            </b-button>
             <b-button class="mr-2" variant="primary" @click="clear_all"
-              >設定を初期化</b-button
-            >
-            <b-button variant="primary" @click="set_random_hand"
-              >ランダムの手牌入力</b-button
-            >
+              >設定を初期化
+            </b-button>
+            <b-button class="mr-2" variant="primary" @click="set_random_hand"
+              >ランダムの手牌入力
+            </b-button>
 
             <template #overlay>
               <b-icon
@@ -236,6 +300,102 @@
               <p>計算中</p>
             </template>
           </b-overlay>
+        </b-col>
+      </b-row>
+
+      <!-- 他ツール -->
+      <b-row align-v="center">
+        <b-col cols="auto">
+          他ツールでの検証
+        </b-col>
+        <b-col>
+          <!-- 天鳳 / 牌理 -->
+          <b-button
+            class="mr-2"
+            :disabled="n_hand_tiles == 0"
+            :href="tenhoURL"
+            target="_blank"
+            variant="success"
+            id="tooltip-tenho-hairi"
+            >天鳳 / 牌理
+          </b-button>
+          <b-tooltip
+            target="tooltip-tenho-hairi"
+            triggers="hover"
+            custom-class="custom-tooltip"
+            placement="topright"
+          >
+            <b-link
+              href="https://tenhou.net/2/"
+              target="_blank"
+              class="text-info"
+              >天鳳 / 牌理</b-link
+            >
+            を開きます。
+          </b-tooltip>
+          <!-- 一人麻雀練習機 -->
+          <b-button
+            class="mr-2"
+            :disabled="
+              n_hand_tiles != 14 ||
+                this.melded_blocks != 0 ||
+                this.dora_indicators.length != 1
+            "
+            variant="success"
+            @click="downloadHMR"
+            id="tooltip-hmr"
+            >一人麻雀練習機
+          </b-button>
+          <b-tooltip
+            target="tooltip-hmr"
+            triggers="hover"
+            custom-class="custom-tooltip"
+            placement="topright"
+          >
+            <p>
+              <b-link
+                href="http://ara.moo.jp/mjhmr/"
+                target="_blank"
+                class="text-info"
+                >一人麻雀練習機</b-link
+              >で読み込める .hmr ファイルをダウンロードします。
+            </p>
+            <p>一人麻雀練習機は副露、赤牌、槓ドラは対応していません。</p>
+
+            <ol>
+              <li>
+                一人麻雀練習機を起動します。
+              </li>
+              <li>
+                「読み込み」ボタンをクリックし、ダウンロードした .hmr 形式の
+                ファイルを開きます。
+              </li>
+              <li>
+                メニューの「ツール」から「何切る？」または「何切る？(手変わり)」を選択します。
+              </li>
+            </ol>
+          </b-tooltip>
+          <!-- ツモ和了り確率計算機 -->
+          <b-button
+            :disabled="n_hand_tiles != 14 || this.melded_blocks.length != 0"
+            variant="success"
+            v-clipboard:copy="tumoProbStr"
+            id="tooltip-tumoprob"
+            >ツモ和了り確率計算機</b-button
+          >
+          <b-tooltip
+            target="tooltip-tumoprob"
+            triggers="hover"
+            custom-class="custom-tooltip"
+            placement="topright"
+          >
+            <b-link
+              href="http://critter.sakura.ne.jp/agari_keisan.html"
+              target="_blank"
+              class="text-info"
+              >ツモ和了り確率計算機</b-link
+            >の「手牌」入力欄にコピペできる手牌形式をクリップボードにコピーします。
+          </b-tooltip>
         </b-col>
       </b-row>
     </b-container>
@@ -252,8 +412,12 @@ import {
   Tile,
   DoraHyozi2Dora,
   Tile2String,
+  Hand2String,
   SyantenType,
-  SyantenType2String
+  SyantenType2String,
+  Hand2TenhoString,
+  Aka2Normal,
+  Tile2TumoProbString
 } from "@/mahjong.js";
 
 import HandAndMeldedBlocks from "@/components/mahjong/HandAndMeldedBlocks.vue";
@@ -345,6 +509,53 @@ export default {
 
   computed: {
     // 手牌の枚数
+    tenhoURL: function() {
+      return "https://tenhou.net/2/?q=" + Hand2TenhoString(this.hand_tiles);
+    },
+
+    // tumoProbURL: function() {
+    //   // ドラは最大4枚、赤ドラは非対応
+    //   let dora_tiles = this.dora_indicators
+    //     .map(x => DoraHyozi2Dora[x])
+    //     .slice(0, 4)
+    //     .map(x => Tile2TumoProbString.get(x))
+    //     .join(",");
+
+    //   // 手牌
+    //   let hand_tiles = this.hand_tiles
+    //     .map(x => Tile2TumoProbString.get(x))
+    //     .join(",");
+
+    //   // 手変わりを考慮するかどうか
+    //   let tegawari =
+    //     this.flag.indexOf(1) != -1 || this.flag.indexOf(2) != -1 ? 1 : 0;
+
+    //   let query = {
+    //     bakaze: this.bakaze - 27,
+    //     jikaze: this.zikaze - 27,
+    //     text0: dora_tiles,
+    //     text1: hand_tiles,
+    //     tsumo_num: tegawari
+    //   };
+    //   const searchParams = new URLSearchParams();
+    //   Object.keys(query).forEach(k => searchParams.append(k, query[k]));
+
+    //   let url =
+    //     "http://critter.sakura.ne.jp/agari_keisan3.cgi?" +
+    //     searchParams.toString();
+
+    //   return url;
+    // },
+
+    tumoProbStr: function() {
+      let hand_tiles = this.hand_tiles
+        .map(x => Tile2TumoProbString.get(x))
+        .join(",");
+
+      return hand_tiles;
+    },
+
+    // 手牌の枚数
     n_hand_tiles: function() {
       return this.hand_tiles.length + this.melded_blocks.length * 3;
     },
@@ -394,8 +605,8 @@ export default {
 
       // POST する。
       axios
-        .post("/apps/mahjong-nanikiru-simulator/post.py", data)
-        //.post("http://localhost:8888", data)
+        //.post("/apps/mahjong-nanikiru-simulator/post.py", data)
+        .post("http://localhost:8888", data)
         .then(response => {
           this.result = response.data;
         })
@@ -435,6 +646,42 @@ export default {
         32 // 裏ドラ
       ];
       this.select_tab = 0;
+    },
+
+    downloadHMR() {
+      let filename = `${Hand2String(this.hand_tiles)}.hmr`;
+      let text = "";
+
+      // 1行目: "<巡目> <自摸牌>"
+      let tumo_tile = Aka2Normal(this.hand_tiles[this.hand_tiles.length - 1]);
+      text += this.turn + " " + tumo_tile + "\n";
+      // 2行目: 各牌の残り枚数
+      text += this.tile_counts.slice(0, -3).join("") + "\n";
+      // 3行目: 手牌の各牌の枚数
+      text += this.toTiles34(this.hand_tiles).join("") + "\n";
+      // 4行目: ドラ
+      let dora_tile = DoraHyozi2Dora[this.dora_indicators[0]];
+      text += this.toTiles34([dora_tile]).join("") + "\n";
+      // 5行目: 捨牌
+      text +=
+        Array(18)
+          .fill(-1)
+          .join("") + "\n";
+
+      let blob = new Blob([text], { type: "text/plain" });
+      let link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    },
+
+    /// 長さ34の配列形式にする。
+    toTiles34(tiles) {
+      let tiles34 = Array(34).fill(0);
+
+      for (let tile of tiles) tiles34[Aka2Normal(tile)]++;
+
+      return tiles34;
     },
 
     /// 牌を手牌に追加する。
@@ -509,3 +756,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.custom-tooltip > .tooltip-inner {
+  max-width: 400px;
+  text-align: left;
+  padding-top: 5px;
+}
+</style>

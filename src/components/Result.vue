@@ -6,11 +6,19 @@
       <b-row>
         <b-col>
           計算時間: {{ calcTime }} 向聴数: {{ syanten }}
-
           <br />
-          <span style="color: red;">
+          <span class="text-primary">
             ※青色は向聴戻しとなる打牌です。副露している場合、役なしの和了は点数0として計算します。
           </span>
+        </b-col>
+      </b-row>
+
+      <!-- ボタン -->
+      <b-row class="mt-2">
+        <b-col cols="auto">
+          <b-button block variant="primary" v-clipboard:copy="copy_result"
+            >クリップボードにコピー
+          </b-button>
         </b-col>
       </b-row>
 
@@ -18,8 +26,8 @@
       <b-row class="mt-2">
         <b-col>
           <b-table
-            :items="items"
             :fields="fields"
+            :items="items"
             :sort-compare="sortCompare"
             :sort-by.sync="sortBy"
             :sort-desc.sync="sortDesc"
@@ -36,8 +44,8 @@
             <!-- 有効牌 -->
             <template #cell(required_tiles)="data">
               <TileImage
-                v-for="(tile, j) in data.item.required_tiles"
-                :key="j"
+                v-for="(tile, i) in data.item.required_tiles"
+                :key="i"
                 :tile="tile.tile"
               />
             </template>
@@ -82,15 +90,6 @@
           </b-form-group>
         </div>
       </template>
-
-      <!-- ボタン -->
-      <b-row class="mt-2">
-        <b-col cols="auto">
-          <b-button block variant="primary" v-clipboard:copy="copy_result"
-            >結果をクリップボードにコピー
-          </b-button>
-        </b-col>
-      </b-row>
     </template>
 
     <!-- 失敗時 -->

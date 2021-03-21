@@ -172,8 +172,22 @@
               の場合は、裏ドラの乗る確率を厳密に計算するように修正しました。2枚以上の場合は平和形を仮定した場合の統計データによる近似になります。
             </li>
             <li>
-              version 0.5.0 (2021/03/21): 他の期待値計算ツール
-              (一人麻雀練習機、ツモアガリ確率計算機) で検証できる機能を追加
+              version 0.5.0 (2021/03/21): 他の期待値計算ツール (<b-link
+                href="https://tenhou.net/2/"
+                target="_blank"
+                class="text-info"
+                >天鳳 / 牌理</b-link
+              >、<b-link
+                href="http://ara.moo.jp/mjhmr/"
+                target="_blank"
+                class="text-info"
+                >一人麻雀練習機</b-link
+              >、<b-link
+                href="http://critter.sakura.ne.jp/agari_keisan.html"
+                target="_blank"
+                class="text-info"
+                >ツモ和了り確率計算機</b-link
+              >) で検証できる機能を追加
             </li>
           </ul>
 
