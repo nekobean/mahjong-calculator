@@ -284,7 +284,7 @@ export default {
       turn: 1, // 現在の巡目
       syanten_type: SyantenType.Normal, // 手牌の種類
       dora_indicators: [Tile.Ton], // ドラ
-      flag: [1, 2, 4, 16, 8, 32], // フラグ
+      flag: [1, 2, 4, 8, 16, 32], // フラグ
       maximize_target: 0,
       hand_tiles: [], // 手牌
       melded_blocks: [], // 副露ブロックの一覧
@@ -374,10 +374,6 @@ export default {
       return counts;
     }
   },
-
-  // created: function() {
-  //   this.calculate();
-  // },
 
   methods: {
     calculate() {
