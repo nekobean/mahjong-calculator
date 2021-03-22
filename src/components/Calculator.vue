@@ -136,7 +136,8 @@
                   向聴数が変化しない手変わりも計算対象に含めるかどうかを設定します。
                 </li>
                 <li>
-                  ダブル立直: 有効の場合、1巡目の場合はダブル立直になります。
+                  ダブル立直:
+                  有効の場合、1巡目で聴牌の場合はダブル立直になります。
                 </li>
                 <li>
                   一発、海底撈月:
@@ -180,7 +181,7 @@
                 </li>
                 <li>
                   和了確率最大化:
-                  和了確率が最大となる打牌を選択します。点数関係なく、和了重視する場合はこちらを選択してください。
+                  和了確率が最大となる打牌を選択します。オーラストップなど和了率を重視する場合はこちらを選択してください。
                 </li>
               </ul>
             </b-tooltip>
@@ -312,27 +313,13 @@
           <!-- 天鳳 / 牌理 -->
           <b-button
             class="mr-2"
-            :disabled="n_hand_tiles == 0"
+            :disabled="n_hand_tiles % 3 != 2"
             :href="tenhoURL"
             target="_blank"
             variant="success"
             id="tooltip-tenho-hairi"
             >天鳳 / 牌理
           </b-button>
-          <b-tooltip
-            target="tooltip-tenho-hairi"
-            triggers="hover"
-            custom-class="custom-tooltip"
-            placement="topright"
-          >
-            <b-link
-              href="https://tenhou.net/2/"
-              target="_blank"
-              class="text-info"
-              >天鳳 / 牌理</b-link
-            >
-            を開きます。
-          </b-tooltip>
           <!-- 一人麻雀練習機 -->
           <b-button
             class="mr-2"
@@ -375,13 +362,13 @@
               </li>
             </ol>
           </b-tooltip>
-          <!-- ツモ和了り確率計算機 -->
+          <!-- ツモアガリ確率計算機 -->
           <b-button
             :disabled="n_hand_tiles != 14 || this.melded_blocks.length != 0"
             variant="success"
             v-clipboard:copy="tumoProbStr"
             id="tooltip-tumoprob"
-            >ツモ和了り確率計算機</b-button
+            >ツモアガリ確率計算機</b-button
           >
           <b-tooltip
             target="tooltip-tumoprob"
@@ -393,7 +380,7 @@
               href="http://critter.sakura.ne.jp/agari_keisan.html"
               target="_blank"
               class="text-info"
-              >ツモ和了り確率計算機</b-link
+              >ツモアガリ確率計算機</b-link
             >の「手牌」入力欄にコピペできる手牌形式をクリップボードにコピーします。
           </b-tooltip>
         </b-col>
@@ -455,6 +442,7 @@ export default {
       result: null, // 結果
       is_calculating: false,
       select_tab: 0,
+      Hand2String: Hand2String,
 
       // オプション
       // 場風
@@ -605,8 +593,8 @@ export default {
 
       // POST する。
       axios
-        //.post("/apps/mahjong-nanikiru-simulator/post.py", data)
-        .post("http://localhost:8888", data)
+        .post("/apps/mahjong-nanikiru-simulator/post.py", data)
+        //.post("http://localhost:8888", data)
         .then(response => {
           this.result = response.data;
         })
