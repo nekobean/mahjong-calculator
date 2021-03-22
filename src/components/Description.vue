@@ -38,8 +38,8 @@
           </ul>
         </b-tab>
 
-        <!-- 計算の詳細 -->
-        <b-tab title="計算の詳細" :title-link-class="linkClass(1)">
+        <!-- 前提条件 -->
+        <b-tab title="前提条件" :title-link-class="linkClass(1)">
           <p>
             前提条件
           </p>
@@ -77,7 +77,7 @@
           </p>
           <p>
             ※2 ドラが1枚の場合は、「<b-link
-              href="https://pystyle.info/mahjong-expected-value-in-mahjong/"
+              href="https://pystyle.info/mahjong-uradora-probability/"
               target="_blank"
               class="text-info"
               >裏ドラが乗る確率の計算方法</b-link
@@ -100,12 +100,12 @@
                 href="https://pystyle.info/mahjong-expected-value-in-mahjong/"
                 target="_blank"
                 class="text-info"
-                >手牌の点数期待値の計算の方法</b-link
+                >手牌の点数期待値の計算方法</b-link
               >
             </li>
             <li>
               <b-link
-                href="https://pystyle.info/mahjong-expected-value-in-mahjong/"
+                href="https://pystyle.info/mahjong-uradora-probability/"
                 target="_blank"
                 class="text-info"
                 >裏ドラが乗る確率の計算方法</b-link
@@ -126,7 +126,7 @@
           <ul>
             <li>
               点数期待値において、50点未満の差はほぼ同等と考えてよいです。
-              例えば、手牌「123m999p789s北北北白発」において、白のほうが裏ドラ表示牌が1枚多いため、白単騎だと5032点、発単騎だと5017点で15点差になります。
+              例えば、手牌「123m999p789s北北北白發」において、白のほうが裏ドラ表示牌が1枚多いため、白単騎だと5032点、發単騎だと5017点で15点差になります。
               このように、数十点というのは裏ドラ表示牌が1枚多いかどうか程度の差しかありません。
             </li>
             <li>
@@ -186,7 +186,7 @@
                 href="http://critter.sakura.ne.jp/agari_keisan.html"
                 target="_blank"
                 class="text-info"
-                >ツモ和了り確率計算機</b-link
+                >ツモアガリ確率計算機</b-link
               >) で検証できる機能を追加
             </li>
           </ul>
@@ -237,6 +237,13 @@
         / 作成者:
         <b-link href="https://pystyle.info/" target="_blank" class="text-info"
           >pystyle</b-link
+        >
+        / 牌画像:
+        <b-link
+          href="https://casinoconcierge.cc/mahjong-images"
+          target="_blank"
+          class="text-info"
+          >カジノコンシェルジュ</b-link
         >
       </p>
     </b-jumbotron>
