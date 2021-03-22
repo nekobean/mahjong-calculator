@@ -16,7 +16,7 @@
       <!-- ボタン -->
       <b-row class="mt-2">
         <b-col cols="auto">
-          <b-button block variant="primary" v-clipboard:copy="copy_result"
+          <b-button block variant="primary" v-clipboard:copy="copy_result()"
             >クリップボードにコピー
           </b-button>
         </b-col>
@@ -184,6 +184,90 @@ export default {
           compareOptions
         );
       }
+    },
+
+    // コピーする文字列
+    copy_result() {
+      if (!this.result || !this.result.success) return "";
+
+      let req = this.result.request;
+      let res = this.result.response;
+
+      let tiles2string = tiles => {
+        return tiles.map(x => Tile2String.get(x)).join(",");
+      };
+
+      // 場況
+      let str = "";
+      str += `## 場況\n`;
+      str += `場風牌: ${Tile2String.get(req.bakaze)}, `;
+      str += `自風牌: ${Tile2String.get(req.zikaze)}, `;
+      str += `${req.turn}巡目, `;
+      str += `手牌の種類: ${SyantenType2String.get(req.syanten_type)}, `;
+      if (req.dora_tiles.length) {
+        str += `ドラ: [${tiles2string(req.dora_tiles)}]`;
+      }
+      str += "\n";
+
+      str += `手牌: ${Hand2String(req.hand_tiles)}`;
+      if (req.melded_blocks.length) {
+        str += " " + req.melded_blocks.map(Meld2String).join("");
+      }
+      str += ` (${this.syanten})\n\n`;
+
+      str += `## 計算結果\n`;
+
+      if (res.result_type == 1) {
+        for (let candidate of res.candidates) {
+          // 有効牌の合計枚数
+          let n_required_tiles = candidate.required_tiles.reduce(
+            (s, e) => s + e.count,
+            0
+          );
+          // 有効牌の一覧
+          let required_tiles = candidate.required_tiles
+            .concat()
+            .sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
+
+          str += `打: ${Tile2String.get(candidate.tile)}, `;
+          str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚, `;
+          str += `有効牌: [${Hand2String(required_tiles.map(x => x.tile))}]`;
+          str += candidate.syanten_down ? " 向聴戻し" : "";
+          str += "\n";
+
+          if (res.syanten <= 3) {
+            let exp_value = Math.floor(candidate.exp_values[req.turn - 1]);
+            let win_prob = (candidate.win_probs[req.turn - 1] * 100).toFixed(2);
+            let tenpai_prob = (
+              candidate.tenpai_probs[req.turn - 1] * 100
+            ).toFixed(2);
+
+            str += `    期待値: ${exp_value}点, `;
+            str += `和了確率: ${win_prob}%, `;
+            str += `聴牌確率: ${tenpai_prob}%\n`;
+          }
+          str += "\n";
+        }
+      } else if (res.result_type == 0) {
+        // 有効牌の合計枚数
+        let n_required_tiles = this.result.response.required_tiles.reduce(
+          (s, e) => s + e.count,
+          0
+        );
+        // 有効牌の一覧
+        let required_tiles = this.result.response.required_tiles
+          .concat()
+          .sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
+
+        str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚 `;
+        str += `有効牌: `;
+        for (let tile of res.required_tiles) str += `${tile.tile}`;
+        str += "\n\n";
+      }
+
+      str += `Powered by 何切るシミュレーター https://pystyle.info/apps/mahjong-nanikiru-simulator\n`;
+
+      return str;
     }
   },
 
@@ -502,90 +586,6 @@ export default {
       else if (time.toString().length > 3)
         return Math.floor(time / 1000) + "ms";
       else return time.toString() + "μs";
-    },
-
-    // コピーする文字列
-    copy_result() {
-      if (!this.result || !this.result.success) return "";
-
-      let req = this.result.request;
-      let res = this.result.response;
-
-      let tiles2string = tiles => {
-        return tiles.map(x => Tile2String.get(x)).join(",");
-      };
-
-      // 場況
-      let str = "";
-      str += `## 場況\n`;
-      str += `場風牌: ${Tile2String.get(req.bakaze)}, `;
-      str += `自風牌: ${Tile2String.get(req.zikaze)}, `;
-      str += `${req.turn}巡目, `;
-      str += `手牌の種類: ${SyantenType2String.get(req.syanten_type)}, `;
-      if (req.dora_tiles.length) {
-        str += `ドラ: [${tiles2string(req.dora_tiles)}]`;
-      }
-      str += "\n";
-
-      str += `手牌: ${Hand2String(req.hand_tiles)}`;
-      if (req.melded_blocks.length) {
-        str += " " + req.melded_blocks.map(Meld2String).join("");
-      }
-      str += ` (${res.syanten}向聴)\n\n`;
-
-      str += `## 計算結果\n`;
-
-      if (res.result_type == 1) {
-        for (let candidate of res.candidates) {
-          // 有効牌の合計枚数
-          let n_required_tiles = candidate.required_tiles.reduce(
-            (s, e) => s + e.count,
-            0
-          );
-          // 有効牌の一覧
-          let required_tiles = candidate.required_tiles
-            .concat()
-            .sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
-
-          str += `打: ${Tile2String.get(candidate.tile)}, `;
-          str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚, `;
-          str += `有効牌: [${Hand2String(required_tiles.map(x => x.tile))}]`;
-          str += candidate.syanten_down ? " 向聴戻し" : "";
-          str += "\n";
-
-          if (res.syanten <= 3) {
-            let exp_value = Math.floor(candidate.exp_values[req.turn - 1]);
-            let win_prob = (candidate.win_probs[req.turn - 1] * 100).toFixed(2);
-            let tenpai_prob = (
-              candidate.tenpai_probs[req.turn - 1] * 100
-            ).toFixed(2);
-
-            str += `    期待値: ${exp_value}点, `;
-            str += `和了確率: ${win_prob}%, `;
-            str += `聴牌確率: ${tenpai_prob}%\n`;
-          }
-          str += "\n";
-        }
-      } else if (res.result_type == 0) {
-        // 有効牌の合計枚数
-        let n_required_tiles = this.result.response.required_tiles.reduce(
-          (s, e) => s + e.count,
-          0
-        );
-        // 有効牌の一覧
-        let required_tiles = this.result.response.required_tiles
-          .concat()
-          .sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
-
-        str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚 `;
-        str += `有効牌: `;
-        for (let tile of res.required_tiles) str += `${tile.tile}`;
-        str += "\n\n";
-      }
-
-      str += `Powered by 何切るシミュレーター https://pystyle.info/apps/mahjong-nanikiru-simulator\n`;
-
-      return str;
     }
   },
 
