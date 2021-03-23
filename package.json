@@ -15,7 +15,8 @@
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-clipboard2": "^0.3.1",
-    "vue-meta": "^2.4.0"
+    "vue-meta": "^2.4.0",
+    "vue-social-sharing": "^3.0.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -226,6 +226,23 @@
         </li>
       </ul>
 
+      <div class="mb-3">
+        <span class="mr-2">シェアする</span>
+        <template v-for="sns in ['Twitter', 'Facebook', 'Line']">
+          <ShareNetwork
+            :key="sns"
+            :network="sns"
+            url="https://pystyle.info/apps/mahjong-nanikiru-simulator/"
+            title="麻雀何切るシミュレーター"
+            description="麻雀何切るシミュレーターは、入力された手牌の受入枚数、点数期待値、和了確率、聴牌確率を計算するツールです。"
+            hashtags="麻雀,何切る"
+            :class="[sns, 'social-button']"
+          >
+            {{ sns }}
+          </ShareNetwork>
+        </template>
+      </div>
+
       <p>
         GitHub:
         <b-link
@@ -271,7 +288,29 @@ export default {
 </script>
 
 <style scoped>
-.tab-title-class {
-  color: #ff0000 !important;
+.social-button {
+  font-weight: bold;
+  color: white;
+  border-radius: 3px;
+  margin-right: 10px;
+  width: 100px;
+  height: 25px;
+  text-align: center;
+  display: inline-block;
+}
+
+.Facebook {
+  background-color: #2e4a88;
+  box-shadow: 0 4px 0 #1b3d82;
+}
+
+.Twitter {
+  background-color: #008dde;
+  box-shadow: 0 4px 0 #0078bd;
+}
+
+.Line {
+  background-color: #22cc47;
+  box-shadow: 0 4px 0 #14ba5f;
 }
 </style>
