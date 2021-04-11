@@ -101,7 +101,7 @@
           >
             <DoraTiles
               v-on:remove-dora="remove_dora"
-              :dora_tiles="dora_indicators"
+              :dora_indicators="dora_indicators"
             />
           </b-form-group>
 
@@ -585,16 +585,24 @@ export default {
         bakaze: this.bakaze,
         turn: this.turn,
         syanten_type: this.syanten_type,
-        dora_tiles: this.dora_indicators.map(x => DoraHyozi2Dora[x]),
+        dora_indicators: this.dora_indicators,
         flag: this.flag.reduce((a, x) => (a += x), 0) + this.maximize_target,
         hand_tiles: this.hand_tiles,
         melded_blocks: this.melded_blocks
       });
 
+      let url;
+
+      if (
+        location.hostname === "localhost" ||
+        location.hostname === "127.0.0.1"
+      )
+        url = "http://localhost:8888";
+      else url = "/apps/mahjong-nanikiru-simulator/post.py";
+
       // POST する。
       axios
-        .post("/apps/mahjong-nanikiru-simulator/post.py", data)
-        //.post("http://localhost:8888", data)
+        .post(url, data)
         .then(response => {
           this.result = response.data;
         })

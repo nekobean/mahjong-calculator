@@ -108,7 +108,8 @@ import {
   Tile2String,
   SyantenType2String,
   Hand2String,
-  Meld2String
+  Meld2String,
+  DoraHyozi2Dora
 } from "@/mahjong.js";
 import LineChart from "@/components/LineChart.js";
 
@@ -204,8 +205,10 @@ export default {
       str += `自風牌: ${Tile2String.get(req.zikaze)}, `;
       str += `${req.turn}巡目, `;
       str += `手牌の種類: ${SyantenType2String.get(req.syanten_type)}, `;
-      if (req.dora_tiles.length) {
-        str += `ドラ: [${tiles2string(req.dora_tiles)}]`;
+      if (req.dora_indicators.length) {
+        str += `ドラ: [${tiles2string(
+          req.dora_indicators.map(x => DoraHyozi2Dora[x])
+        )}]`;
       }
       str += "\n";
 
