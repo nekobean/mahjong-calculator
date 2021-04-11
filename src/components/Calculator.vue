@@ -20,15 +20,6 @@
               size="sm"
               buttons
             ></b-form-radio-group>
-
-            <b-tooltip
-              target="input-bakaze"
-              triggers="hover"
-              custom-class="custom-tooltip"
-              placement="topright"
-            >
-              東家の場合は親、それ以外の場合は子として点数計算します。
-            </b-tooltip>
           </b-form-group>
 
           <!-- 自風 -->
@@ -47,6 +38,15 @@
               size="sm"
               buttons
             ></b-form-radio-group>
+
+            <b-tooltip
+              target="input-zikaze"
+              triggers="hover"
+              custom-class="custom-tooltip"
+              placement="topright"
+            >
+              東家の場合は親、それ以外の場合は子として点数計算します。
+            </b-tooltip>
           </b-form-group>
 
           <!-- 巡目 -->
