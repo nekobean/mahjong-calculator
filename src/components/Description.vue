@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron
       class="pt-2 pb-2"
-      header="麻雀何切るシミュレーター (version 0.6.0)"
+      header="麻雀何切るシミュレーター (version 0.6.1)"
       header-level="5"
       bg-variant="dark"
       text-variant="light"
@@ -34,6 +34,9 @@
             </li>
             <li>
               手牌が13枚または14枚になったら、「計算」ボタンをクリックしてください。
+            </li>
+            <li>
+              巡目は打牌候補の優劣に影響するため、設定することをおすすめします。
             </li>
           </ul>
         </b-tab>
@@ -194,6 +197,9 @@
               version 0.6.0 (2021/04/12):
               計算時に赤牌の自摸を考慮するように修正。
             </li>
+            <li>
+              version 0.6.1 (2021/04/16): 巡目の初期設定を変更。
+            </li>
           </ul>
 
           <p>ToDo</p>
@@ -224,6 +230,11 @@
         <li>
           <span style="color: lightgreen;">
             version 0.6.0: 計算時に赤ドラの自摸を考慮するようにしました。
+          </span>
+        </li>
+        <li>
+          <span style="color: lightgreen;">
+            version 0.6.1: 巡目の初期設定を3巡目に変更しました。
           </span>
         </li>
       </ul>

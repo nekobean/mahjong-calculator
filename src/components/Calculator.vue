@@ -432,7 +432,7 @@ export default {
     return {
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風
-      turn: 1, // 現在の巡目
+      turn: 3, // 現在の巡目
       syanten_type: SyantenType.Normal, // 手牌の種類
       dora_indicators: [Tile.Ton], // ドラ
       flag: [1, 2, 4, 8, 16, 32], // フラグ
@@ -630,7 +630,7 @@ export default {
       this.clear_hand();
       this.zikaze = Tile.Ton;
       this.bakaze = Tile.Ton;
-      this.turn = 1;
+      this.turn = 3;
       this.syanten_type = 1;
       this.dora_indicators = [Tile.Ton];
       this.flag = [
