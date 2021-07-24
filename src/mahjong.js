@@ -443,7 +443,16 @@ const MeldType2String = new Map([
   [MeldType.Kakan, "加槓"]
 ])
 
-let Hand2String = function (tiles) {
+let Hand2String = function (hand_tiles, melded_blocks) {
+  let str = ""
+  str += Block2String(hand_tiles)
+  if (melded_blocks && melded_blocks.length) {
+    str += " " + melded_blocks.map(Meld2String).join("")
+  }
+  return str
+}
+
+let Block2String = function (tiles) {
   tiles.concat().sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile])
 
   let manzu = []
@@ -514,7 +523,27 @@ let Hand2TenhoString = function (tiles) {
 }
 
 let Meld2String = function (meld) {
-  return `[${MeldType2String.get(meld.type)}, ${Hand2String(meld.tiles)}]`
+  return `[${Block2String(meld.tiles)}]`
+}
+
+let Problem2String = function (bakaze, zikaze, turn, dora_indicators, hand_tiles, melded_blocks) {
+  let tiles2string = tiles => {
+    return tiles.map(x => Tile2String.get(x)).join(",")
+  }
+
+  let str = ""
+  str += `${Tile2String.get(bakaze)}一局0本場 `
+  str += `${Tile2String.get(zikaze)}家 `
+  str += `${turn}巡目 `
+  if (dora_indicators.length) {
+    str += `ドラ: ${tiles2string(
+      dora_indicators.map(x => DoraHyozi2Dora[x])
+    )}`
+  }
+  str += "\n"
+  str += `${Hand2String(hand_tiles, melded_blocks)}`
+
+  return str
 }
 
 let Aka2Normal = function (tile) {
@@ -542,9 +571,9 @@ export {
   Hand2String,
   MeldType,
   MeldType2String,
-  Meld2String,
   TilePriority,
   Hand2TenhoString,
   Aka2Normal,
-  Tile2TumoProbString
+  Tile2TumoProbString,
+  Problem2String
 }

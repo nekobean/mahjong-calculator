@@ -92,7 +92,7 @@
           </b-form-group>
 
           <!-- ドラ -->
-          <b-form-group
+          <!-- <b-form-group
             label-cols="2"
             content-cols="4"
             label="ドラ表示牌"
@@ -103,7 +103,7 @@
               v-on:remove-dora="remove_dora"
               :dora_indicators="dora_indicators"
             />
-          </b-form-group>
+          </b-form-group> -->
 
           <!-- 考慮する項目 -->
           <b-form-group
@@ -188,7 +188,7 @@
           </b-form-group>
 
           <!-- 牌の枚数 -->
-          <b-form-group
+          <!-- <b-form-group
             label-cols="2"
             content-cols="2"
             label="牌の枚数"
@@ -201,20 +201,42 @@
               size="sm"
               :readonly="true"
             ></b-form-input>
-          </b-form-group>
+          </b-form-group> -->
         </b-col>
       </b-row>
 
       <!-- 手牌及び副露ブロックの一覧 -->
       <b-row class="mb-3">
-        <b-col>
-          <HandAndMeldedBlocks
-            v-on:remove-tile="remove_tile"
-            v-on:remove-block="remove_meld"
-            :hand_tiles="hand_tiles"
-            :melded_blocks="melded_blocks"
-            size="lg"
-          />
+        <b-col cols="auto">
+          <b-container id="problem" class="ml-0 p-2">
+            <b-row>
+              <b-col>
+                <ul>
+                  <li>{{ Tile2String.get(bakaze) }}一局</li>
+                  <li class="ml-2">0本場</li>
+                  <li class="ml-3">{{ Tile2String.get(zikaze) }}家</li>
+                  <li class="ml-3">{{ turn }}巡目</li>
+                  <li class="ml-3">
+                    <DoraTiles
+                      v-on:remove-dora="remove_dora"
+                      :dora_indicators="dora_indicators"
+                    />
+                  </li>
+                </ul>
+              </b-col>
+            </b-row>
+            <b-row class="mt-3">
+              <b-col>
+                <HandAndMeldedBlocks
+                  v-on:remove-tile="remove_tile"
+                  v-on:remove-block="remove_meld"
+                  :hand_tiles="hand_tiles"
+                  :melded_blocks="melded_blocks"
+                  size="sm"
+                />
+              </b-col>
+            </b-row>
+          </b-container>
         </b-col>
       </b-row>
 
@@ -272,7 +294,7 @@
       </b-row>
 
       <!-- ボタン -->
-      <b-row class="mb-3">
+      <b-row class="mb-2">
         <b-col>
           <b-overlay :show="is_calculating" rounded="sm">
             <b-button
@@ -301,6 +323,30 @@
               <p>計算中</p>
             </template>
           </b-overlay>
+        </b-col>
+      </b-row>
+
+      <!-- 他ツール -->
+      <b-row align-v="center" class="mb-2">
+        <b-col cols="auto">
+          何切る問題を作成
+        </b-col>
+        <b-col>
+          <!-- 画像で保存するボタン -->
+          <b-button
+            class="mr-2"
+            variant="primary"
+            @click="generateImage"
+            :disabled="n_hand_tiles < 13"
+            >画面で保存する
+          </b-button>
+          <!-- テキストで保存するボタン -->
+          <b-button
+            variant="primary"
+            v-clipboard:copy="generateText()"
+            :disabled="n_hand_tiles < 13"
+            >テキストでコピーする
+          </b-button>
         </b-col>
       </b-row>
 
@@ -393,6 +439,7 @@
 </template>
 
 <script>
+import html2canvas from "html2canvas";
 import axios from "axios";
 import {
   sort_tiles,
@@ -404,7 +451,8 @@ import {
   SyantenType2String,
   Hand2TenhoString,
   Aka2Normal,
-  Tile2TumoProbString
+  Tile2TumoProbString,
+  Problem2String
 } from "@/mahjong.js";
 
 import HandAndMeldedBlocks from "@/components/mahjong/HandAndMeldedBlocks.vue";
@@ -443,6 +491,7 @@ export default {
       is_calculating: false,
       select_tab: 0,
       Hand2String: Hand2String,
+      Tile2String: Tile2String,
 
       // オプション
       // 場風
@@ -618,6 +667,32 @@ export default {
         });
     },
 
+    generateImage() {
+      let target = document.querySelector("#problem");
+      let config = { useCORS: true };
+
+      html2canvas(target, config).then(canvas => {
+        //document.body.appendChild(canvas);
+        var a = document.createElement("a");
+        a.href = canvas
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        a.download = `${Hand2String(this.hand_tiles, this.melded_blocks)}.png`;
+        a.click();
+      });
+    },
+
+    generateText() {
+      return Problem2String(
+        this.bakaze,
+        this.zikaze,
+        this.turn,
+        this.dora_indicators,
+        this.hand_tiles,
+        this.melded_blocks
+      );
+    },
+
     /// 手牌を初期化する。
     clear_hand() {
       this.hand_tiles = [];
@@ -758,5 +833,16 @@ export default {
   max-width: 400px;
   text-align: left;
   padding-top: 5px;
+}
+
+#problem ul {
+  margin: 0;
+  padding: 0;
+}
+
+#problem li {
+  font-size: 18px;
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>

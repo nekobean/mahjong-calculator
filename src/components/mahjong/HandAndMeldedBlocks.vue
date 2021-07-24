@@ -1,5 +1,5 @@
 <template>
-  <div class="hand_and_melded_blocks">
+  <div :class="get_class">
     <!-- 手牌 -->
     <div class="hand_tiles">
       <TileButton
@@ -7,7 +7,7 @@
         v-for="(tile, i) in hand_tiles"
         :key="i"
         :tile="tile"
-        size="lg"
+        :size="size"
       />
     </div>
     <!-- 副露ブロックの一覧 -->
@@ -16,7 +16,7 @@
       v-for="(block, i) in melded_blocks.slice().reverse()"
       :key="i"
       :block="block"
-      size="lg"
+      :size="size"
     />
   </div>
 </template>
@@ -53,6 +53,15 @@ export default {
     remove_block(block) {
       this.$emit("remove-block", block);
     }
+  },
+
+  computed: {
+    // 手牌の枚数
+    get_class: function() {
+      return this.size == "lg"
+        ? "hand_and_melded_blocks"
+        : "hand_and_melded_blocks_sm";
+    }
   }
 };
 </script>
@@ -61,8 +70,18 @@ export default {
 .hand_and_melded_blocks {
   display: flex;
   flex-wrap: wrap;
-  box-shadow: 0 5px 2px -2px rgba(0, 0, 0, 0.5);
   height: 80px;
+}
+
+.hand_and_melded_blocks_sm {
+  display: flex;
+  flex-wrap: wrap;
+  height: 50px;
+}
+
+.hand_and_melded_blocks_sm > * {
+  align-self: flex-end;
+  margin-right: 5px;
 }
 
 .hand_and_melded_blocks > * {

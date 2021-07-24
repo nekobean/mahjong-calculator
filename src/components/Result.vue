@@ -14,16 +14,25 @@
       </b-row>
 
       <!-- ボタン -->
-      <b-row class="mt-2">
+      <b-row class="mt-2" align-v="center">
         <b-col cols="auto">
-          <b-button block variant="primary" v-clipboard:copy="copy_result()"
-            >クリップボードにコピー
+          結果の出力
+        </b-col>
+        <b-col>
+          <!-- 画像で保存するボタン -->
+          <b-button class="mr-2" variant="primary" @click="generateImage"
+            >画面で保存する
+          </b-button>
+
+          <!-- テキストで保存するボタン -->
+          <b-button variant="primary" v-clipboard:copy="copy_result()"
+            >テキストでコピーする
           </b-button>
         </b-col>
       </b-row>
 
       <!-- 打牌一覧 -->
-      <b-row class="mt-2">
+      <b-row class="mt-2" id="result">
         <b-col>
           <b-table
             :fields="fields"
@@ -101,15 +110,14 @@
 
 <script>
 /*eslint-disable */
+import html2canvas from "html2canvas";
 import TileImage from "@/components/mahjong/TileImage.vue";
 import {
   TileOrder,
   TilePriority,
   Tile2String,
-  SyantenType2String,
   Hand2String,
-  Meld2String,
-  DoraHyozi2Dora
+  Problem2String
 } from "@/mahjong.js";
 import LineChart from "@/components/LineChart.js";
 
@@ -143,6 +151,22 @@ export default {
   },
 
   methods: {
+    generateImage() {
+      let target = document.querySelector("#result");
+      let config = { useCORS: true };
+      let req = this.result.request;
+
+      html2canvas(target, config).then(canvas => {
+        //document.body.appendChild(canvas);
+        var a = document.createElement("a");
+        a.href = canvas
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        a.download = `${Hand2String(req.hand_tiles, req.melded_blocks)}.png`;
+        a.click();
+      });
+    },
+
     sortCompare(
       aRow,
       bRow,
@@ -194,29 +218,18 @@ export default {
       let req = this.result.request;
       let res = this.result.response;
 
-      let tiles2string = tiles => {
-        return tiles.map(x => Tile2String.get(x)).join(",");
-      };
-
       // 場況
       let str = "";
       str += `## 場況\n`;
-      str += `場風牌: ${Tile2String.get(req.bakaze)}, `;
-      str += `自風牌: ${Tile2String.get(req.zikaze)}, `;
-      str += `${req.turn}巡目, `;
-      str += `手牌の種類: ${SyantenType2String.get(req.syanten_type)}, `;
-      if (req.dora_indicators.length) {
-        str += `ドラ: [${tiles2string(
-          req.dora_indicators.map(x => DoraHyozi2Dora[x])
-        )}]`;
-      }
-      str += "\n";
-
-      str += `手牌: ${Hand2String(req.hand_tiles)}`;
-      if (req.melded_blocks.length) {
-        str += " " + req.melded_blocks.map(Meld2String).join("");
-      }
-      str += ` (${this.syanten})\n\n`;
+      str += Problem2String(
+        req.bakaze,
+        req.zikaze,
+        req.turn,
+        req.dora_indicators,
+        req.hand_tiles,
+        req.melded_blocks
+      );
+      str += ` ${this.syanten}\n\n`;
 
       str += `## 計算結果\n`;
 
@@ -234,7 +247,7 @@ export default {
 
           str += `打: ${Tile2String.get(candidate.tile)}, `;
           str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚, `;
-          str += `有効牌: [${Hand2String(required_tiles.map(x => x.tile))}]`;
+          str += `有効牌: ${Hand2String(required_tiles.map(x => x.tile))}`;
           str += candidate.syanten_down ? " 向聴戻し" : "";
           str += "\n";
 
@@ -263,8 +276,7 @@ export default {
           .sort((a, b) => TileOrder[a.tile] - TileOrder[b.tile]);
 
         str += `受け入れ枚数: ${required_tiles.length}種${n_required_tiles}枚 `;
-        str += `有効牌: `;
-        for (let tile of res.required_tiles) str += `${tile.tile}`;
+        str += `有効牌: ${Hand2String(required_tiles.map(x => x.tile))}`;
         str += "\n\n";
       }
 

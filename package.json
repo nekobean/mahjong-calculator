@@ -12,6 +12,7 @@
     "chart.js": "^2.9.4",
     "chartjs-plugin-annotation": "^0.5.7",
     "core-js": "^3.6.5",
+    "html2canvas": "^1.0.0-alpha.12",
     "vue": "^2.6.11",
     "vue-adsense": "^1.0.1",
     "vue-chartjs": "^3.5.1",

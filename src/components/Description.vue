@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron
       class="pt-2 pb-2"
-      header="麻雀何切るシミュレーター (version 0.7)"
+      header="麻雀何切るシミュレーター (version 0.7.0)"
       header-level="5"
       bg-variant="dark"
       text-variant="light"
@@ -36,7 +36,7 @@
               手牌が13枚または14枚になったら、「計算」ボタンをクリックしてください。
             </li>
             <li>
-              巡目は打牌候補の優劣に影響するため、設定することをおすすめします。
+              「画像で保存する」ボタンをクリックすることで牌姿を画像でダウンロードできます。
             </li>
           </ul>
         </b-tab>
@@ -228,7 +228,7 @@
           >のコメント欄にお願いします。
         </li>
         <li>
-          PC 版 Google Chrome で動作確認しています。
+          PC 版 Google Chrome で動作確認をしています。
         </li>
       </ul>
 
