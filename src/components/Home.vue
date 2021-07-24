@@ -1,7 +1,6 @@
 <template>
   <div id="simulator" class="p-3">
     <Description />
-
     <Calculator />
   </div>
 </template>

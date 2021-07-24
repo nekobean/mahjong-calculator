@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron
       class="pt-2 pb-2"
-      header="麻雀何切るシミュレーター (version 0.6.1)"
+      header="麻雀何切るシミュレーター (version 0.7)"
       header-level="5"
       bg-variant="dark"
       text-variant="light"
@@ -124,7 +124,7 @@
           </p>
 
           <p>
-            計算結果を解釈する上で特に留意する事項
+            計算結果を解釈する上で留意する事項
           </p>
           <ul>
             <li>
@@ -200,6 +200,9 @@
             <li>
               version 0.6.1 (2021/04/16): 巡目の初期設定を変更。
             </li>
+            <li>
+              version 0.7.0 (2021/07/25): 何切る問題の画像を生成する機能を追加。
+            </li>
           </ul>
 
           <p>ToDo</p>
@@ -227,34 +230,7 @@
         <li>
           PC 版 Google Chrome で動作確認しています。
         </li>
-        <li>
-          <span style="color: lightgreen;">
-            version 0.6.0: 計算時に赤ドラの自摸を考慮するようにしました。
-          </span>
-        </li>
-        <li>
-          <span style="color: lightgreen;">
-            version 0.6.1: 巡目の初期設定を3巡目に変更しました。
-          </span>
-        </li>
       </ul>
-
-      <div class="mb-3">
-        <span class="mr-2">シェアする</span>
-        <template v-for="sns in ['Twitter', 'Facebook', 'Line']">
-          <ShareNetwork
-            :key="sns"
-            :network="sns"
-            url="https://pystyle.info/apps/mahjong-nanikiru-simulator/"
-            title="麻雀何切るシミュレーター"
-            description="麻雀何切るシミュレーターは、入力された手牌の受入枚数、点数期待値、和了確率、聴牌確率を計算するツールです。"
-            hashtags="麻雀,何切る"
-            :class="[sns, 'social-button']"
-          >
-            {{ sns }}
-          </ShareNetwork>
-        </template>
-      </div>
 
       <p>
         GitHub:
@@ -276,6 +252,47 @@
           >カジノコンシェルジュ</b-link
         >
       </p>
+
+      <!-- 
+      <div class="mb-3">
+        <span class="mr-2">シェアする</span>
+        <template v-for="sns in ['Twitter', 'Facebook', 'Line']">
+          <ShareNetwork
+            :key="sns"
+            :network="sns"
+            url="https://pystyle.info/apps/mahjong-nanikiru-simulator/"
+            title="麻雀何切るシミュレーター"
+            description="麻雀何切るシミュレーターは、入力された手牌の受入枚数、点数期待値、和了確率、聴牌確率を計算するツールです。"
+            hashtags="麻雀,何切る"
+            :class="[sns, 'social-button']"
+          >
+            {{ sns }}
+          </ShareNetwork>
+        </template>
+      </div> -->
+
+      <b-container class="bv-example-row">
+        <b-row>
+          <b-col>
+            <adsense
+              ad-client="ca-pub-9930040906284502"
+              ad-slot="9160643683"
+              ad-format="auto"
+              full-width-responsive="true"
+            >
+            </adsense
+          ></b-col>
+          <b-col>
+            <adsense
+              ad-client="ca-pub-9930040906284502"
+              ad-slot="9160643683"
+              ad-format="auto"
+              full-width-responsive="true"
+            >
+            </adsense
+          ></b-col>
+        </b-row>
+      </b-container>
     </b-jumbotron>
   </div>
 </template>
