@@ -143,9 +143,7 @@
                   一発、海底撈月:
                   有効の場合、一発、海底撈月が点数期待値に考慮されます。
                 </li>
-                <li>
-                  裏ドラ: 有効の場合、裏ドラが点数期待値に考慮されます。
-                </li>
+                <li>裏ドラ: 有効の場合、裏ドラが点数期待値に考慮されます。</li>
               </ul>
             </b-tooltip>
           </b-form-group>
@@ -176,9 +174,7 @@
               一向聴以上の手牌の場合に、シミュレーション途中の打牌選択の方針を設定します。
 
               <ul>
-                <li>
-                  期待値最大化: 期待値が最大となる打牌を選択します。
-                </li>
+                <li>期待値最大化: 期待値が最大となる打牌を選択します。</li>
                 <li>
                   和了確率最大化:
                   和了確率が最大となる打牌を選択します。オーラストップなど和了率を重視する場合はこちらを選択してください。
@@ -328,9 +324,7 @@
 
       <!-- 他ツール -->
       <b-row align-v="center" class="mb-2">
-        <b-col cols="auto">
-          何切る問題を作成
-        </b-col>
+        <b-col cols="2"> 牌姿を保存 </b-col>
         <b-col>
           <!-- 画像で保存するボタン -->
           <b-button
@@ -338,23 +332,21 @@
             variant="primary"
             @click="generateImage"
             :disabled="n_hand_tiles < 13"
-            >画面で保存する
+            >画像で保存
           </b-button>
           <!-- テキストで保存するボタン -->
           <b-button
             variant="primary"
             v-clipboard:copy="generateText()"
             :disabled="n_hand_tiles < 13"
-            >テキストでコピーする
+            >テキストでコピー
           </b-button>
         </b-col>
       </b-row>
 
       <!-- 他ツール -->
       <b-row align-v="center">
-        <b-col cols="auto">
-          他ツールでの検証
-        </b-col>
+        <b-col cols="2"> 他ツールで検証 </b-col>
         <b-col>
           <!-- 天鳳 / 牌理 -->
           <b-button
@@ -371,8 +363,8 @@
             class="mr-2"
             :disabled="
               n_hand_tiles != 14 ||
-                this.melded_blocks != 0 ||
-                this.dora_indicators.length != 1
+              this.melded_blocks != 0 ||
+              this.dora_indicators.length != 1
             "
             variant="success"
             @click="downloadHMR"
@@ -396,9 +388,7 @@
             <p>一人麻雀練習機は副露、赤牌、槓ドラは対応していません。</p>
 
             <ol>
-              <li>
-                一人麻雀練習機を起動します。
-              </li>
+              <li>一人麻雀練習機を起動します。</li>
               <li>
                 「読み込み」ボタンをクリックし、ダウンロードした .hmr 形式の
                 ファイルを開きます。
@@ -452,7 +442,7 @@ import {
   Hand2TenhoString,
   Aka2Normal,
   Tile2TumoProbString,
-  Problem2String
+  Problem2String,
 } from "@/mahjong.js";
 
 import HandAndMeldedBlocks from "@/components/mahjong/HandAndMeldedBlocks.vue";
@@ -474,10 +464,11 @@ export default {
     MinsyuntuInput,
     MinkantuInput,
     AnkantuInput,
-    Result
+    Result,
   },
-  data: function() {
+  data: function () {
     return {
+      test: "",
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風
       turn: 3, // 現在の巡目
@@ -497,29 +488,29 @@ export default {
       // 場風
       input_bakaze_options: [
         { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
-        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) }
+        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
       ],
       // 自風
       input_zikaze_options: [
         { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
         { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
         { value: Tile.Sya, text: Tile2String.get(Tile.Sya) },
-        { value: Tile.Pe, text: Tile2String.get(Tile.Pe) }
+        { value: Tile.Pe, text: Tile2String.get(Tile.Pe) },
       ],
       // 手牌の種類
       input_syanten_type_options: [
         {
           value: SyantenType.Normal,
-          text: SyantenType2String.get(SyantenType.Normal)
+          text: SyantenType2String.get(SyantenType.Normal),
         },
         {
           value: SyantenType.Tiitoi,
-          text: SyantenType2String.get(SyantenType.Tiitoi)
+          text: SyantenType2String.get(SyantenType.Tiitoi),
         },
         {
           value: SyantenType.Kokusi,
-          text: SyantenType2String.get(SyantenType.Kokusi)
-        }
+          text: SyantenType2String.get(SyantenType.Kokusi),
+        },
       ],
       // 考慮する項目
       input_flag_options: [
@@ -528,25 +519,25 @@ export default {
         { value: 4, text: "ダブル立直" },
         { value: 8, text: "一発" },
         { value: 16, text: "海底自摸" },
-        { value: 32, text: "裏ドラ" }
+        { value: 32, text: "裏ドラ" },
       ],
       // 重視する項目
       input_maximize_target_options: [
         {
           value: 0,
-          text: "期待値最大化"
+          text: "期待値最大化",
         },
         {
           value: 64,
-          text: "和了確率最大化"
-        }
-      ]
+          text: "和了確率最大化",
+        },
+      ],
     };
   },
 
   computed: {
     // 手牌の枚数
-    tenhoURL: function() {
+    tenhoURL: function () {
       return "https://tenhou.net/2/?q=" + Hand2TenhoString(this.hand_tiles);
     },
 
@@ -584,27 +575,25 @@ export default {
     //   return url;
     // },
 
-    tumoProbStr: function() {
+    tumoProbStr: function () {
       let hand_tiles = this.hand_tiles
-        .map(x => Tile2TumoProbString.get(x))
+        .map((x) => Tile2TumoProbString.get(x))
         .join(",");
 
       return hand_tiles;
     },
 
     // 手牌の枚数
-    n_hand_tiles: function() {
+    n_hand_tiles: function () {
       return this.hand_tiles.length + this.melded_blocks.length * 3;
     },
 
     // 各牌の残り枚数
-    tile_counts: function() {
+    tile_counts: function () {
       // 初期化する。
-      let counts = Array(34)
-        .fill(4)
-        .concat([1, 1, 1]);
+      let counts = Array(34).fill(4).concat([1, 1, 1]);
 
-      let minus_tile = tile => {
+      let minus_tile = (tile) => {
         counts[tile] -= 1;
         // 赤ドラの場合は対応する牌も減らす。
         if (tile == Tile.AkaManzu5) counts[Tile.Manzu5] -= 1;
@@ -617,10 +606,10 @@ export default {
       // 手牌を除く
       this.hand_tiles.forEach(minus_tile);
       // 副露ブロックを除く
-      this.melded_blocks.forEach(block => block.tiles.forEach(minus_tile));
+      this.melded_blocks.forEach((block) => block.tiles.forEach(minus_tile));
 
       return counts;
-    }
+    },
   },
 
   methods: {
@@ -637,7 +626,7 @@ export default {
         dora_indicators: this.dora_indicators,
         flag: this.flag.reduce((a, x) => (a += x), 0) + this.maximize_target,
         hand_tiles: this.hand_tiles,
-        melded_blocks: this.melded_blocks
+        melded_blocks: this.melded_blocks,
       });
 
       let url;
@@ -652,14 +641,14 @@ export default {
       // POST する。
       axios
         .post(url, data)
-        .then(response => {
+        .then((response) => {
           this.result = response.data;
         })
         .catch(() => {
           this.result = {
             success: false,
             err_msg:
-              "サーバーとの通信に失敗しました。サービス停止中は利用できません。"
+              "サーバーとの通信に失敗しました。サービス停止中は利用できません。",
           };
         })
         .finally(() => {
@@ -671,12 +660,14 @@ export default {
       let target = document.querySelector("#problem");
       let config = { useCORS: true };
 
-      html2canvas(target, config).then(canvas => {
-        //document.body.appendChild(canvas);
-        var a = document.createElement("a");
-        a.href = canvas
+      html2canvas(target, config).then((canvas) => {
+        let src = canvas
           .toDataURL("image/png")
           .replace("image/png", "image/octet-stream");
+        //document.body.appendChild(canvas);
+        var a = document.createElement("a");
+        a.href = src;
+        console.log(a.href);
         a.download = `${Hand2String(this.hand_tiles, this.melded_blocks)}.png`;
         a.click();
       });
@@ -714,7 +705,7 @@ export default {
         4, // ダブル立直
         8, // 一発
         16, // 海底自摸
-        32 // 裏ドラ
+        32, // 裏ドラ
       ];
       this.select_tab = 0;
     },
@@ -734,10 +725,7 @@ export default {
       let dora_tile = DoraHyozi2Dora[this.dora_indicators[0]];
       text += this.toTiles34([dora_tile]).join("") + "\n";
       // 5行目: 捨牌
-      text +=
-        Array(18)
-          .fill(-1)
-          .join("") + "\n";
+      text += Array(18).fill(-1).join("") + "\n";
 
       let blob = new Blob([text], { type: "text/plain" });
       let link = document.createElement("a");
@@ -775,7 +763,7 @@ export default {
     /// 牌を副露ブロックの一覧から削除する。
     remove_meld(block) {
       let i = this.melded_blocks.findIndex(
-        x => JSON.stringify(x) == JSON.stringify(block)
+        (x) => JSON.stringify(x) == JSON.stringify(block)
       );
       if (i > -1) this.melded_blocks.splice(i, 1);
     },
@@ -823,8 +811,8 @@ export default {
       sort_tiles(hand_tiles);
 
       this.hand_tiles = hand_tiles;
-    }
-  }
+    },
+  },
 };
 </script>
 
