@@ -12,11 +12,11 @@ import Home from "./components/Home.vue";
 export default {
   name: "App",
   components: {
-    Home
+    Home,
   },
   metaInfo: {
     title: "麻雀何切るシミュレーター",
-    titleTemplate: "pystyle - %s"
-  }
+    titleTemplate: "%s - pystyle",
+  },
 };
 </script>

@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron
       class="pt-2 pb-2"
-      header="麻雀何切るシミュレーター (version 0.7.0)"
+      header="麻雀何切るシミュレーター (version 0.8.0)"
       header-level="5"
       bg-variant="dark"
       text-variant="light"
@@ -168,21 +168,36 @@
             <li>
               version 0.7.0 (2021/07/25): 何切る問題の画像を生成する機能を追加
             </li>
+            <li>
+              version 0.8.0 (2021/09/24):
+              確率計算の不具合修正。(手変わり考慮時の確率値が過大に算出されていた問題等)
+            </li>
           </ul>
         </b-tab>
       </b-tabs>
 
       <hr style="border: 1px solid white" />
 
+      <p>version 0.8.0 (2021/9/24) の更新内容</p>
+
       <ul>
         <li>
-          既知の不具合、今後の更新予定は<b-link
-            href="https://pystyle.info/mahjong-nanikiru-simulator-todo-list/"
-            target="_blank"
-            class="text-info"
-            >こちら</b-link
-          >に記載しています。
+          手変わり考慮時に確率が1%～3%前後過剰に算出されていた問題を修正。これにより一部の牌姿で聴牌確率が100%を超えて表示されていた問題も修正されました。この修正により、以前のバージョンで得られていた結果が大きく変化することはありません。
         </li>
+      </ul>
+
+      <p>
+        アップデートにより不具合が生じた場合はもとに戻します。不自然なシミュレーション結果が表示された牌姿がありましたら、<b-link
+          href="https://pystyle.info/mahjong-nanikiru-simulator/"
+          target="_blank"
+          class="text-info"
+          >コメント欄</b-link
+        >で教えていただければ調査します。
+      </p>
+
+      <hr style="border: 1px solid white" />
+
+      <ul>
         <li>
           ご意見、ご質問、不具合報告は<b-link
             href="https://pystyle.info/mahjong-nanikiru-simulator/"
@@ -195,7 +210,13 @@
       </ul>
 
       <p>
-        GitHub:
+        <b-link
+          href="https://pystyle.info/mahjong-nanikiru-simulator-todo-list/"
+          target="_blank"
+          class="text-info"
+          >更新予定</b-link
+        >
+        / GitHub:
         <b-link
           href="https://github.com/nekobean/mahjong-cpp"
           target="_blank"
@@ -236,22 +257,18 @@
       <b-container class="bv-example-row">
         <b-row>
           <b-col>
-            <adsense
-              ad-client="ca-pub-9930040906284502"
-              ad-slot="9160643683"
-              ad-format="auto"
-              full-width-responsive="true"
+            <Adsense
+              data-ad-client="ca-pub-9930040906284502"
+              data-ad-slot="9160643683"
             >
-            </adsense
+            </Adsense
           ></b-col>
           <b-col>
-            <adsense
-              ad-client="ca-pub-9930040906284502"
-              ad-slot="9160643683"
-              ad-format="auto"
-              full-width-responsive="true"
+            <Adsense
+              data-ad-client="ca-pub-9930040906284502"
+              data-ad-slot="9160643683"
             >
-            </adsense
+            </Adsense
           ></b-col>
         </b-row>
       </b-container>

@@ -5,22 +5,25 @@ import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue"
 import App from "./App.vue"
 import VueClipboard from "vue-clipboard2"
 import VueMeta from "vue-meta"
-import VueSocialSharing from "vue-social-sharing"
+//import VueSocialSharing from "vue-social-sharing"
 import Vue from "vue"
 import VueGtag from "vue-gtag"
-import VueAdsense from 'vue-adsense'
+import Ads from 'vue-google-adsense'
+
+// Google Adsense
+Vue.use(require('vue-script2'))
+Vue.use(Ads.Adsense)
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(VueClipboard)
 Vue.use(VueMeta)
-Vue.use(VueSocialSharing)
+//Vue.use(VueSocialSharing)
 Vue.config.productionTip = false
-Vue.component('adsense', VueAdsense)
 Vue.use(VueGtag, {
-  config: { id: "UA-125035771-2" }
+    config: { id: "G-GDCFWZN645" }
 })
 
 new Vue({
-  render: h => h(App)
+    render: h => h(App)
 }).$mount("#app")
