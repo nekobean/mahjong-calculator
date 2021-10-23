@@ -3,7 +3,7 @@
     <!-- 手牌 -->
     <div class="hand_tiles">
       <TileButton
-        v-on:add-tile="remove_tile"
+        @add-tile="remove_tile"
         v-for="(tile, i) in hand_tiles"
         :key="i"
         :tile="tile"
@@ -12,7 +12,7 @@
     </div>
     <!-- 副露ブロックの一覧 -->
     <BlockButton
-      v-on:add-block="remove_block"
+      @add-block="remove_block"
       v-for="(block, i) in melded_blocks.slice().reverse()"
       :key="i"
       :block="block"
@@ -29,21 +29,21 @@ export default {
   name: "HandAndMeldedBlocks",
   components: {
     TileButton,
-    BlockButton
+    BlockButton,
   },
   props: {
     hand_tiles: {
       type: Array,
-      required: true
+      required: true,
     },
     melded_blocks: {
       type: Array,
-      required: true
+      required: true,
     },
     size: {
       type: String,
-      default: "sm"
-    }
+      default: "sm",
+    },
   },
   methods: {
     remove_tile(tile) {
@@ -52,17 +52,17 @@ export default {
 
     remove_block(block) {
       this.$emit("remove-block", block);
-    }
+    },
   },
 
   computed: {
     // 手牌の枚数
-    get_class: function() {
+    get_class: function () {
       return this.size == "lg"
         ? "hand_and_melded_blocks"
         : "hand_and_melded_blocks_sm";
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -7,7 +7,7 @@
           <b-th class="text-center align-middle text-nowrap">萬子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in ManzuTiles"
               :key="tile"
               :block="create_minkantu(tile)"
@@ -20,7 +20,7 @@
           <b-th class="text-center align-middle text-nowrap">筒子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in PinzuTiles"
               :key="tile"
               :block="create_minkantu(tile)"
@@ -33,7 +33,7 @@
           <b-th class="text-center align-middle text-nowrap">索子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in SozuTiles"
               :key="tile"
               :block="create_minkantu(tile)"
@@ -46,7 +46,7 @@
           <b-th class="text-center align-middle text-nowrap">字牌</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in ZihaiTiles"
               :key="tile"
               :block="create_minkantu(tile)"
@@ -67,31 +67,31 @@ import {
   PinzuTiles,
   SozuTiles,
   ZihaiTiles,
-  MeldType
+  MeldType,
 } from "@/mahjong.js";
 
 export default {
   name: "MinkotuInput",
   components: {
-    BlockButton
+    BlockButton,
   },
   props: {
     tile_counts: {
       type: Array,
-      required: true
+      required: true,
     },
     n_hand_tiles: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       Tile: Tile,
       ManzuTiles: ManzuTiles,
       PinzuTiles: PinzuTiles,
       SozuTiles: SozuTiles,
-      ZihaiTiles: ZihaiTiles
+      ZihaiTiles: ZihaiTiles,
     };
   },
   methods: {
@@ -106,7 +106,7 @@ export default {
         type: MeldType.Minkan,
         tiles: tiles,
         discarded_tile: tiles[0],
-        from: 3 /* 上家 */
+        from: 3 /* 上家 */,
       };
     },
 
@@ -116,8 +116,8 @@ export default {
 
     is_disabled(block) {
       return this.n_hand_tiles >= 12 || this.tile_counts[block.tiles[3]] != 4;
-    }
-  }
+    },
+  },
 };
 </script>
 

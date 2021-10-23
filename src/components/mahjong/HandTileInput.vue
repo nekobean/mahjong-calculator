@@ -7,14 +7,14 @@
           <b-th class="text-center align-middle text-nowrap">萬子</b-th>
           <b-td class="tiles">
             <TileButton
-              v-on:add-tile="add_tile"
+              @add-tile="add_tile"
               v-for="tile in ManzuTiles"
               :key="tile"
               :tile="tile"
               :disabled="is_disabled(tile)"
             />
             <TileButton
-              v-on:add-tile="add_tile"
+              @add-tile="add_tile"
               :tile="Tile.AkaManzu5"
               :disabled="is_disabled(Tile.AkaManzu5)"
             />
@@ -25,14 +25,14 @@
           <b-th class="text-center align-middle text-nowrap">筒子</b-th>
           <b-td class="tiles">
             <TileButton
-              v-on:add-tile="add_tile"
+              @add-tile="add_tile"
               v-for="tile in PinzuTiles"
               :key="tile"
               :tile="tile"
               :disabled="is_disabled(tile)"
             />
             <TileButton
-              v-on:add-tile="add_tile"
+              @add-tile="add_tile"
               :tile="Tile.AkaPinzu5"
               :disabled="is_disabled(Tile.AkaPinzu5)"
             />
@@ -43,14 +43,14 @@
           <b-th class="text-center align-middle text-nowrap">索子</b-th>
           <b-td class="tiles">
             <TileButton
-              v-on:add-tile="add_tile"
+              @add-tile="add_tile"
               v-for="tile in SozuTiles"
               :key="tile"
               :tile="tile"
               :disabled="is_disabled(tile)"
             />
             <TileButton
-              v-on:add-tile="add_tile"
+              @add-tile="add_tile"
               :tile="Tile.AkaSozu5"
               :disabled="is_disabled(Tile.AkaSozu5)"
             />
@@ -61,7 +61,7 @@
           <b-th class="text-center align-middle text-nowrap">字牌</b-th>
           <b-td class="tiles">
             <TileButton
-              v-on:add-tile="add_tile"
+              @add-tile="add_tile"
               v-for="tile in ZihaiTiles"
               :key="tile"
               :tile="tile"
@@ -80,36 +80,36 @@ import {
   ManzuTiles,
   PinzuTiles,
   SozuTiles,
-  ZihaiTiles
+  ZihaiTiles,
 } from "@/mahjong.js";
 import TileButton from "./TileButton.vue";
 
 export default {
   name: "HandTileInput",
   components: {
-    TileButton
+    TileButton,
   },
   props: {
     tile_counts: {
       type: Array,
-      required: true
+      required: true,
     },
     n_hand_tiles: {
       type: Number,
-      default: null
+      default: null,
     },
     n_dora_tiles: {
       type: Number,
-      default: null
-    }
+      default: null,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       Tile: Tile,
       ManzuTiles: ManzuTiles,
       PinzuTiles: PinzuTiles,
       SozuTiles: SozuTiles,
-      ZihaiTiles: ZihaiTiles
+      ZihaiTiles: ZihaiTiles,
     };
   },
   methods: {
@@ -121,8 +121,8 @@ export default {
       if (this.n_hand_tiles)
         return this.n_hand_tiles >= 14 || this.tile_counts[tile] == 0;
       else return this.n_dora_tiles >= 5 || this.tile_counts[tile] == 0;
-    }
-  }
+    },
+  },
 };
 </script>
 

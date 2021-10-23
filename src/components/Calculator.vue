@@ -100,7 +100,7 @@
             label-align="right"
           >
             <DoraTiles
-              v-on:remove-dora="remove_dora"
+              @remove-dora="remove_dora"
               :dora_indicators="dora_indicators"
             />
           </b-form-group> -->
@@ -214,7 +214,7 @@
                   <li class="ml-3">{{ turn }}巡目</li>
                   <li class="ml-3">
                     <DoraTiles
-                      v-on:remove-dora="remove_dora"
+                      @remove-dora="remove_dora"
                       :dora_indicators="dora_indicators"
                     />
                   </li>
@@ -224,8 +224,8 @@
             <b-row class="mt-3">
               <b-col>
                 <HandAndMeldedBlocks
-                  v-on:remove-tile="remove_tile"
-                  v-on:remove-block="remove_meld"
+                  @remove-tile="remove_tile"
+                  @remove-block="remove_meld"
                   :hand_tiles="hand_tiles"
                   :melded_blocks="melded_blocks"
                   size="sm"
@@ -242,7 +242,7 @@
           <b-tabs v-model="select_tab">
             <b-tab title="手牌" active>
               <HandTileInput
-                v-on:add-tile="add_tile"
+                @add-tile="add_tile"
                 :tile_counts="tile_counts"
                 :n_hand_tiles="n_hand_tiles"
               />
@@ -252,35 +252,35 @@
                 ドラはドラ表示牌で指定するので注意してください。槓ドラも含め、最大5枚まで設定できます。
               </p>
               <HandTileInput
-                v-on:add-tile="add_dora"
+                @add-tile="add_dora"
                 :tile_counts="tile_counts"
                 :n_dora_tiles="dora_indicators.length"
               />
             </b-tab>
             <b-tab title="明刻子">
               <MinkotuInput
-                v-on:add-block="add_meld"
+                @add-block="add_meld"
                 :tile_counts="tile_counts"
                 :n_hand_tiles="n_hand_tiles"
               />
             </b-tab>
             <b-tab title="明順子">
               <MinsyuntuInput
-                v-on:add-block="add_meld"
+                @add-block="add_meld"
                 :tile_counts="tile_counts"
                 :n_hand_tiles="n_hand_tiles"
               />
             </b-tab>
             <b-tab title="明槓子">
               <MinkantuInput
-                v-on:add-block="add_meld"
+                @add-block="add_meld"
                 :tile_counts="tile_counts"
                 :n_hand_tiles="n_hand_tiles"
               />
             </b-tab>
             <b-tab title="暗槓子">
               <AnkantuInput
-                v-on:add-block="add_meld"
+                @add-block="add_meld"
                 :tile_counts="tile_counts"
                 :n_hand_tiles="n_hand_tiles"
               />
@@ -468,13 +468,14 @@ export default {
   },
   data: function () {
     return {
+      version: "0.9.0",
       test: "",
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風
       turn: 3, // 現在の巡目
       syanten_type: SyantenType.Normal, // 手牌の種類
       dora_indicators: [Tile.Ton], // ドラ
-      flag: [1, 2, 4, 8, 16, 32], // フラグ
+      flag: [1, 2, 4, 8, 16, 32, 64], // フラグ
       maximize_target: 0,
       hand_tiles: [], // 手牌
       melded_blocks: [], // 副露ブロックの一覧
@@ -520,6 +521,7 @@ export default {
         { value: 8, text: "一発" },
         { value: 16, text: "海底自摸" },
         { value: 32, text: "裏ドラ" },
+        { value: 64, text: "赤牌自摸" },
       ],
       // 重視する項目
       input_maximize_target_options: [
@@ -528,7 +530,7 @@ export default {
           text: "期待値最大化",
         },
         {
-          value: 64,
+          value: 128,
           text: "和了確率最大化",
         },
       ],
@@ -619,6 +621,7 @@ export default {
 
       // JSON を作成する。
       let data = JSON.stringify({
+        version: this.version,
         zikaze: this.zikaze,
         bakaze: this.bakaze,
         turn: this.turn,
@@ -706,6 +709,7 @@ export default {
         8, // 一発
         16, // 海底自摸
         32, // 裏ドラ
+        64, // 赤牌自摸
       ];
       this.select_tab = 0;
     },

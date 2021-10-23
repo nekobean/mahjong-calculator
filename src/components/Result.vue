@@ -5,7 +5,11 @@
       <!-- 結果の概要 -->
       <b-row>
         <b-col>
-          計算時間: {{ calcTime }} 向聴数: {{ syanten }}
+          計算時間: {{ calcTime }} 向聴数: {{ syanten_str(syanten) }} (一般手:
+          {{ syanten_str(result.response.syanten.normal) }} 七対子:
+          {{ syanten_str(result.response.syanten.tiitoi) }} 国士無双:
+          {{ syanten_str(result.response.syanten.kokusi) }}
+          )
           <br />
           <span class="text-primary">
             ※青色は向聴戻しとなる打牌です。副露している場合、役なしの和了は点数0として計算します。
@@ -227,7 +231,7 @@ export default {
         req.hand_tiles,
         req.melded_blocks
       );
-      str += ` ${this.syanten}\n\n`;
+      str += ` ${this.syanten_str(this.syanten)}\n\n`;
 
       str += `## 計算結果\n`;
 
@@ -249,7 +253,7 @@ export default {
           str += candidate.syanten_down ? " 向聴戻し" : "";
           str += "\n";
 
-          if (res.syanten <= 3) {
+          if (this.syanten <= 3) {
             let exp_value = Math.floor(candidate.exp_values[req.turn - 1]);
             let win_prob = (candidate.win_probs[req.turn - 1] * 100).toFixed(2);
             let tenpai_prob = (
@@ -282,6 +286,10 @@ export default {
 
       return str;
     },
+
+    syanten_str(syanten) {
+      return syanten == 0 ? "聴牌" : `${syanten}向聴`;
+    },
   },
 
   computed: {
@@ -290,7 +298,7 @@ export default {
 
       let res = this.result.response;
 
-      return res.result_type == 1 && res.syanten <= 3;
+      return res.result_type == 1 && this.syanten <= 3;
     },
 
     lineOptions() {
@@ -426,7 +434,6 @@ export default {
     fields() {
       if (!this.result || !this.result.success) return [];
 
-      let syanten = this.result.response.syanten;
       let result_type = this.result.response.result_type;
 
       if (result_type == 1) {
@@ -451,7 +458,7 @@ export default {
           },
         ];
 
-        if (syanten <= 3) {
+        if (this.syanten <= 3) {
           fields = fields.concat([
             {
               key: "exp_value",
@@ -529,7 +536,7 @@ export default {
           // 有効牌の一覧
           item.required_tiles = required_tiles;
 
-          if (res.syanten <= 3) {
+          if (this.syanten <= 3) {
             // 現状の巡目の期待値
             item.exp_value = candidate.exp_values[req.turn - 1];
             // 現状の巡目の和了確率
@@ -566,10 +573,10 @@ export default {
 
       if (res.result_type == 1) {
         // 14枚
-        if (res.syanten <= 3 && req.flag & 64) {
+        if (this.syanten <= 3 && req.flag & 128) {
           // 「3向聴以上、和了確率最大化」の場合は和了確率が高い順にソートする。
           return "win_prob";
-        } else if (res.syanten <= 3 && !(req.flag & 64)) {
+        } else if (this.syanten <= 3 && !(req.flag & 128)) {
           // 「3向聴以上かつ期待値最大化」の場合は期待値が高い順にソートする。
           return "exp_value";
         } else {
@@ -586,9 +593,14 @@ export default {
     syanten() {
       if (!this.result || !this.result.success) return "";
 
-      let syanten = this.result.response.syanten;
+      let syanten_list = this.result.response.syanten;
+      let min_syanten = Math.min(
+        syanten_list.normal,
+        syanten_list.tiitoi,
+        syanten_list.kokusi
+      );
 
-      return syanten == 0 ? "聴牌" : `${syanten}向聴`;
+      return min_syanten;
     },
 
     // 計算時間
@@ -617,20 +629,20 @@ export default {
 
       if (res.result_type != 1) return;
 
-      if (req.flag & 64) this.line_type = "win_probs";
+      if (req.flag & 128) this.line_type = "win_probs";
       else this.line_type = "exp_values";
 
       // 14枚
-      if (res.syanten <= 3 && req.flag & 64) {
-        // 「3向聴以上、和了確率最大化」の場合は和了確率が高い順にソートする。
+      if (this.syanten <= 3 && req.flag & 128) {
+        // 「3向聴以下かつ和了確率最大化」の場合は和了確率が高い順にソートする。
         res.candidates.sort((a, b) =>
           Math.round(a.win_probs[0] * 10000) !=
           Math.round(b.win_probs[0] * 10000)
             ? b.win_probs[0] - a.win_probs[0]
             : TilePriority[a.tile] - TilePriority[b.tile]
         );
-      } else if (res.syanten <= 3 && !(req.flag & 64)) {
-        // 「3向聴以上かつ期待値最大化」の場合は期待値が高い順にソートする。
+      } else if (this.syanten <= 3 && !(req.flag & 128)) {
+        // 「3向聴以下かつ期待値最大化」の場合は期待値が高い順にソートする。
         res.candidates.sort((a, b) =>
           Math.round(a.exp_values[0]) != Math.round(b.exp_values[0])
             ? b.exp_values[0] - a.exp_values[0]

@@ -7,14 +7,14 @@
           <b-th class="text-center align-middle text-nowrap">萬子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in ManzuTiles.slice(0, 7)"
               :key="tile"
               :block="create_minsyuntu(tile)"
               :disabled="is_disabled(create_minsyuntu(tile))"
             />
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in ManzuTiles.slice(2, 5)"
               :key="tile + 'aka'"
               :block="create_minsyuntu(tile, true)"
@@ -27,14 +27,14 @@
           <b-th class="text-center align-middle text-nowrap">筒子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in PinzuTiles.slice(0, 7)"
               :key="tile"
               :block="create_minsyuntu(tile)"
               :disabled="is_disabled(create_minsyuntu(tile))"
             />
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in PinzuTiles.slice(2, 5)"
               :key="tile + 'aka'"
               :block="create_minsyuntu(tile, true)"
@@ -47,14 +47,14 @@
           <b-th class="text-center align-middle text-nowrap">索子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in SozuTiles.slice(0, 7)"
               :key="tile"
               :block="create_minsyuntu(tile)"
               :disabled="is_disabled(create_minsyuntu(tile))"
             />
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in SozuTiles.slice(2, 5)"
               :key="tile + 'aka'"
               :block="create_minsyuntu(tile, true)"
@@ -75,31 +75,31 @@ import {
   PinzuTiles,
   SozuTiles,
   ZihaiTiles,
-  MeldType
+  MeldType,
 } from "@/mahjong.js";
 
 export default {
   name: "MinsyuntuInput",
   components: {
-    BlockButton
+    BlockButton,
   },
   props: {
     tile_counts: {
       type: Array,
-      required: true
+      required: true,
     },
     n_hand_tiles: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       Tile: Tile,
       ManzuTiles: ManzuTiles,
       PinzuTiles: PinzuTiles,
       SozuTiles: SozuTiles,
-      ZihaiTiles: ZihaiTiles
+      ZihaiTiles: ZihaiTiles,
     };
   },
   methods: {
@@ -118,7 +118,7 @@ export default {
         type: MeldType.Ti,
         tiles: tiles,
         discarded_tile: tiles[0],
-        from: 3
+        from: 3,
       };
     },
 
@@ -129,10 +129,10 @@ export default {
     is_disabled(block) {
       return (
         this.n_hand_tiles >= 12 ||
-        block.tiles.some(x => this.tile_counts[x] === 0)
+        block.tiles.some((x) => this.tile_counts[x] === 0)
       );
-    }
-  }
+    },
+  },
 };
 </script>
 

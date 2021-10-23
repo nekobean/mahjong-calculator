@@ -1,9 +1,9 @@
 <template>
   <div
     :class="disabled ? 'disabled' : 'enabled'"
-    v-on:click="$emit('add-block', block)"
+    @click="$emit('add-block', block)"
   >
-    <MeldedBlock :block="block" :seat="0" :size="size" />
+    <MeldedBlock :block="block" :seat="0" />
   </div>
 </template>
  
@@ -14,17 +14,15 @@ export default {
   name: "BlockButton",
   components: { MeldedBlock },
   props: {
+    // ブロック
     block: {
       type: Object,
       required: true,
     },
+    // 無効にするかどうか
     disabled: {
       type: Boolean,
       default: false,
-    },
-    size: {
-      type: String,
-      default: "sm",
     },
   },
 };

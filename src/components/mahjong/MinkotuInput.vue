@@ -7,14 +7,14 @@
           <b-th class="text-center align-middle text-nowrap">萬子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in ManzuTiles"
               :key="tile"
               :block="create_minkotu(tile)"
               :disabled="is_disabled(create_minkotu(tile))"
             />
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               :block="create_minkotu(Tile.Manzu5, true)"
               :disabled="is_disabled(create_minkotu(Tile.Manzu5, true))"
             />
@@ -25,14 +25,14 @@
           <b-th class="text-center align-middle text-nowrap">筒子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in PinzuTiles"
               :key="tile"
               :block="create_minkotu(tile)"
               :disabled="is_disabled(create_minkotu(tile))"
             />
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               :block="create_minkotu(Tile.Pinzu5, true)"
               :disabled="is_disabled(create_minkotu(Tile.Pinzu5, true))"
             />
@@ -43,14 +43,14 @@
           <b-th class="text-center align-middle text-nowrap">索子</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in SozuTiles"
               :key="tile"
               :block="create_minkotu(tile)"
               :disabled="is_disabled(create_minkotu(tile))"
             />
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               :block="create_minkotu(Tile.Sozu5, true)"
               :disabled="is_disabled(create_minkotu(Tile.Sozu5, true))"
             />
@@ -61,7 +61,7 @@
           <b-th class="text-center align-middle text-nowrap">字牌</b-th>
           <b-td class="melded_blocks">
             <BlockButton
-              v-on:add-block="add_block"
+              @add-block="add_block"
               v-for="tile in ZihaiTiles"
               :key="tile"
               :block="create_minkotu(tile)"
@@ -82,31 +82,31 @@ import {
   PinzuTiles,
   SozuTiles,
   ZihaiTiles,
-  MeldType
+  MeldType,
 } from "@/mahjong.js";
 
 export default {
   name: "MinkotuInput",
   components: {
-    BlockButton
+    BlockButton,
   },
   props: {
     tile_counts: {
       type: Array,
-      required: true
+      required: true,
     },
     n_hand_tiles: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       Tile: Tile,
       ManzuTiles: ManzuTiles,
       PinzuTiles: PinzuTiles,
       SozuTiles: SozuTiles,
-      ZihaiTiles: ZihaiTiles
+      ZihaiTiles: ZihaiTiles,
     };
   },
   methods: {
@@ -123,7 +123,7 @@ export default {
         type: MeldType.Pon,
         tiles: tiles,
         discarded_tile: tiles[0],
-        from: 3 /* 上家 */
+        from: 3 /* 上家 */,
       };
     },
 
@@ -137,8 +137,8 @@ export default {
         this.tile_counts[block.tiles[0]] == 0 ||
         this.tile_counts[block.tiles[2]] < 3
       );
-    }
-  }
+    },
+  },
 };
 </script>
 

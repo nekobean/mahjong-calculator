@@ -2,7 +2,7 @@
   <div class="dora_indicators">
     <TileImage v-for="(tile, i) in 2" :key="i + 'ura1'" :tile="-1" size="sm" />
     <TileButton
-      v-on:add-tile="remove_dora"
+      @add-tile="remove_dora"
       v-for="(tile, i) in dora_indicators"
       :key="i"
       :tile="tile"
@@ -24,19 +24,19 @@ export default {
   name: "DoraTiles",
   components: {
     TileButton,
-    TileImage
+    TileImage,
   },
   props: {
     dora_indicators: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     remove_dora(tile) {
       this.$emit("remove-dora", tile);
-    }
-  }
+    },
+  },
 };
 </script>
 

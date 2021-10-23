@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     getSrc() {
-      return `./tiles/${this.tile}_small.png`;
+      return `./tiles/${this.tile}.png`;
     },
 
     getClass() {
