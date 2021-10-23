@@ -1,73 +1,47 @@
 <template>
-  <img :src="get_src()" :class="get_classes()" />
+  <img :src="getSrc()" :class="getClass()" />
 </template>
 
 <script>
 export default {
   name: "TileImage",
   props: {
+    // 牌の種類
     tile: {
       type: Number,
-      required: true
+      required: true,
     },
-    size: {
-      type: String,
-      default: "sm"
-    },
+    // 牌の向き
     type: {
       type: String,
-      default: "upright"
-    }
+      default: "upright",
+    },
   },
   methods: {
-    get_src() {
-      return this.size == "sm"
-        ? `./tiles/${this.tile}_small.png`
-        : `./tiles/${this.tile}.png`;
+    getSrc() {
+      return `./tiles/${this.tile}_small.png`;
     },
 
-    get_classes() {
-      let classes = [];
+    getClass() {
+      if (this.type == "rotate1") return "rotated_1st";
+      else if (this.type == "rotate2") return "rotated_2nd";
 
-      if (this.size == "sm") {
-        if (this.type == "rotate1") classes.push("rotated_small");
-        else if (this.type == "rotate2") classes.push("rotated2_small");
-      } else {
-        if (this.type == "rotate1") classes.push("rotated_large");
-        else if (this.type == "rotate2") classes.push("rotated2_large");
-        classes.push("large");
-      }
-
-      return classes.join(" ");
-    }
-  }
+      return "";
+    },
+  },
 };
 </script>
 
 <style scoped>
-.large {
-  width: 40px;
-}
-
-.rotated_large {
-  margin-left: 14px;
-  transform-origin: bottom right;
-  transform: rotate(270deg) translate(100%);
-}
-
-.rotated2_large {
-  margin-left: -40px;
-  transform-origin: bottom right;
-  transform: rotate(270deg) translate(200%);
-}
-
-.rotated_small {
+/* 横向きの牌 1段目 */
+.rotated_1st {
   margin-left: 16px;
   transform-origin: bottom right;
   transform: rotate(270deg) translate(100%);
 }
 
-.rotated2_small {
+/* 横向きの牌 2段目 */
+.rotated_2nd {
   margin-left: -46px;
   transform-origin: bottom right;
   transform: rotate(270deg) translate(200%);

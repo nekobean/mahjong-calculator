@@ -1,9 +1,9 @@
 <template>
   <div
     :class="disabled ? 'disabled' : 'enabled'"
-    v-on:click="$emit('add-tile', tile)"
+    @click="$emit('add-tile', tile)"
   >
-    <TileImage :tile="tile" :size="size" />
+    <TileImage :tile="tile" />
   </div>
 </template>
  
@@ -14,17 +14,15 @@ export default {
   name: "TileButton",
   components: { TileImage },
   props: {
+    // 牌の種類
     tile: {
       type: Number,
       required: true,
     },
+    // 無効にするかどうか
     disabled: {
       type: Boolean,
       default: false,
-    },
-    size: {
-      type: String,
-      default: "sm",
     },
   },
 };
