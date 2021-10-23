@@ -95,7 +95,6 @@
               v-model="line_type"
               :options="line_options"
               button-variant="outline-secondary"
-              size="sm"
               buttons
             ></b-form-radio-group>
           </b-form-group>

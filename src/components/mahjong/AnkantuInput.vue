@@ -1,62 +1,56 @@
 <template>
-  <div>
-    <b-table-simple class="table">
-      <b-tbody>
-        <!-- 萬子 -->
-        <b-tr>
-          <b-th class="text-center align-middle text-nowrap">萬子</b-th>
-          <b-td class="melded_blocks">
-            <BlockButton
-              @add-block="add_block"
-              v-for="tile in ManzuTiles"
-              :key="tile"
-              :block="create_ankantu(tile)"
-              :disabled="is_disabled(create_ankantu(tile))"
-            />
-          </b-td>
-        </b-tr>
-        <!-- 筒子 -->
-        <b-tr>
-          <b-th class="text-center align-middle text-nowrap">筒子</b-th>
-          <b-td class="melded_blocks">
-            <BlockButton
-              @add-block="add_block"
-              v-for="tile in PinzuTiles"
-              :key="tile"
-              :block="create_ankantu(tile)"
-              :disabled="is_disabled(create_ankantu(tile))"
-            />
-          </b-td>
-        </b-tr>
-        <!-- 索子 -->
-        <b-tr>
-          <b-th class="text-center align-middle text-nowrap">索子</b-th>
-          <b-td class="melded_blocks">
-            <BlockButton
-              @add-block="add_block"
-              v-for="tile in SozuTiles"
-              :key="tile"
-              :block="create_ankantu(tile)"
-              :disabled="is_disabled(create_ankantu(tile))"
-            />
-          </b-td>
-        </b-tr>
-        <!-- 字牌 -->
-        <b-tr>
-          <b-th class="text-center align-middle text-nowrap">字牌</b-th>
-          <b-td class="melded_blocks">
-            <BlockButton
-              @add-block="add_block"
-              v-for="tile in ZihaiTiles"
-              :key="tile"
-              :block="create_ankantu(tile)"
-              :disabled="is_disabled(create_ankantu(tile))"
-            />
-          </b-td>
-        </b-tr>
-      </b-tbody>
-    </b-table-simple>
-  </div>
+  <b-table-simple class="table">
+    <b-tbody>
+      <!-- 萬子 -->
+      <b-tr>
+        <b-td class="melded_blocks">
+          <BlockButton
+            @add-block="add_block"
+            v-for="tile in ManzuTiles"
+            :key="tile"
+            :block="createAnkantuBlock(tile)"
+            :disabled="disabled(createAnkantuBlock(tile))"
+          />
+        </b-td>
+      </b-tr>
+      <!-- 筒子 -->
+      <b-tr>
+        <b-td class="melded_blocks">
+          <BlockButton
+            @add-block="add_block"
+            v-for="tile in PinzuTiles"
+            :key="tile"
+            :block="createAnkantuBlock(tile)"
+            :disabled="disabled(createAnkantuBlock(tile))"
+          />
+        </b-td>
+      </b-tr>
+      <!-- 索子 -->
+      <b-tr>
+        <b-td class="melded_blocks">
+          <BlockButton
+            @add-block="add_block"
+            v-for="tile in SozuTiles"
+            :key="tile"
+            :block="createAnkantuBlock(tile)"
+            :disabled="disabled(createAnkantuBlock(tile))"
+          />
+        </b-td>
+      </b-tr>
+      <!-- 字牌 -->
+      <b-tr>
+        <b-td class="melded_blocks">
+          <BlockButton
+            @add-block="add_block"
+            v-for="tile in ZihaiTiles"
+            :key="tile"
+            :block="createAnkantuBlock(tile)"
+            :disabled="disabled(createAnkantuBlock(tile))"
+          />
+        </b-td>
+      </b-tr>
+    </b-tbody>
+  </b-table-simple>
 </template>
 
 <script>
@@ -77,11 +71,13 @@ export default {
     BlockButton,
   },
   props: {
-    tile_counts: {
+    // 牌の残り枚数
+    tileCounts: {
       type: Array,
       required: true,
     },
-    n_hand_tiles: {
+    // 手牌の枚数
+    numHandTiles: {
       type: Number,
       required: true,
     },
@@ -96,13 +92,14 @@ export default {
     };
   },
   methods: {
-    create_ankantu(tile) {
+    // 暗槓子を作成する
+    createAnkantuBlock(tile) {
       let tiles = Array(4).fill(tile);
 
       return {
         type: MeldType.Ankan,
         tiles: tiles,
-        discarded_tile: tiles[0] /* 1個目の牌を鳴いた */,
+        discardedTile: tiles[0] /* 1個目の牌を鳴いた */,
         from: 3 /* 上家 */,
       };
     },
@@ -111,8 +108,8 @@ export default {
       this.$emit("add-block", block);
     },
 
-    is_disabled(block) {
-      return this.n_hand_tiles >= 12 || this.tile_counts[block.tiles[3]] != 4;
+    disabled(block) {
+      return this.numHandTiles >= 12 || this.tileCounts[block.tiles[3]] != 4;
     },
   },
 };

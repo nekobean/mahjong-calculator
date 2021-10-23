@@ -7,7 +7,6 @@
         v-for="(tile, i) in hand_tiles"
         :key="i"
         :tile="tile"
-        :size="size"
       />
     </div>
     <!-- 副露ブロックの一覧 -->
@@ -16,7 +15,6 @@
       v-for="(block, i) in melded_blocks.slice().reverse()"
       :key="i"
       :block="block"
-      :size="size"
     />
   </div>
 </template>

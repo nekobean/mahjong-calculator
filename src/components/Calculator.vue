@@ -17,7 +17,6 @@
               v-model="bakaze"
               :options="input_bakaze_options"
               button-variant="outline-primary"
-              size="sm"
               buttons
             ></b-form-radio-group>
           </b-form-group>
@@ -35,7 +34,6 @@
               v-model="zikaze"
               :options="input_zikaze_options"
               button-variant="outline-primary"
-              size="sm"
               buttons
             ></b-form-radio-group>
 
@@ -57,7 +55,7 @@
             label-for="input-turn"
             label-align="right"
           >
-            <b-form-select v-model="turn" id="input-turn" size="sm">
+            <b-form-select v-model="turn" id="input-turn">
               <b-form-select-option v-for="i in 17" :key="i" :value="i"
                 >{{ i }} 巡目</b-form-select-option
               >
@@ -77,7 +75,6 @@
               v-model="syanten_type"
               :options="input_syanten_type_options"
               button-variant="outline-primary"
-              size="sm"
               buttons
             ></b-form-radio-group>
 
@@ -116,7 +113,6 @@
               id="input-flag"
               v-model="flag"
               :options="input_flag_options"
-              size="sm"
               switches
             ></b-form-checkbox-group>
 
@@ -161,7 +157,6 @@
               v-model="maximize_target"
               :options="input_maximize_target_options"
               button-variant="outline-primary"
-              size="sm"
               buttons
             ></b-form-radio-group>
 
@@ -192,9 +187,9 @@
             label-align="right"
           >
             <b-form-input
-              v-model="n_hand_tiles"
+              v-model="numHandTiles"
               id="input-n-hand-tiles"
-              size="sm"
+             
               :readonly="true"
             ></b-form-input>
           </b-form-group> -->
@@ -228,7 +223,6 @@
                   @remove-block="remove_meld"
                   :hand_tiles="hand_tiles"
                   :melded_blocks="melded_blocks"
-                  size="sm"
                 />
               </b-col>
             </b-row>
@@ -243,8 +237,8 @@
             <b-tab title="手牌" active>
               <HandTileInput
                 @add-tile="add_tile"
-                :tile_counts="tile_counts"
-                :n_hand_tiles="n_hand_tiles"
+                :tileCounts="tileCounts"
+                :numHandTiles="numHandTiles"
               />
             </b-tab>
             <b-tab title="ドラ表示牌">
@@ -253,36 +247,36 @@
               </p>
               <HandTileInput
                 @add-tile="add_dora"
-                :tile_counts="tile_counts"
-                :n_dora_tiles="dora_indicators.length"
+                :tileCounts="tileCounts"
+                :numDoraTiles="dora_indicators.length"
               />
             </b-tab>
             <b-tab title="明刻子">
               <MinkotuInput
                 @add-block="add_meld"
-                :tile_counts="tile_counts"
-                :n_hand_tiles="n_hand_tiles"
+                :tileCounts="tileCounts"
+                :numHandTiles="numHandTiles"
               />
             </b-tab>
             <b-tab title="明順子">
               <MinsyuntuInput
                 @add-block="add_meld"
-                :tile_counts="tile_counts"
-                :n_hand_tiles="n_hand_tiles"
+                :tileCounts="tileCounts"
+                :numHandTiles="numHandTiles"
               />
             </b-tab>
             <b-tab title="明槓子">
               <MinkantuInput
                 @add-block="add_meld"
-                :tile_counts="tile_counts"
-                :n_hand_tiles="n_hand_tiles"
+                :tileCounts="tileCounts"
+                :numHandTiles="numHandTiles"
               />
             </b-tab>
             <b-tab title="暗槓子">
               <AnkantuInput
                 @add-block="add_meld"
-                :tile_counts="tile_counts"
-                :n_hand_tiles="n_hand_tiles"
+                :tileCounts="tileCounts"
+                :numHandTiles="numHandTiles"
               />
             </b-tab>
           </b-tabs>
@@ -297,7 +291,7 @@
               class="mr-2"
               variant="primary"
               @click="calculate"
-              :disabled="n_hand_tiles < 13 || is_calculating"
+              :disabled="numHandTiles < 13 || is_calculating"
               >計算を実行
             </b-button>
             <b-button class="mr-2" variant="primary" @click="clear_hand"
@@ -331,14 +325,14 @@
             class="mr-2"
             variant="primary"
             @click="generateImage"
-            :disabled="n_hand_tiles < 13"
+            :disabled="numHandTiles < 13"
             >画像で保存
           </b-button>
           <!-- テキストで保存するボタン -->
           <b-button
             variant="primary"
             v-clipboard:copy="generateText()"
-            :disabled="n_hand_tiles < 13"
+            :disabled="numHandTiles < 13"
             >テキストでコピー
           </b-button>
         </b-col>
@@ -351,7 +345,7 @@
           <!-- 天鳳 / 牌理 -->
           <b-button
             class="mr-2"
-            :disabled="n_hand_tiles % 3 != 2"
+            :disabled="numHandTiles % 3 != 2"
             :href="tenhoURL"
             target="_blank"
             variant="success"
@@ -362,7 +356,7 @@
           <b-button
             class="mr-2"
             :disabled="
-              n_hand_tiles != 14 ||
+              numHandTiles != 14 ||
               this.melded_blocks != 0 ||
               this.dora_indicators.length != 1
             "
@@ -400,7 +394,7 @@
           </b-tooltip>
           <!-- ツモアガリ確率計算機 -->
           <b-button
-            :disabled="n_hand_tiles != 14 || this.melded_blocks.length != 0"
+            :disabled="numHandTiles != 14 || this.melded_blocks.length != 0"
             variant="success"
             v-clipboard:copy="tumoProbStr"
             id="tooltip-tumoprob"
@@ -586,12 +580,12 @@ export default {
     },
 
     // 手牌の枚数
-    n_hand_tiles: function () {
+    numHandTiles: function () {
       return this.hand_tiles.length + this.melded_blocks.length * 3;
     },
 
     // 各牌の残り枚数
-    tile_counts: function () {
+    tileCounts: function () {
       // 初期化する。
       let counts = Array(34).fill(4).concat([1, 1, 1]);
 
@@ -722,7 +716,7 @@ export default {
       let tumo_tile = Aka2Normal(this.hand_tiles[this.hand_tiles.length - 1]);
       text += this.turn + " " + tumo_tile + "\n";
       // 2行目: 各牌の残り枚数
-      text += this.tile_counts.slice(0, -3).join("") + "\n";
+      text += this.tileCounts.slice(0, -3).join("") + "\n";
       // 3行目: 手牌の各牌の枚数
       text += this.toTiles34(this.hand_tiles).join("") + "\n";
       // 4行目: ドラ

@@ -4,7 +4,6 @@
       v-for="(tile, i) in get_block(block, seat)"
       :key="i"
       :tile="tile.tile"
-      :size="size"
       :type="tile.type"
     />
   </div>
@@ -16,21 +15,19 @@ import { Tile, Seat, MeldType } from "@/mahjong.js";
 
 export default {
   name: "MeldedBlock",
+  components: { TileImage },
   props: {
+    // ブロック
     block: {
       type: Object,
-      required: true
+      required: true,
     },
+    // どこから鳴いたか
     seat: {
       type: Number,
-      required: true
+      required: true,
     },
-    size: {
-      type: String,
-      default: "sm"
-    }
   },
-  components: { TileImage },
   methods: {
     get_relative_seat(my_seat, other_seat) {
       let rel_seat = my_seat - other_seat;
@@ -41,15 +38,15 @@ export default {
       let tiles = [];
       tiles.push({
         tile: block.tiles[0],
-        type: Seat.Kamitya == from ? "rotate1" : "upright"
+        type: Seat.Kamitya == from ? "rotate1" : "upright",
       });
       tiles.push({
         tile: block.tiles[1],
-        type: Seat.Toimen == from ? "rotate1" : "upright"
+        type: Seat.Toimen == from ? "rotate1" : "upright",
       });
       tiles.push({
         tile: block.tiles[2],
-        type: Seat.Simotya == from ? "rotate1" : "upright"
+        type: Seat.Simotya == from ? "rotate1" : "upright",
       });
 
       return tiles;
@@ -58,13 +55,13 @@ export default {
     create_ti_block(block, from) {
       let tiles = [];
       for (const tile of block.tiles) {
-        if (tile !== block.discarded_tile) {
+        if (tile !== block.discardedTile) {
           tiles.push({ tile: tile, type: "upright" });
         }
       }
       tiles.splice(from - 1, 0, {
-        tile: block.discarded_tile,
-        type: "rotate1"
+        tile: block.discardedTile,
+        type: "rotate1",
       });
 
       return tiles;
@@ -75,7 +72,7 @@ export default {
       for (const [i, tile] of block.tiles.entries()) {
         tiles.push({
           tile: i == 0 || i == 3 ? Tile.Null : tile,
-          type: "upright"
+          type: "upright",
         });
       }
 
@@ -86,16 +83,16 @@ export default {
       let tiles = [];
       tiles.push({
         tile: block.tiles[0],
-        type: Seat.Kamitya == from ? "rotate1" : "upright"
+        type: Seat.Kamitya == from ? "rotate1" : "upright",
       });
       tiles.push({
         tile: block.tiles[1],
-        type: Seat.Toimen == from ? "rotate1" : "upright"
+        type: Seat.Toimen == from ? "rotate1" : "upright",
       });
       tiles.push({ tile: block.tiles[2], type: "upright" });
       tiles.push({
         tile: block.tiles[3],
-        type: Seat.Simotya == from ? "rotate1" : "upright"
+        type: Seat.Simotya == from ? "rotate1" : "upright",
       });
 
       return tiles;
@@ -107,17 +104,17 @@ export default {
         if (i == from - 1) {
           tiles.push({
             tile: tile,
-            type: "rotate1"
+            type: "rotate1",
           });
         } else if (i == from) {
           tiles.push({
             tile: tile,
-            type: "rotate2"
+            type: "rotate2",
           });
         } else {
           tiles.push({
             tile: tile,
-            type: "upright"
+            type: "upright",
           });
         }
       }
@@ -151,8 +148,8 @@ export default {
       }
 
       return classes.join(" ");
-    }
-  }
+    },
+  },
 };
 </script>
 

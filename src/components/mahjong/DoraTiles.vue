@@ -1,6 +1,6 @@
 <template>
   <div class="dora_indicators">
-    <TileImage v-for="(tile, i) in 2" :key="i + 'ura1'" :tile="-1" size="sm" />
+    <TileImage v-for="(tile, i) in 2" :key="i + 'ura1'" :tile="-1" />
     <TileButton
       @add-tile="remove_dora"
       v-for="(tile, i) in dora_indicators"
@@ -11,7 +11,6 @@
       v-for="(tile, i) in 5 - dora_indicators.length"
       :key="i + 'ura2'"
       :tile="-1"
-      size="sm"
     />
   </div>
 </template>
