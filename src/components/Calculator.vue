@@ -53,7 +53,7 @@
           <b-form-group label-cols="3" label="手牌の種類" label-align="right">
             <b-form-radio-group
               id="input-syanten-type"
-              v-model="syanten_type"
+              v-model="syantenType"
               :options="syantenTypeOptions"
               button-variant="outline-primary"
               buttons
@@ -150,7 +150,7 @@
                   <li class="ml-3">
                     <DoraTiles
                       @remove-dora="removeDora"
-                      :DoraIndicators="dora_indicators"
+                      :DoraIndicators="doraIndicators"
                     />
                   </li>
                 </ul>
@@ -161,8 +161,8 @@
                 <HandAndMeldedBlocks
                   @remove-tile="removeTile"
                   @remove-block="removeMeld"
-                  :hand="hand_tiles"
-                  :melds="melded_blocks"
+                  :hand="hand"
+                  :melds="melds"
                 />
               </b-col>
             </b-row>
@@ -188,7 +188,7 @@
               <HandTileInput
                 @add-tile="addDora"
                 :tileCounts="tileCounts"
-                :numDoraTiles="dora_indicators.length"
+                :numDoraTiles="doraIndicators.length"
               />
             </b-tab>
             <b-tab title="明刻子">
@@ -234,13 +234,13 @@
               :disabled="numHandTiles < 13 || isCalculating"
               >計算を実行
             </b-button>
-            <b-button class="mr-2" variant="primary" @click="clear_hand"
+            <b-button class="mr-2" variant="primary" @click="clearHand"
               >手牌を初期化
             </b-button>
-            <b-button class="mr-2" variant="primary" @click="clear_all"
+            <b-button class="mr-2" variant="primary" @click="clearAll"
               >設定を初期化
             </b-button>
-            <b-button class="mr-2" variant="primary" @click="set_random_hand"
+            <b-button class="mr-2" variant="primary" @click="setRandomHand"
               >ランダムの手牌入力
             </b-button>
 
@@ -264,14 +264,14 @@
           <b-button
             class="mr-2"
             variant="primary"
-            @click="generateImage"
+            @click="downloadProblemAsImage"
             :disabled="numHandTiles < 13"
             >画像で保存
           </b-button>
           <!-- テキストで保存するボタン -->
           <b-button
             variant="primary"
-            v-clipboard:copy="generateText()"
+            v-clipboard:copy="copyProblemAsText()"
             :disabled="numHandTiles < 13"
             >テキストでコピー
           </b-button>
@@ -297,8 +297,8 @@
             class="mr-2"
             :disabled="
               numHandTiles != 14 ||
-              this.melded_blocks != 0 ||
-              this.dora_indicators.length != 1
+              this.melds != 0 ||
+              this.doraIndicators.length != 1
             "
             variant="success"
             @click="downloadHMR"
@@ -334,7 +334,7 @@
           </b-tooltip>
           <!-- ツモアガリ確率計算機 -->
           <b-button
-            :disabled="numHandTiles != 14 || this.melded_blocks.length != 0"
+            :disabled="numHandTiles != 14 || this.melds.length != 0"
             variant="success"
             v-clipboard:copy="tumoProbStr"
             id="tooltip-tumoprob"
@@ -406,15 +406,14 @@ export default {
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風
       turn: 3, // 現在の巡目
-      syanten_type: SyantenType.Normal, // 手牌の種類
-      dora_indicators: [Tile.Ton], // ドラ
+      syantenType: SyantenType.Normal, // 手牌の種類
+      doraIndicators: [Tile.Ton], // ドラ
       flag: [1, 2, 4, 8, 16, 32, 64], // フラグ
       maximize_target: 0,
-      hand_tiles: [], // 手牌
-      melded_blocks: [], // 副露ブロックの一覧
+      hand: [], // 手牌
+      melds: [], // 副露ブロックの一覧
       result: null, // 結果
       isCalculating: false,
-      Hand2String: Hand2String,
       Tile2String: Tile2String,
 
       // オプション
@@ -472,7 +471,7 @@ export default {
   computed: {
     // 手牌の枚数
     numHandTiles: function () {
-      return this.hand_tiles.length + this.melded_blocks.length * 3;
+      return this.hand.length + this.melds.length * 3;
     },
 
     // 各牌の残り枚数
@@ -489,27 +488,25 @@ export default {
       };
 
       // ドラ表示牌を除く
-      this.dora_indicators.forEach(minus_tile);
+      this.doraIndicators.forEach(minus_tile);
       // 手牌を除く
-      this.hand_tiles.forEach(minus_tile);
+      this.hand.forEach(minus_tile);
       // 副露ブロックを除く
-      this.melded_blocks.forEach((block) => block.tiles.forEach(minus_tile));
+      this.melds.forEach((block) => block.tiles.forEach(minus_tile));
 
       return counts;
     },
 
     // 「天鳳 / 牌理」の URL
     tenhoURL: function () {
-      return "https://tenhou.net/2/?q=" + Hand2TenhoString(this.hand_tiles);
+      return "https://tenhou.net/2/?q=" + Hand2TenhoString(this.hand);
     },
 
     // 「ツモアガリ確率計算機」用の文字列
     tumoProbStr: function () {
-      let hand_tiles = this.hand_tiles
-        .map((x) => Tile2TumoProbString.get(x))
-        .join(",");
+      let hand = this.hand.map((x) => Tile2TumoProbString.get(x)).join(",");
 
-      return hand_tiles;
+      return hand;
     },
   },
 
@@ -524,11 +521,11 @@ export default {
         zikaze: this.zikaze,
         bakaze: this.bakaze,
         turn: this.turn,
-        syanten_type: this.syanten_type,
-        dora_indicators: this.dora_indicators,
+        syanten_type: this.syantenType,
+        dora_indicators: this.doraIndicators,
         flag: this.flag.reduce((a, x) => (a += x), 0) + this.maximize_target,
-        hand_tiles: this.hand_tiles,
-        melded_blocks: this.melded_blocks,
+        hand_tiles: this.hand,
+        melded_blocks: this.melds,
       });
 
       let url =
@@ -554,131 +551,63 @@ export default {
         });
     },
 
-    generateImage() {
-      let target = document.querySelector("#problem");
-      let config = { useCORS: true };
-
-      html2canvas(target, config).then((canvas) => {
-        let src = canvas
-          .toDataURL("image/png")
-          .replace("image/png", "image/octet-stream");
-        //document.body.appendChild(canvas);
-        var a = document.createElement("a");
-        a.href = src;
-        console.log(a.href);
-        a.download = `${Hand2String(this.hand_tiles, this.melded_blocks)}.png`;
-        a.click();
-      });
-    },
-
-    generateText() {
-      return Problem2String(
-        this.bakaze,
-        this.zikaze,
-        this.turn,
-        this.dora_indicators,
-        this.hand_tiles,
-        this.melded_blocks
-      );
-    },
-
     /// 手牌を初期化する。
-    clear_hand() {
-      this.hand_tiles = [];
-      this.melded_blocks = [];
+    clearHand() {
+      this.hand = [];
+      this.melds = [];
       this.result = null;
     },
 
     /// 設定を初期化する。
-    clear_all() {
-      this.clear_hand();
+    clearAll() {
+      this.clearHand();
       this.zikaze = Tile.Ton;
       this.bakaze = Tile.Ton;
       this.turn = 3;
-      this.syanten_type = 1;
-      this.dora_indicators = [Tile.Ton];
-      this.flag = [
-        1, // 向聴戻し
-        2, // 手変わり
-        4, // ダブル立直
-        8, // 一発
-        16, // 海底自摸
-        32, // 裏ドラ
-        64, // 赤牌自摸
-      ];
-    },
-
-    downloadHMR() {
-      let filename = `${Hand2String(this.hand_tiles)}.hmr`;
-      let text = "";
-
-      // 1行目: "<巡目> <自摸牌>"
-      let tumo_tile = Aka2Normal(this.hand_tiles[this.hand_tiles.length - 1]);
-      text += this.turn + " " + tumo_tile + "\n";
-      // 2行目: 各牌の残り枚数
-      text += this.tileCounts.slice(0, -3).join("") + "\n";
-      // 3行目: 手牌の各牌の枚数
-      text += this.toTiles34(this.hand_tiles).join("") + "\n";
-      // 4行目: ドラ
-      let dora_tile = DoraHyozi2Dora[this.dora_indicators[0]];
-      text += this.toTiles34([dora_tile]).join("") + "\n";
-      // 5行目: 捨牌
-      text += Array(18).fill(-1).join("") + "\n";
-
-      let blob = new Blob([text], { type: "text/plain" });
-      let link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = filename;
-      link.click();
-    },
-
-    /// 長さ34の配列形式にする。
-    toTiles34(tiles) {
-      let tiles34 = Array(34).fill(0);
-
-      for (let tile of tiles) tiles34[Aka2Normal(tile)]++;
-
-      return tiles34;
+      this.syantenType = SyantenType.Normal;
+      this.doraIndicators = [Tile.Ton];
+      this.flag = [1, 2, 4, 8, 16, 32, 64];
+      this.maximize_target = 0;
     },
 
     /// 牌を手牌に追加する。
     addTile(tile) {
-      this.hand_tiles.push(tile);
-      sort_tiles(this.hand_tiles);
+      this.hand.push(tile);
+      sort_tiles(this.hand);
     },
 
     /// 牌を手牌から削除する。
     removeTile(tile) {
-      let i = this.hand_tiles.indexOf(tile);
-      if (i > -1) this.hand_tiles.splice(i, 1);
+      let i = this.hand.indexOf(tile);
+      if (i > -1) this.hand.splice(i, 1);
     },
 
     /// 牌を副露ブロックの一覧に追加する。
     addMeld(block) {
-      this.melded_blocks.push(block);
+      this.melds.push(block);
     },
 
     /// 牌を副露ブロックの一覧から削除する。
     removeMeld(block) {
-      let i = this.melded_blocks.findIndex(
+      let i = this.melds.findIndex(
         (x) => JSON.stringify(x) == JSON.stringify(block)
       );
-      if (i > -1) this.melded_blocks.splice(i, 1);
+      if (i > -1) this.melds.splice(i, 1);
     },
 
     /// 牌をドラ表示牌の一覧に追加する。
     addDora(tile) {
-      this.dora_indicators.push(tile);
+      this.doraIndicators.push(tile);
     },
 
     /// 牌をドラ表示牌の一覧から削除する。
     removeDora(tile) {
-      let i = this.dora_indicators.indexOf(tile);
-      if (i > -1) this.dora_indicators.splice(i, 1);
+      let i = this.doraIndicators.indexOf(tile);
+      if (i > -1) this.doraIndicators.splice(i, 1);
     },
 
-    set_random_hand() {
-      this.clear_hand();
+    /// ランダムな手牌を設定する。
+    setRandomHand() {
       const shuffle = ([...array]) => {
         for (let i = array.length - 1; i >= 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -687,17 +616,18 @@ export default {
         return array;
       };
 
+      // 手牌をクリアする。
+      this.clearHand();
+
       // 牌山を作成する。
       let yama = [];
-      for (let i = 0; i < 27; ++i) {
-        yama = yama.concat(Array(4).fill(i));
-      }
+      for (let i = 0; i < 27; ++i) yama = yama.concat(Array(4).fill(i));
       yama[Tile.Manzu5 * 4] = Tile.AkaManzu5;
       yama[Tile.Pinzu5 * 4] = Tile.AkaPinzu5;
       yama[Tile.Sozu5 * 4] = Tile.AkaSozu5;
 
       // ドラ表示牌は削除する。
-      for (let tile of this.dora_indicators) {
+      for (let tile of this.doraIndicators) {
         let i = yama.indexOf(tile);
         yama.splice(i, 1);
       }
@@ -705,10 +635,75 @@ export default {
       // 先牌する。
       yama = shuffle(yama);
 
-      let hand_tiles = yama.slice(0, 14);
-      sort_tiles(hand_tiles);
+      // 先頭14枚を取り出す。
+      let hand = yama.slice(0, 14);
 
-      this.hand_tiles = hand_tiles;
+      // 理牌する。
+      sort_tiles(hand);
+
+      this.hand = hand;
+    },
+
+    // 牌姿をダウンロードする。
+    downloadProblemAsImage() {
+      let target = document.querySelector("#problem");
+      let config = { useCORS: true };
+
+      html2canvas(target, config).then((canvas) => {
+        let src = canvas
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        var a = document.createElement("a");
+        a.href = src;
+        console.log(a.href);
+        a.download = `${Hand2String(this.hand, this.melds)}.png`;
+        a.click();
+      });
+    },
+
+    // 牌姿をテキストでコピーする。
+    copyProblemAsText() {
+      return Problem2String(
+        this.bakaze,
+        this.zikaze,
+        this.turn,
+        this.doraIndicators,
+        this.hand,
+        this.melds
+      );
+    },
+
+    /// 牌姿を一人麻雀練習機形式でダウンロードする。
+    downloadHMR() {
+      const toTiles34 = (tiles) => {
+        let tiles34 = Array(34).fill(0);
+
+        for (let tile of tiles) tiles34[Aka2Normal(tile)]++;
+
+        return tiles34;
+      };
+
+      let filename = `${Hand2String(this.hand)}.hmr`;
+      let text = "";
+
+      // 1行目: "<巡目> <自摸牌>"
+      let tumo_tile = Aka2Normal(this.hand[this.hand.length - 1]);
+      text += this.turn + " " + tumo_tile + "\n";
+      // 2行目: 各牌の残り枚数
+      text += this.tileCounts.slice(0, -3).join("") + "\n";
+      // 3行目: 手牌の各牌の枚数
+      text += toTiles34(this.hand).join("") + "\n";
+      // 4行目: ドラ
+      let dora_tile = DoraHyozi2Dora[this.doraIndicators[0]];
+      text += toTiles34([dora_tile]).join("") + "\n";
+      // 5行目: 捨牌
+      text += Array(18).fill(-1).join("") + "\n";
+
+      let blob = new Blob([text], { type: "text/plain" });
+      let link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
     },
   },
 };
