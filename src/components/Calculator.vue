@@ -88,20 +88,6 @@
             </b-tooltip>
           </b-form-group>
 
-          <!-- ドラ -->
-          <!-- <b-form-group
-            label-cols="2"
-            content-cols="4"
-            label="ドラ表示牌"
-            label-for="input-dora-indicators"
-            label-align="right"
-          >
-            <DoraTiles
-              @remove-dora="remove_dora"
-              :dora_indicators="dora_indicators"
-            />
-          </b-form-group> -->
-
           <!-- 考慮する項目 -->
           <b-form-group
             label-cols="2"
@@ -177,22 +163,6 @@
               </ul>
             </b-tooltip>
           </b-form-group>
-
-          <!-- 牌の枚数 -->
-          <!-- <b-form-group
-            label-cols="2"
-            content-cols="2"
-            label="牌の枚数"
-            label-for="input-n-hand-tiles"
-            label-align="right"
-          >
-            <b-form-input
-              v-model="numHandTiles"
-              id="input-n-hand-tiles"
-             
-              :readonly="true"
-            ></b-form-input>
-          </b-form-group> -->
         </b-col>
       </b-row>
 
@@ -209,7 +179,7 @@
                   <li class="ml-3">{{ turn }}巡目</li>
                   <li class="ml-3">
                     <DoraTiles
-                      @remove-dora="remove_dora"
+                      @remove-dora="removeDora"
                       :DoraIndicators="dora_indicators"
                     />
                   </li>
@@ -219,10 +189,10 @@
             <b-row class="mt-3">
               <b-col>
                 <HandAndMeldedBlocks
-                  @remove-tile="remove_tile"
-                  @remove-block="remove_meld"
-                  :hand_tiles="hand_tiles"
-                  :melded_blocks="melded_blocks"
+                  @remove-tile="removeTile"
+                  @remove-block="removeMeld"
+                  :hand="hand_tiles"
+                  :melds="melded_blocks"
                 />
               </b-col>
             </b-row>
@@ -233,10 +203,10 @@
       <!-- 手牌及び副露ブロックの入力欄 -->
       <b-row>
         <b-col>
-          <b-tabs v-model="select_tab">
+          <b-tabs>
             <b-tab title="手牌" active>
               <HandTileInput
-                @add-tile="add_tile"
+                @add-tile="addTile"
                 :tileCounts="tileCounts"
                 :numHandTiles="numHandTiles"
               />
@@ -246,35 +216,35 @@
                 ドラはドラ表示牌で指定するので注意してください。槓ドラも含め、最大5枚まで設定できます。
               </p>
               <HandTileInput
-                @add-tile="add_dora"
+                @add-tile="addDora"
                 :tileCounts="tileCounts"
                 :numDoraTiles="dora_indicators.length"
               />
             </b-tab>
             <b-tab title="明刻子">
               <MinkotuInput
-                @add-block="add_meld"
+                @add-block="addMeld"
                 :tileCounts="tileCounts"
                 :numHandTiles="numHandTiles"
               />
             </b-tab>
             <b-tab title="明順子">
               <MinsyuntuInput
-                @add-block="add_meld"
+                @add-block="addMeld"
                 :tileCounts="tileCounts"
                 :numHandTiles="numHandTiles"
               />
             </b-tab>
             <b-tab title="明槓子">
               <MinkantuInput
-                @add-block="add_meld"
+                @add-block="addMeld"
                 :tileCounts="tileCounts"
                 :numHandTiles="numHandTiles"
               />
             </b-tab>
             <b-tab title="暗槓子">
               <AnkantuInput
-                @add-block="add_meld"
+                @add-block="addMeld"
                 :tileCounts="tileCounts"
                 :numHandTiles="numHandTiles"
               />
@@ -475,7 +445,6 @@ export default {
       melded_blocks: [], // 副露ブロックの一覧
       result: null, // 結果
       is_calculating: false,
-      select_tab: 0,
       Hand2String: Hand2String,
       Tile2String: Tile2String,
 
@@ -705,7 +674,6 @@ export default {
         32, // 裏ドラ
         64, // 赤牌自摸
       ];
-      this.select_tab = 0;
     },
 
     downloadHMR() {
@@ -742,24 +710,24 @@ export default {
     },
 
     /// 牌を手牌に追加する。
-    add_tile(tile) {
+    addTile(tile) {
       this.hand_tiles.push(tile);
       sort_tiles(this.hand_tiles);
     },
 
     /// 牌を手牌から削除する。
-    remove_tile(tile) {
+    removeTile(tile) {
       let i = this.hand_tiles.indexOf(tile);
       if (i > -1) this.hand_tiles.splice(i, 1);
     },
 
     /// 牌を副露ブロックの一覧に追加する。
-    add_meld(block) {
+    addMeld(block) {
       this.melded_blocks.push(block);
     },
 
     /// 牌を副露ブロックの一覧から削除する。
-    remove_meld(block) {
+    removeMeld(block) {
       let i = this.melded_blocks.findIndex(
         (x) => JSON.stringify(x) == JSON.stringify(block)
       );
@@ -767,12 +735,12 @@ export default {
     },
 
     /// 牌をドラ表示牌の一覧に追加する。
-    add_dora(tile) {
+    addDora(tile) {
       this.dora_indicators.push(tile);
     },
 
     /// 牌をドラ表示牌の一覧から削除する。
-    remove_dora(tile) {
+    removeDora(tile) {
       let i = this.dora_indicators.indexOf(tile);
       if (i > -1) this.dora_indicators.splice(i, 1);
     },

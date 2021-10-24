@@ -3,7 +3,7 @@
     <!-- 手牌 -->
     <div class="hand_tiles">
       <TileButton
-        v-for="(tile, i) in hand_tiles"
+        v-for="(tile, i) in hand"
         :key="i"
         :tile="tile"
         @click-tile="remove_tile"
@@ -11,7 +11,7 @@
     </div>
     <!-- 副露ブロックの一覧 -->
     <BlockButton
-      v-for="(block, i) in melded_blocks.slice().reverse()"
+      v-for="(block, i) in melds.slice().reverse()"
       :key="i"
       :block="block"
       @click-block="remove_block"
@@ -31,12 +31,12 @@ export default {
   },
   props: {
     // 手牌
-    hand_tiles: {
+    hand: {
       type: Array,
       required: true,
     },
     // 副露ブロックの一覧
-    melded_blocks: {
+    melds: {
       type: Array,
       required: true,
     },
