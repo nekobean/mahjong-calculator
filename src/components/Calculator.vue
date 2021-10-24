@@ -5,34 +5,22 @@
       <b-row>
         <b-col>
           <!-- 場風 -->
-          <b-form-group
-            label-cols="2"
-            content-cols="4"
-            label="場風"
-            label-for="input-bakaze"
-            label-align="right"
-          >
+          <b-form-group label-cols="3" label="場風" label-align="right">
             <b-form-radio-group
               id="input-bakaze"
               v-model="bakaze"
-              :options="input_bakaze_options"
+              :options="bakazeOptions"
               button-variant="outline-primary"
               buttons
             ></b-form-radio-group>
           </b-form-group>
 
           <!-- 自風 -->
-          <b-form-group
-            label-cols="2"
-            content-cols="4"
-            label="自風"
-            label-for="input-zikaze"
-            label-align="right"
-          >
+          <b-form-group label-cols="3" label="自風" label-align="right">
             <b-form-radio-group
               id="input-zikaze"
               v-model="zikaze"
-              :options="input_zikaze_options"
+              :options="zikazeOptions"
               button-variant="outline-primary"
               buttons
             ></b-form-radio-group>
@@ -49,10 +37,9 @@
 
           <!-- 巡目 -->
           <b-form-group
-            label-cols="2"
-            content-cols="2"
+            label-cols="3"
+            content-cols="4"
             label="現在の巡目"
-            label-for="input-turn"
             label-align="right"
           >
             <b-form-select v-model="turn" id="input-turn">
@@ -63,17 +50,11 @@
           </b-form-group>
 
           <!-- 手牌の種類 -->
-          <b-form-group
-            label-cols="2"
-            content-cols="4"
-            label="手牌の種類"
-            label-for="input-syanten-type"
-            label-align="right"
-          >
+          <b-form-group label-cols="3" label="手牌の種類" label-align="right">
             <b-form-radio-group
               id="input-syanten-type"
               v-model="syanten_type"
-              :options="input_syanten_type_options"
+              :options="syantenTypeOptions"
               button-variant="outline-primary"
               buttons
             ></b-form-radio-group>
@@ -89,16 +70,11 @@
           </b-form-group>
 
           <!-- 考慮する項目 -->
-          <b-form-group
-            label-cols="2"
-            label="考慮する項目"
-            label-for="input-flag"
-            label-align="right"
-          >
+          <b-form-group label-cols="3" label="考慮する項目" label-align="right">
             <b-form-checkbox-group
               id="input-flag"
               v-model="flag"
-              :options="input_flag_options"
+              :options="flagOptions"
               switches
             ></b-form-checkbox-group>
 
@@ -131,17 +107,11 @@
           </b-form-group>
 
           <!-- 考慮する項目 -->
-          <b-form-group
-            label-cols="2"
-            content-cols="4"
-            label="重視する項目"
-            label-for="input-maximize-target"
-            label-align="right"
-          >
+          <b-form-group label-cols="3" label="重視する項目" label-align="right">
             <b-form-radio-group
               id="input-maximize-target"
               v-model="maximize_target"
-              :options="input_maximize_target_options"
+              :options="maximizeTargetOptions"
               button-variant="outline-primary"
               buttons
             ></b-form-radio-group>
@@ -256,12 +226,12 @@
       <!-- ボタン -->
       <b-row class="mb-2">
         <b-col>
-          <b-overlay :show="is_calculating" rounded="sm">
+          <b-overlay :show="isCalculating" rounded="sm">
             <b-button
               class="mr-2"
               variant="primary"
               @click="calculate"
-              :disabled="numHandTiles < 13 || is_calculating"
+              :disabled="numHandTiles < 13 || isCalculating"
               >計算を実行
             </b-button>
             <b-button class="mr-2" variant="primary" @click="clear_hand"
@@ -433,7 +403,6 @@ export default {
   data: function () {
     return {
       version: "0.9.0",
-      test: "",
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風
       turn: 3, // 現在の巡目
@@ -444,25 +413,25 @@ export default {
       hand_tiles: [], // 手牌
       melded_blocks: [], // 副露ブロックの一覧
       result: null, // 結果
-      is_calculating: false,
+      isCalculating: false,
       Hand2String: Hand2String,
       Tile2String: Tile2String,
 
       // オプション
       // 場風
-      input_bakaze_options: [
+      bakazeOptions: [
         { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
         { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
       ],
       // 自風
-      input_zikaze_options: [
+      zikazeOptions: [
         { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
         { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
         { value: Tile.Sya, text: Tile2String.get(Tile.Sya) },
         { value: Tile.Pe, text: Tile2String.get(Tile.Pe) },
       ],
       // 手牌の種類
-      input_syanten_type_options: [
+      syantenTypeOptions: [
         {
           value: SyantenType.Normal,
           text: SyantenType2String.get(SyantenType.Normal),
@@ -477,7 +446,7 @@ export default {
         },
       ],
       // 考慮する項目
-      input_flag_options: [
+      flagOptions: [
         { value: 1, text: "向聴戻し" },
         { value: 2, text: "手変わり" },
         { value: 4, text: "ダブル立直" },
@@ -487,7 +456,7 @@ export default {
         { value: 64, text: "赤牌自摸" },
       ],
       // 重視する項目
-      input_maximize_target_options: [
+      maximizeTargetOptions: [
         {
           value: 0,
           text: "期待値最大化",
@@ -501,53 +470,6 @@ export default {
   },
 
   computed: {
-    // 手牌の枚数
-    tenhoURL: function () {
-      return "https://tenhou.net/2/?q=" + Hand2TenhoString(this.hand_tiles);
-    },
-
-    // tumoProbURL: function() {
-    //   // ドラは最大4枚、赤ドラは非対応
-    //   let dora_tiles = this.dora_indicators
-    //     .map(x => DoraHyozi2Dora[x])
-    //     .slice(0, 4)
-    //     .map(x => Tile2TumoProbString.get(x))
-    //     .join(",");
-
-    //   // 手牌
-    //   let hand_tiles = this.hand_tiles
-    //     .map(x => Tile2TumoProbString.get(x))
-    //     .join(",");
-
-    //   // 手変わりを考慮するかどうか
-    //   let tegawari =
-    //     this.flag.indexOf(1) != -1 || this.flag.indexOf(2) != -1 ? 1 : 0;
-
-    //   let query = {
-    //     bakaze: this.bakaze - 27,
-    //     jikaze: this.zikaze - 27,
-    //     text0: dora_tiles,
-    //     text1: hand_tiles,
-    //     tsumo_num: tegawari
-    //   };
-    //   const searchParams = new URLSearchParams();
-    //   Object.keys(query).forEach(k => searchParams.append(k, query[k]));
-
-    //   let url =
-    //     "http://critter.sakura.ne.jp/agari_keisan3.cgi?" +
-    //     searchParams.toString();
-
-    //   return url;
-    // },
-
-    tumoProbStr: function () {
-      let hand_tiles = this.hand_tiles
-        .map((x) => Tile2TumoProbString.get(x))
-        .join(",");
-
-      return hand_tiles;
-    },
-
     // 手牌の枚数
     numHandTiles: function () {
       return this.hand_tiles.length + this.melded_blocks.length * 3;
@@ -575,11 +497,25 @@ export default {
 
       return counts;
     },
+
+    // 「天鳳 / 牌理」の URL
+    tenhoURL: function () {
+      return "https://tenhou.net/2/?q=" + Hand2TenhoString(this.hand_tiles);
+    },
+
+    // 「ツモアガリ確率計算機」用の文字列
+    tumoProbStr: function () {
+      let hand_tiles = this.hand_tiles
+        .map((x) => Tile2TumoProbString.get(x))
+        .join(",");
+
+      return hand_tiles;
+    },
   },
 
   methods: {
     calculate() {
-      this.is_calculating = true;
+      this.isCalculating = true;
       this.result = null;
 
       // JSON を作成する。
@@ -595,14 +531,10 @@ export default {
         melded_blocks: this.melded_blocks,
       });
 
-      let url;
-
-      if (
-        location.hostname === "localhost" ||
-        location.hostname === "127.0.0.1"
-      )
-        url = "http://localhost:8888";
-      else url = "/apps/mahjong-nanikiru-simulator/post.py";
+      let url =
+        location.hostname === "localhost"
+          ? "http://localhost:8888"
+          : "/apps/mahjong-nanikiru-simulator/post.py";
 
       // POST する。
       axios
@@ -618,7 +550,7 @@ export default {
           };
         })
         .finally(() => {
-          this.is_calculating = false;
+          this.isCalculating = false;
         });
     },
 

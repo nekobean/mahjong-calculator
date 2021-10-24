@@ -20,6 +20,6 @@ export default {
 
 <style scoped>
 #simulator {
-  width: 900px;
+  width: 700px;
 }
 </style>

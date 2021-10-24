@@ -254,7 +254,7 @@
         </template>
       </div> -->
 
-      <b-container class="bv-example-row">
+      <b-container>
         <b-row>
           <b-col>
             <Adsense
