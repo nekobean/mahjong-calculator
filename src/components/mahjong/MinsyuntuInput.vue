@@ -5,14 +5,14 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ManzuTiles.slice(0, 7)"
             :key="tile"
             :block="createMinsyuntu(tile)"
             :disabled="disabled(createMinsyuntu(tile))"
           />
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ManzuTiles.slice(2, 5)"
             :key="tile + 'aka'"
             :block="createMinsyuntu(tile, true)"
@@ -24,14 +24,14 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in PinzuTiles.slice(0, 7)"
             :key="tile"
             :block="createMinsyuntu(tile)"
             :disabled="disabled(createMinsyuntu(tile))"
           />
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in PinzuTiles.slice(2, 5)"
             :key="tile + 'aka'"
             :block="createMinsyuntu(tile, true)"
@@ -43,14 +43,14 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in SozuTiles.slice(0, 7)"
             :key="tile"
             :block="createMinsyuntu(tile)"
             :disabled="disabled(createMinsyuntu(tile))"
           />
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in SozuTiles.slice(2, 5)"
             :key="tile + 'aka'"
             :block="createMinsyuntu(tile, true)"
@@ -121,7 +121,7 @@ export default {
     add_block(block) {
       this.$emit("add-block", block);
     },
-
+    // 無効にするかどうかを返す。
     disabled(block) {
       return (
         this.numHandTiles >= 12 ||

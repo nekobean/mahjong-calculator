@@ -1,7 +1,7 @@
 <template>
   <div
     :class="disabled ? 'disabled' : 'enabled'"
-    @click="$emit('add-tile', tile)"
+    @click="$emit('click-tile', tile)"
   >
     <TileImage :tile="tile" />
   </div>

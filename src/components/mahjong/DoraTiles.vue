@@ -1,17 +1,9 @@
 <template>
   <div class="dora_indicators">
-    <TileImage v-for="(tile, i) in 2" :key="i + 'ura1'" :tile="-1" />
-    <TileButton
-      @add-tile="remove_dora"
-      v-for="(tile, i) in dora_indicators"
-      :key="i"
-      :tile="tile"
-    />
-    <TileImage
-      v-for="(tile, i) in 5 - dora_indicators.length"
-      :key="i + 'ura2'"
-      :tile="-1"
-    />
+    <template v-for="(tile, i) in Wanpai">
+      <TileImage v-if="tile == -1" :key="i" :tile="tile" />
+      <TileButton v-else :key="i" :tile="tile" @click-tile="removeDora" />
+    </template>
   </div>
 </template>
 
@@ -26,13 +18,24 @@ export default {
     TileImage,
   },
   props: {
-    dora_indicators: {
+    DoraIndicators: {
       type: Array,
       required: true,
     },
   },
+  computed: {
+    Wanpai: function () {
+      let tiles = Array(7).fill(-1);
+
+      for (const [i, tile] of this.DoraIndicators.entries())
+        tiles[i + 2] = tile;
+
+      return tiles;
+    },
+  },
   methods: {
-    remove_dora(tile) {
+    // ドラを削除するイベントを送出する
+    removeDora(tile) {
       this.$emit("remove-dora", tile);
     },
   },

@@ -5,14 +5,14 @@
       <b-tr>
         <b-td class="tiles">
           <TileButton
-            @add-tile="add_tile"
+            @click-tile="add_tile"
             v-for="tile in ManzuTiles"
             :key="tile"
             :tile="tile"
             :disabled="disabled(tile)"
           />
           <TileButton
-            @add-tile="add_tile"
+            @click-tile="add_tile"
             :tile="Tile.AkaManzu5"
             :disabled="disabled(Tile.AkaManzu5)"
           />
@@ -22,14 +22,14 @@
       <b-tr>
         <b-td class="tiles">
           <TileButton
-            @add-tile="add_tile"
+            @click-tile="add_tile"
             v-for="tile in PinzuTiles"
             :key="tile"
             :tile="tile"
             :disabled="disabled(tile)"
           />
           <TileButton
-            @add-tile="add_tile"
+            @click-tile="add_tile"
             :tile="Tile.AkaPinzu5"
             :disabled="disabled(Tile.AkaPinzu5)"
           />
@@ -39,14 +39,14 @@
       <b-tr>
         <b-td class="tiles">
           <TileButton
-            @add-tile="add_tile"
+            @click-tile="add_tile"
             v-for="tile in SozuTiles"
             :key="tile"
             :tile="tile"
             :disabled="disabled(tile)"
           />
           <TileButton
-            @add-tile="add_tile"
+            @click-tile="add_tile"
             :tile="Tile.AkaSozu5"
             :disabled="disabled(Tile.AkaSozu5)"
           />
@@ -56,7 +56,7 @@
       <b-tr>
         <b-td class="tiles">
           <TileButton
-            @add-tile="add_tile"
+            @click-tile="add_tile"
             v-for="tile in ZihaiTiles"
             :key="tile"
             :tile="tile"
@@ -114,9 +114,12 @@ export default {
       this.$emit("add-tile", tile);
     },
 
+    // 無効にするかどうかを返す。
     disabled(tile) {
       if (this.numHandTiles)
+        // 手牌入力欄の場合
         return this.numHandTiles >= 14 || this.tileCounts[tile] == 0;
+      // ドラ表示牌入力欄の場合
       else return this.numDoraTiles >= 5 || this.tileCounts[tile] == 0;
     },
   },

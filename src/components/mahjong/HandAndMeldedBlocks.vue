@@ -1,20 +1,20 @@
 <template>
-  <div :class="get_class">
+  <div class="hand_and_melded_blocks">
     <!-- 手牌 -->
     <div class="hand_tiles">
       <TileButton
-        @add-tile="remove_tile"
         v-for="(tile, i) in hand_tiles"
         :key="i"
         :tile="tile"
+        @click-tile="remove_tile"
       />
     </div>
     <!-- 副露ブロックの一覧 -->
     <BlockButton
-      @add-block="remove_block"
       v-for="(block, i) in melded_blocks.slice().reverse()"
       :key="i"
       :block="block"
+      @click-block="remove_block"
     />
   </div>
 </template>
@@ -30,17 +30,15 @@ export default {
     BlockButton,
   },
   props: {
+    // 手牌
     hand_tiles: {
       type: Array,
       required: true,
     },
+    // 副露ブロックの一覧
     melded_blocks: {
       type: Array,
       required: true,
-    },
-    size: {
-      type: String,
-      default: "sm",
     },
   },
   methods: {
@@ -52,15 +50,6 @@ export default {
       this.$emit("remove-block", block);
     },
   },
-
-  computed: {
-    // 手牌の枚数
-    get_class: function () {
-      return this.size == "lg"
-        ? "hand_and_melded_blocks"
-        : "hand_and_melded_blocks_sm";
-    },
-  },
 };
 </script>
 
@@ -68,23 +57,12 @@ export default {
 .hand_and_melded_blocks {
   display: flex;
   flex-wrap: wrap;
-  height: 80px;
-}
-
-.hand_and_melded_blocks_sm {
-  display: flex;
-  flex-wrap: wrap;
   height: 50px;
-}
-
-.hand_and_melded_blocks_sm > * {
-  align-self: flex-end;
-  margin-right: 5px;
 }
 
 .hand_and_melded_blocks > * {
   align-self: flex-end;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .hand_tiles {

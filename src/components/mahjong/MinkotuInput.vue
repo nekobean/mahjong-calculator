@@ -5,14 +5,14 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ManzuTiles"
             :key="tile"
             :block="createMinkotu(tile)"
             :disabled="disabled(createMinkotu(tile))"
           />
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             :block="createMinkotu(Tile.Manzu5, true)"
             :disabled="disabled(createMinkotu(Tile.Manzu5, true))"
           />
@@ -22,14 +22,14 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in PinzuTiles"
             :key="tile"
             :block="createMinkotu(tile)"
             :disabled="disabled(createMinkotu(tile))"
           />
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             :block="createMinkotu(Tile.Pinzu5, true)"
             :disabled="disabled(createMinkotu(Tile.Pinzu5, true))"
           />
@@ -39,14 +39,14 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in SozuTiles"
             :key="tile"
             :block="createMinkotu(tile)"
             :disabled="disabled(createMinkotu(tile))"
           />
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             :block="createMinkotu(Tile.Sozu5, true)"
             :disabled="disabled(createMinkotu(Tile.Sozu5, true))"
           />
@@ -56,7 +56,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ZihaiTiles"
             :key="tile"
             :block="createMinkotu(tile)"
@@ -104,7 +104,7 @@ export default {
     };
   },
   methods: {
-    // 明刻子を作成する
+    // 明刻子を作成する。
     createMinkotu(tile, akahai = false) {
       let tiles = Array(3).fill(tile);
 
@@ -126,8 +126,14 @@ export default {
       this.$emit("add-block", block);
     },
 
+    // 無効にするかどうかを返す。
     disabled(block) {
-      return this.numHandTiles >= 12 || this.tileCounts[block.tiles[2]] < 3;
+      return (
+        // 手牌が12枚以上、牌が3枚残っていない、または赤牌が残っていない場合
+        this.numHandTiles >= 12 ||
+        this.tileCounts[block.tiles[2]] < 3 ||
+        this.tileCounts[block.tiles[0]] == 0
+      );
     },
   },
 };

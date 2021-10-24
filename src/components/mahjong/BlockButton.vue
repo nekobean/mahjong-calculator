@@ -1,7 +1,7 @@
 <template>
   <div
     :class="disabled ? 'disabled' : 'enabled'"
-    @click="$emit('add-block', block)"
+    @click="$emit('click-block', block)"
   >
     <MeldedBlock :block="block" :seat="0" />
   </div>

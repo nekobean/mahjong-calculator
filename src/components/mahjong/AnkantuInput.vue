@@ -5,7 +5,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ManzuTiles"
             :key="tile"
             :block="createAnkantuBlock(tile)"
@@ -17,7 +17,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in PinzuTiles"
             :key="tile"
             :block="createAnkantuBlock(tile)"
@@ -29,7 +29,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in SozuTiles"
             :key="tile"
             :block="createAnkantuBlock(tile)"
@@ -41,7 +41,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ZihaiTiles"
             :key="tile"
             :block="createAnkantuBlock(tile)"
@@ -92,9 +92,14 @@ export default {
     };
   },
   methods: {
-    // 暗槓子を作成する
+    // 暗槓子を作成する。
     createAnkantuBlock(tile) {
       let tiles = Array(4).fill(tile);
+
+      // 槓子が赤牌を含む場合、1枚目を赤牌にする。
+      if (tile == Tile.Manzu5) tiles[0] = Tile.AkaManzu5;
+      else if (tile == Tile.Pinzu5) tiles[0] = Tile.AkaPinzu5;
+      else if (tile == Tile.Sozu5) tiles[0] = Tile.AkaSozu5;
 
       return {
         type: MeldType.Ankan,
@@ -108,7 +113,9 @@ export default {
       this.$emit("add-block", block);
     },
 
+    // 無効にするかどうかを返す。
     disabled(block) {
+      // 手牌が12枚以上、または牌が4枚残っていない場合
       return this.numHandTiles >= 12 || this.tileCounts[block.tiles[3]] != 4;
     },
   },

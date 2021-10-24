@@ -210,7 +210,7 @@
                   <li class="ml-3">
                     <DoraTiles
                       @remove-dora="remove_dora"
-                      :dora_indicators="dora_indicators"
+                      :DoraIndicators="dora_indicators"
                     />
                   </li>
                 </ul>

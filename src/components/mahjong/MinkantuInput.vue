@@ -5,7 +5,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ManzuTiles"
             :key="tile"
             :block="createMinkantu(tile)"
@@ -17,7 +17,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in PinzuTiles"
             :key="tile"
             :block="createMinkantu(tile)"
@@ -29,7 +29,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in SozuTiles"
             :key="tile"
             :block="createMinkantu(tile)"
@@ -41,7 +41,7 @@
       <b-tr>
         <b-td class="melded_blocks">
           <BlockButton
-            @add-block="add_block"
+            @click-block="add_block"
             v-for="tile in ZihaiTiles"
             :key="tile"
             :block="createMinkantu(tile)"
@@ -89,7 +89,7 @@ export default {
     };
   },
   methods: {
-    // 明槓子を作成する
+    // 明槓子を作成する。
     createMinkantu(tile) {
       let tiles = Array(4).fill(tile);
 
@@ -110,7 +110,9 @@ export default {
       this.$emit("add-block", block);
     },
 
+    // 無効にするかどうかを返す。
     disabled(block) {
+      // 手牌が12枚以上、または牌が4枚残っていない場合
       return this.numHandTiles >= 12 || this.tileCounts[block.tiles[3]] != 4;
     },
   },

@@ -142,10 +142,7 @@ export default {
     get_classes() {
       let classes = ["melded_block"];
 
-      if (this.block.type == "Kakan") {
-        if (this.size == "sm") classes.push("kakan_small");
-        else classes.push("kakan_large");
-      }
+      if (this.block.type == "Kakan") classes.push("kakan_small");
 
       return classes.join(" ");
     },
