@@ -231,7 +231,7 @@
               class="mr-2"
               variant="primary"
               @click="calculate"
-              :disabled="numHandTiles < 13 || isCalculating"
+              :disabled="numHandTiles != 14 || isCalculating"
               >計算を実行
             </b-button>
             <b-button class="mr-2" variant="primary" @click="clearHand"
@@ -240,7 +240,7 @@
             <b-button class="mr-2" variant="primary" @click="clearAll"
               >設定を初期化
             </b-button>
-            <b-button class="mr-2" variant="primary" @click="setRandomHand"
+            <b-button variant="primary" @click="setRandomHand"
               >ランダムの手牌入力
             </b-button>
 
@@ -256,7 +256,7 @@
         </b-col>
       </b-row>
 
-      <!-- 他ツール -->
+      <!-- 牌姿の保存 -->
       <b-row align-v="center" class="mb-2">
         <b-col cols="2"> 牌姿を保存 </b-col>
         <b-col>
@@ -265,14 +265,14 @@
             class="mr-2"
             variant="primary"
             @click="downloadProblemAsImage"
-            :disabled="numHandTiles < 13"
+            :disabled="numHandTiles != 14"
             >画像で保存
           </b-button>
           <!-- テキストで保存するボタン -->
           <b-button
             variant="primary"
             v-clipboard:copy="copyProblemAsText()"
-            :disabled="numHandTiles < 13"
+            :disabled="numHandTiles != 14"
             >テキストでコピー
           </b-button>
         </b-col>
@@ -280,7 +280,7 @@
 
       <!-- 他ツール -->
       <b-row align-v="center">
-        <b-col cols="2"> 他ツールで検証 </b-col>
+        <b-col cols="2"> 他ツール </b-col>
         <b-col>
           <!-- 天鳳 / 牌理 -->
           <b-button
@@ -297,8 +297,8 @@
             class="mr-2"
             :disabled="
               numHandTiles != 14 ||
-              this.melds != 0 ||
-              this.doraIndicators.length != 1
+              melds.length != 0 ||
+              doraIndicators.length != 1
             "
             variant="success"
             @click="downloadHMR"
@@ -334,7 +334,7 @@
           </b-tooltip>
           <!-- ツモアガリ確率計算機 -->
           <b-button
-            :disabled="numHandTiles != 14 || this.melds.length != 0"
+            :disabled="numHandTiles != 14 || melds.length != 0"
             variant="success"
             v-clipboard:copy="tumoProbStr"
             id="tooltip-tumoprob"
@@ -402,7 +402,7 @@ export default {
   },
   data: function () {
     return {
-      version: "0.9.0",
+      version: "0.8.1",
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風
       turn: 3, // 現在の巡目
