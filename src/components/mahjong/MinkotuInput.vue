@@ -1,5 +1,5 @@
 <template>
-  <b-table-simple class="table">
+  <b-table-simple>
     <b-tbody>
       <!-- 萬子 -->
       <b-tr>
