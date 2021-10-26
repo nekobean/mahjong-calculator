@@ -231,7 +231,7 @@
               class="mr-2"
               variant="primary"
               @click="calculate"
-              :disabled="numHandTiles != 14 || isCalculating"
+              :disabled="numHandTiles < 13 || isCalculating"
               >計算を実行
             </b-button>
             <b-button class="mr-2" variant="primary" @click="clearHand"
@@ -264,6 +264,7 @@
           <b-button
             class="mr-2"
             variant="primary"
+            size="sm"
             @click="downloadProblemAsImage"
             :disabled="numHandTiles != 14"
             >画像で保存
@@ -271,6 +272,7 @@
           <!-- テキストで保存するボタン -->
           <b-button
             variant="primary"
+            size="sm"
             v-clipboard:copy="copyProblemAsText()"
             :disabled="numHandTiles != 14"
             >テキストでコピー
@@ -289,6 +291,7 @@
             :href="tenhoURL"
             target="_blank"
             variant="success"
+            size="sm"
             id="tooltip-tenho-hairi"
             >天鳳 / 牌理
           </b-button>
@@ -301,6 +304,7 @@
               doraIndicators.length != 1
             "
             variant="success"
+            size="sm"
             @click="downloadHMR"
             id="tooltip-hmr"
             >一人麻雀練習機
@@ -336,6 +340,7 @@
           <b-button
             :disabled="numHandTiles != 14 || melds.length != 0"
             variant="success"
+            size="sm"
             v-clipboard:copy="tumoProbStr"
             id="tooltip-tumoprob"
             >ツモアガリ確率計算機</b-button

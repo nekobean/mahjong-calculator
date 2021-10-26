@@ -250,7 +250,7 @@
         >
       </p>
 
-      <b-container>
+      <b-container v-if="location.hostname != 'localhost'">
         <b-row>
           <b-col>
             <Adsense
@@ -278,6 +278,7 @@ export default {
   data() {
     return {
       tabIndex: 0,
+      location: location,
     };
   },
 };
