@@ -529,11 +529,6 @@ export default {
             sortable: false,
             thStyle: "width: 100px;",
           },
-          {
-            key: "required_tiles",
-            label: "有効牌",
-            sortable: false,
-          },
         ];
 
         return fields;
