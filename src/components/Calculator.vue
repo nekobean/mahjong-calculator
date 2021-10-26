@@ -241,7 +241,7 @@
               >設定を初期化
             </b-button>
             <b-button variant="primary" @click="setRandomHand"
-              >ランダムの手牌入力
+              >ランダムな手牌
             </b-button>
 
             <template #overlay>
@@ -262,6 +262,7 @@
         <b-col>
           <!-- 画像で保存するボタン -->
           <b-button
+            v-if="!isMobile"
             class="mr-2"
             variant="primary"
             size="sm"
@@ -281,7 +282,7 @@
       </b-row>
 
       <!-- 他ツール -->
-      <b-row align-v="center">
+      <b-row v-if="!isMobile" align-v="center">
         <b-col cols="2"> 他ツール </b-col>
         <b-col>
           <!-- 天鳳 / 牌理 -->
@@ -368,6 +369,7 @@
 </template>
 
 <script>
+import { isMobile } from "mobile-device-detect";
 import html2canvas from "html2canvas";
 import axios from "axios";
 import {
@@ -407,6 +409,7 @@ export default {
   },
   data: function () {
     return {
+      isMobile: isMobile,
       version: "0.8.1",
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風

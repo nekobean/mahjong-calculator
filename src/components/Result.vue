@@ -8,6 +8,7 @@
         <b-col>
           <!-- 画像で保存するボタン -->
           <b-button
+            v-if="!isMobile"
             class="mr-2"
             variant="primary"
             size="sm"
@@ -146,6 +147,7 @@
 </template>
 
 <script>
+import { isMobile } from "mobile-device-detect";
 import html2canvas from "html2canvas";
 import TileImage from "@/components/mahjong/TileImage.vue";
 import {
@@ -167,6 +169,7 @@ export default {
   props: ["result"],
   data() {
     return {
+      isMobile: isMobile,
       sortDesc: true,
       sortBy: "",
       line_options: [

@@ -21,7 +21,7 @@
             手牌、ドラ表示牌にある牌画像をクリックすると、牌を削除できます。
           </li>
           <li>手牌が14枚になったら、「計算」ボタンをクリックしてください。</li>
-          <li>
+          <li v-if="!isMobile">
             「画像で保存」ボタンをクリックすると、牌姿を画像で保存できます。
           </li>
         </ul>
@@ -301,25 +301,21 @@
           >
           </Adsense
         ></b-col>
-        <b-col>
-          <Adsense
-            data-ad-client="ca-pub-9930040906284502"
-            data-ad-slot="9160643683"
-          >
-          </Adsense
-        ></b-col>
       </b-row>
     </b-container>
   </b-jumbotron>
 </template>
 
 <script>
+import { isMobile } from "mobile-device-detect";
+
 export default {
   name: "Description",
   data() {
     return {
       tabIndex: 0,
       location: location,
+      isMobile: isMobile,
     };
   },
 };

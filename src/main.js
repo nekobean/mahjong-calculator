@@ -12,6 +12,7 @@ import Ads from 'vue-google-adsense'
 
 // Google Adsense
 Vue.use(require('vue-script2'))
+Vue.use(Ads.AutoAdsense, { adClient: 'ca-pub-9930040906284502' })
 Vue.use(Ads.Adsense)
 
 Vue.use(BootstrapVue)

@@ -13,6 +13,7 @@
         "chartjs-plugin-annotation": "^0.5.7",
         "core-js": "^3.6.5",
         "html2canvas": "^1.0.0-alpha.12",
+        "mobile-device-detect": "^0.4.3",
         "vue": "^2.6.11",
         "vue-chartjs": "^3.5.1",
         "vue-clipboard2": "^0.3.1",
