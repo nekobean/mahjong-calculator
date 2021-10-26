@@ -47,6 +47,16 @@
 
           <div class="mb-1">
             <h6 class="mb-1 text-warning">
+              Q. 巡目は結果にどのように影響しますか。
+            </h6>
+            <p>
+              巡目があとになるほど、和了確率、聴牌確率が減少しますが、向聴戻しの打牌ほど早く確率が減少していくため、序盤では向聴戻しが有利な結果が出ても、中盤以降はそうでない打牌と優越が逆転します。
+              結果一覧の下のグラフで、各巡目ごとの期待値、和了確率、聴牌確率の推移を確認できます。
+            </p>
+          </div>
+
+          <div class="mb-1">
+            <h6 class="mb-1 text-warning">
               Q. 他家からの牌の出やすさは考慮されますか
             </h6>
             <p>
@@ -122,6 +132,41 @@
               Q. 積み棒、不聴罰符、立直棒は考慮されますか
             </h6>
             <p>積み棒、不聴罰符、立直棒は考慮しません。</p>
+          </div>
+
+          <div class="mb-1">
+            <h6 class="mb-1 text-warning">
+              Q. 不自然が結果が表示されました。なぜでしょうか。
+            </h6>
+            <p>
+              ロンや副露がない等4人麻雀とは異なる条件でのシミュレーション結果であることに留意する必要があります。
+              ただし、プログラムの不具合の可能性もありますので、不自然な結果が表示された牌姿を<b-link
+                href="https://pystyle.info/mahjong-nanikiru-simulator/"
+                target="_blank"
+                class="text-info"
+                >コメント欄</b-link
+              >で教えていただければ、こちらでも確認します。
+            </p>
+          </div>
+
+          <div class="mb-1">
+            <h6 class="mb-1 text-warning">
+              Q. 具体的な計算方法を教えて下さい。
+            </h6>
+            <p>
+              基本的な考え方は<b-link
+                href="https://pystyle.info/mahjong-expected-value-in-mahjong/"
+                target="_blank"
+                class="text-info"
+                >手牌の点数期待値の計算方法</b-link
+              >に記載しています。また、アプリケーションのソースコードは GitHub
+              のレポジトリ<b-link
+                href="https://github.com/nekobean/mahjong-cpp"
+                target="_blank"
+                class="text-info"
+                >mahjong-cpp</b-link
+              >に公開しております。時間があるときにアルゴリズムの詳細について、文章で整理しようと思います。
+            </p>
           </div>
 
           <div class="mb-1">

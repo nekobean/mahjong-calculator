@@ -660,7 +660,6 @@ export default {
           .replace("image/png", "image/octet-stream");
         var a = document.createElement("a");
         a.href = src;
-        console.log(a.href);
         a.download = `${Hand2String(this.hand, this.melds)}.png`;
         a.click();
       });
