@@ -369,6 +369,7 @@
 </template>
 
 <script>
+import { version } from "@/../package.json";
 import { isMobile } from "mobile-device-detect";
 import html2canvas from "html2canvas";
 import axios from "axios";
@@ -410,7 +411,7 @@ export default {
   data: function () {
     return {
       isMobile: isMobile,
-      version: "0.8.1",
+      version: version,
       bakaze: Tile.Ton, // 場風
       zikaze: Tile.Ton, // 自風
       turn: 3, // 現在の巡目

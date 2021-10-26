@@ -1,7 +1,7 @@
 <template>
   <b-jumbotron
     class="pt-2 pb-2"
-    header="麻雀何切るシミュレーター (version 0.8.1)"
+    :header="`麻雀何切るシミュレーター version ${version}`"
     header-level="5"
     bg-variant="dark"
     text-variant="light"
@@ -244,7 +244,7 @@
             version 0.8.0 (2021/09/24):
             確率計算の不具合修正。(手変わり考慮時の確率値が過大に算出されていた問題等)
           </li>
-          <li>version 0.8.1 (2021/10/26): UI のスマホ対応。Q & A を追加。</li>
+          <li>version 0.8.1 (2021/10/26): UI を修正。Q & A を追加。</li>
         </ul>
       </b-tab>
     </b-tabs>
@@ -252,9 +252,7 @@
     <hr style="border: 1px solid white" />
 
     <ul>
-      <li>
-        version 0.8.1 (2021/10/26) の更新内容: UI のスマホ対応。Q & A を追加。
-      </li>
+      <li>version 0.8.1 (2021/10/26) の更新内容: UI を修正。Q & A を追加。</li>
       <li>
         ご意見、ご質問、不具合報告は<b-link
           href="https://pystyle.info/mahjong-nanikiru-simulator/"
@@ -307,12 +305,14 @@
 </template>
 
 <script>
+import { version } from "@/../package.json";
 import { isMobile } from "mobile-device-detect";
 
 export default {
   name: "Description",
   data() {
     return {
+      version: version,
       tabIndex: 0,
       location: location,
       isMobile: isMobile,

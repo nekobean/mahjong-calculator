@@ -626,6 +626,7 @@ export default {
 
       this.setSortBy();
 
+      let req = result.request;
       let res = result.response;
 
       if (res.result_type != 1) return;
@@ -634,16 +635,17 @@ export default {
       if (this.isProbCalculated && this.maximizeWinProb) {
         // 「3向聴以下かつ和了確率最大化」の場合は和了確率が高い順にソートする。
         res.candidates.sort((a, b) =>
-          Math.floor(a.win_probs[0] * 10000) !=
-          Math.floor(b.win_probs[0] * 10000)
-            ? b.win_probs[0] - a.win_probs[0]
+          Math.floor(a.win_probs[req.turn - 1] * 10000) !=
+          Math.floor(b.win_probs[req.turn - 1] * 10000)
+            ? b.win_probs[req.turn - 1] - a.win_probs[req.turn - 1]
             : TilePriority[a.tile] - TilePriority[b.tile]
         );
       } else if (this.isProbCalculated && !this.maximizeWinProb) {
         // 「3向聴以下かつ期待値最大化」の場合は期待値が高い順にソートする。
         res.candidates.sort((a, b) =>
-          Math.floor(a.exp_values[0]) != Math.floor(b.exp_values[0])
-            ? b.exp_values[0] - a.exp_values[0]
+          Math.floor(a.exp_values[req.turn - 1]) !=
+          Math.floor(b.exp_values[req.turn - 1])
+            ? b.exp_values[req.turn - 1] - a.exp_values[req.turn - 1]
             : TilePriority[a.tile] - TilePriority[b.tile]
         );
       } else {
