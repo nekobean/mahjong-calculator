@@ -11,7 +11,7 @@
     </div>
     <!-- 副露ブロックの一覧 -->
     <BlockButton
-      v-for="(block, i) in melds.slice().reverse()"
+      v-for="(block, i) in melds"
       :key="i"
       :block="block"
       @click-block="remove_block"

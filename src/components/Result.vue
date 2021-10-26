@@ -79,16 +79,17 @@
             </template>
             <!-- 受入枚数 -->
             <template #cell(n_required_tiles)="data">
-              {{ data.item.required_tiles.length }}種
-              {{ data.item.n_required_tiles }}枚
-            </template>
-            <!-- 有効牌 -->
-            <template #cell(required_tiles)="data">
-              <TileImage
-                v-for="(tile, i) in data.item.required_tiles"
-                :key="i"
-                :tile="tile.tile"
-              />
+              <div class="mb-2">
+                {{ data.item.required_tiles.length }}種
+                {{ data.item.n_required_tiles }}枚
+              </div>
+              <div class="yukohai">
+                <TileImage
+                  v-for="(tile, i) in data.item.required_tiles"
+                  :key="i"
+                  :tile="tile.tile"
+                />
+              </div>
             </template>
           </b-table>
         </b-col>
@@ -96,46 +97,51 @@
 
       <!-- グラフ -->
       <template v-if="showGraph">
-        <div class="chart">
-          <b-row class="mt-2">
-            <b-col
-              >デフォルトで上位5つの牌を表示しています。<br />
-              グラフ上部の凡例をクリックすることで、表示する牌を選択できます。
-            </b-col>
-          </b-row>
+        <b-row class="mt-2">
+          <b-col
+            >デフォルトで上位5つの牌を表示しています。<br />
+            グラフ上部の凡例をクリックすることで、表示する牌を選択できます。
+          </b-col>
+        </b-row>
 
-          <b-row class="mt-2">
-            <b-col>
-              <LineChart
-                :chartData="lineData"
-                :options="lineOptions"
-              ></LineChart>
-            </b-col>
-          </b-row>
+        <b-row class="mt-2">
+          <b-col>
+            <LineChart
+              class="chart"
+              :chartData="lineData"
+              :options="lineOptions"
+            ></LineChart>
+          </b-col>
+        </b-row>
 
-          <!-- 手牌の種類 -->
-          <b-form-group
-            label-cols="3"
-            label="描画するグラフ"
-            label-for="input-line-type"
-            label-align="right"
-          >
-            <b-form-radio-group
-              id="input-line-type"
-              v-model="lineType"
-              :options="line_options"
-              button-variant="outline-secondary"
-              buttons
-            ></b-form-radio-group>
-          </b-form-group>
-        </div>
+        <!-- 手牌の種類 -->
+        <b-row>
+          <b-col>
+            <b-form-group
+              label-cols="3"
+              label="描画するグラフ"
+              label-for="input-line-type"
+              label-align="right"
+            >
+              <b-form-radio-group
+                id="input-line-type"
+                v-model="lineType"
+                :options="line_options"
+                button-variant="outline-secondary"
+                buttons
+              ></b-form-radio-group>
+            </b-form-group>
+          </b-col>
+        </b-row>
       </template>
     </template>
 
     <!-- 失敗時 -->
-    <b-alert v-else-if="result && !result.success" show variant="danger"
-      >{{ result.err_msg }}
-    </b-alert>
+    <b-row v-else-if="result && !result.success">
+      <b-col
+        ><b-alert show variant="danger">{{ result.err_msg }} </b-alert></b-col
+      >
+    </b-row>
   </b-container>
 </template>
 
@@ -481,12 +487,6 @@ export default {
             key: "n_required_tiles",
             label: "受入枚数",
             sortable: true,
-            thStyle: "width: 110px;",
-          },
-          {
-            key: "required_tiles",
-            label: "有効牌",
-            sortable: false,
           },
         ];
 
@@ -496,7 +496,7 @@ export default {
               key: "exp_value",
               label: "期待値",
               sortable: true,
-              thStyle: "width: 100px;",
+              thStyle: "width: 90px;",
               formatter: (x) => x.toFixed(0) + "点",
             },
             {

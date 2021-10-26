@@ -1,8 +1,8 @@
 <template>
-  <div id="simulator" class="p-3">
+  <b-container class="pt-3" id="simulator">
     <Description />
     <Calculator />
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -20,6 +20,7 @@ export default {
 
 <style scoped>
 #simulator {
-  width: 700px;
+  min-width: 700px;
+  max-width: 1000px;
 }
 </style>

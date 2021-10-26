@@ -5,7 +5,7 @@
       <b-row>
         <b-col>
           <!-- 場風 -->
-          <b-form-group label-cols="3" label="場風" label-align="right">
+          <b-form-group label-cols="2" label="場風" label-align="right">
             <b-form-radio-group
               id="input-bakaze"
               v-model="bakaze"
@@ -16,7 +16,7 @@
           </b-form-group>
 
           <!-- 自風 -->
-          <b-form-group label-cols="3" label="自風" label-align="right">
+          <b-form-group label-cols="2" label="自風" label-align="right">
             <b-form-radio-group
               id="input-zikaze"
               v-model="zikaze"
@@ -37,8 +37,8 @@
 
           <!-- 巡目 -->
           <b-form-group
-            label-cols="3"
-            content-cols="4"
+            label-cols="2"
+            content-cols="3"
             label="現在の巡目"
             label-align="right"
           >
@@ -50,7 +50,7 @@
           </b-form-group>
 
           <!-- 手牌の種類 -->
-          <b-form-group label-cols="3" label="手牌の種類" label-align="right">
+          <b-form-group label-cols="2" label="手牌の種類" label-align="right">
             <b-form-radio-group
               id="input-syanten-type"
               v-model="syantenType"
@@ -69,8 +69,8 @@
             </b-tooltip>
           </b-form-group>
 
-          <!-- 考慮する項目 -->
-          <b-form-group label-cols="3" label="考慮する項目" label-align="right">
+          <!-- 考慮項目 -->
+          <b-form-group label-cols="2" label="考慮項目" label-align="right">
             <b-form-checkbox-group
               id="input-flag"
               v-model="flag"
@@ -106,8 +106,8 @@
             </b-tooltip>
           </b-form-group>
 
-          <!-- 考慮する項目 -->
-          <b-form-group label-cols="3" label="重視する項目" label-align="right">
+          <!-- 最大化対象 -->
+          <b-form-group label-cols="2" label="最大化対象" label-align="right">
             <b-form-radio-group
               id="input-maximize-target"
               v-model="maximize_target"
@@ -449,7 +449,7 @@ export default {
           text: SyantenType2String.get(SyantenType.Kokusi),
         },
       ],
-      // 考慮する項目
+      // 考慮項目
       flagOptions: [
         { value: 1, text: "向聴戻し" },
         { value: 2, text: "手変わり" },
@@ -459,7 +459,7 @@ export default {
         { value: 32, text: "裏ドラ" },
         { value: 64, text: "赤牌自摸" },
       ],
-      // 重視する項目
+      // 最大化対象
       maximizeTargetOptions: [
         {
           value: 0,
