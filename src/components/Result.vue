@@ -464,11 +464,12 @@ export default {
       ];
 
       let res = this.result.response;
-      let turns = Array.from({ length: 17 }, (_, i) => i + 1);
 
+      let turns;
       let datasets = [];
 
       if (res.result_type == 0) {
+        turns = Array.from({ length: res.exp_values.length }, (_, i) => i + 1);
         datasets.push({
           label: "各巡目の値",
           data: res[this.lineType],
@@ -478,6 +479,10 @@ export default {
         });
       } else {
         for (let [i, candidate] of res.candidates.entries()) {
+          turns = Array.from(
+            { length: candidate.exp_values.length },
+            (_, i) => i + 1
+          );
           datasets.push({
             label: Tile2String.get(candidate.tile),
             data: candidate[this.lineType],
