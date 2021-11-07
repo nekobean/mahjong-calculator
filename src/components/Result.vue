@@ -54,10 +54,7 @@
       <b-row>
         <b-col cols="2"> 向聴数 </b-col>
         <b-col>
-          {{ Syanten2String(result.response.syanten.syanten) }} (一般手:
-          {{ Syanten2String(result.response.syanten.normal) }} 七対子:
-          {{ Syanten2String(result.response.syanten.tiitoi) }} 国士無双:
-          {{ Syanten2String(result.response.syanten.kokusi) }})
+          {{ this.syantenStr }}
         </b-col>
       </b-row>
 
@@ -221,7 +218,7 @@ export default {
         req.hand_tiles,
         req.melded_blocks
       );
-      str += ` ${Syanten2String(res.syanten.syanten)}\n\n`;
+      str += ` ${this.syantenStr}\n\n`;
 
       str += `## 計算結果\n`;
 
@@ -258,8 +255,21 @@ export default {
         let n_required_tiles = this.sumRequiredTiles(res.required_tiles);
 
         str += `受入枚数: ${res.required_tiles.length}種${n_required_tiles}枚 `;
-        str += `有効牌: ${Hand2String(res.required_tiles.map((x) => x.tile))}`;
-        str += "\n\n";
+        str += `有効牌: ${Hand2String(
+          res.required_tiles.map((x) => x.tile)
+        )}\n`;
+
+        if (this.isProbCalculated) {
+          let exp_value = res.exp_values[req.turn - 1].toFixed(0);
+          let win_prob = (res.win_probs[req.turn - 1] * 100).toFixed(2);
+          let tenpai_prob = (res.tenpai_probs[req.turn - 1] * 100).toFixed(2);
+
+          str += `期待値: ${exp_value}点, `;
+          str += `和了確率: ${win_prob}%, `;
+          str += `聴牌確率: ${tenpai_prob}%\n`;
+        }
+
+        str += "\n";
       }
 
       str += `Powered by 何切るシミュレーター https://pystyle.info/apps/mahjong-nanikiru-simulator/\n`;
@@ -621,6 +631,20 @@ export default {
 
     isSuccess() {
       return this.result && this.result.success;
+    },
+
+    syantenStr() {
+      if (!this.isSuccess) return "";
+
+      let res = this.result.response;
+
+      let str = "";
+      str += `${Syanten2String(res.syanten.syanten)} `;
+      str += `(一般手: ${Syanten2String(res.syanten.normal)} `;
+      str += `七対子: ${Syanten2String(res.syanten.tiitoi)} `;
+      str += `国士無双: ${Syanten2String(res.syanten.kokusi)})`;
+
+      return str;
     },
   },
   watch: {
