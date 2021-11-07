@@ -128,11 +128,14 @@ export default {
 
     // 無効にするかどうかを返す。
     disabled(block) {
+      const counts = block.tiles.reduce(function (acc, curr) {
+        return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc;
+      }, {});
+
+      // 手牌が12枚以上または必要な牌がない場合
       return (
-        // 手牌が12枚以上、牌が3枚残っていない、または赤牌が残っていない場合
         this.numHandTiles >= 12 ||
-        this.tileCounts[block.tiles[2]] < 3 ||
-        this.tileCounts[block.tiles[0]] == 0
+        Object.entries(counts).some((x) => this.tileCounts[x[0]] < x[1])
       );
     },
   },

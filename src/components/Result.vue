@@ -33,9 +33,6 @@
           <span v-if="result.request.melded_blocks.length > 0">
             <br />■ 役なしの和了は点数0として計算します。
           </span>
-          <span v-if="result.response.result_type == 0">
-            <br />■ 手牌が13枚のため、有効牌を表示します。
-          </span>
           <span
             v-if="
               result.response.result_type == 1 &&
@@ -304,7 +301,7 @@ export default {
 
     // ソートする項目を設定する。
     setSortBy() {
-      if (!this.result || !this.result.success) {
+      if (!this.isSuccess) {
         this.sortDesc = true;
         this.sortBy = "";
         return;
@@ -339,14 +336,12 @@ export default {
   },
   computed: {
     showGraph() {
-      if (!this.result || !this.result.success) return false;
-
-      let res = this.result.response;
-      return res.result_type == 1 && this.isProbCalculated;
+      if (!this.isSuccess) return false;
+      return this.isProbCalculated;
     },
 
     lineOptions() {
-      if (!this.result || !this.result.success) return {};
+      if (!this.isSuccess) return {};
 
       let req = this.result.request;
 
@@ -432,7 +427,7 @@ export default {
     },
 
     lineData() {
-      if (!this.result || !this.result.success) return {};
+      if (!this.isSuccess) return {};
 
       let colors = [
         "#e351d1",
@@ -455,15 +450,26 @@ export default {
       let turns = Array.from({ length: 17 }, (_, i) => i + 1);
 
       let datasets = [];
-      for (let [i, candidate] of res.candidates.entries()) {
+
+      if (res.result_type == 0) {
         datasets.push({
-          label: Tile2String.get(candidate.tile),
-          data: candidate[this.lineType],
+          label: "各巡目の値",
+          data: res[this.lineType],
           fill: false,
           lineTension: 0,
-          borderColor: colors[i],
-          hidden: i >= 5,
+          borderColor: colors[0],
         });
+      } else {
+        for (let [i, candidate] of res.candidates.entries()) {
+          datasets.push({
+            label: Tile2String.get(candidate.tile),
+            data: candidate[this.lineType],
+            fill: false,
+            lineTension: 0,
+            borderColor: colors[i],
+            hidden: i >= 5,
+          });
+        }
       }
 
       return {
@@ -474,75 +480,85 @@ export default {
 
     // 打牌一覧のヘッダー
     fields() {
-      if (!this.result || !this.result.success) return [];
+      if (!this.isSuccess) return [];
       let res = this.result.response;
+
+      let fields = [];
 
       if (res.result_type == 1) {
         // 打牌時
-        let fields = [
-          {
-            key: "tile",
-            label: "打牌",
-            sortable: true,
-            thStyle: "width: 70px;",
-          },
-          {
-            key: "n_required_tiles",
-            label: "受入枚数",
-            sortable: true,
-          },
-        ];
-
-        if (this.isProbCalculated) {
-          fields = fields.concat([
-            {
-              key: "exp_value",
-              label: "期待値",
-              sortable: true,
-              thStyle: "width: 90px;",
-              formatter: (x) => x.toFixed(0) + "点",
-            },
-            {
-              key: "win_prob",
-              label: "和了確率",
-              sortable: true,
-              thStyle: "width: 100px;",
-              formatter: (x) => (x * 100).toFixed(2) + "%",
-            },
-            {
-              key: "tenpai_prob",
-              label: "聴牌確率",
-              sortable: true,
-              thStyle: "width: 100px;",
-              formatter: (x) => (x * 100).toFixed(2) + "%",
-            },
-          ]);
-        }
-
-        return fields;
-      } else {
-        // 自摸時
-        let fields = [
-          {
-            key: "n_required_tiles",
-            label: "受入枚数",
-            sortable: false,
-            thStyle: "width: 100px;",
-          },
-        ];
-
-        return fields;
+        fields.push({
+          key: "tile",
+          label: "打牌",
+          sortable: true,
+          thStyle: "width: 70px;",
+        });
       }
+
+      fields.push({
+        key: "n_required_tiles",
+        label: "受入枚数",
+        sortable: false,
+      });
+
+      if (this.isProbCalculated) {
+        fields.push(
+          {
+            key: "exp_value",
+            label: "期待値",
+            sortable: true,
+            thStyle: "width: 90px;",
+            formatter: (x) => x.toFixed(0) + "点",
+          },
+          {
+            key: "win_prob",
+            label: "和了確率",
+            sortable: true,
+            thStyle: "width: 100px;",
+            formatter: (x) => (x * 100).toFixed(2) + "%",
+          },
+          {
+            key: "tenpai_prob",
+            label: "聴牌確率",
+            sortable: true,
+            thStyle: "width: 100px;",
+            formatter: (x) => (x * 100).toFixed(2) + "%",
+          }
+        );
+      }
+
+      return fields;
     },
 
     // 打牌一覧のコンテンツ
     items() {
-      if (!this.result || !this.result.success) return [];
+      if (!this.isSuccess) return [];
       let req = this.result.request;
       let res = this.result.response;
 
       let items = [];
-      if (res.result_type == 1) {
+      if (res.result_type == 0) {
+        // 自摸の場合
+        let item = {};
+
+        // 受入枚数
+        item.n_required_tiles = this.sumRequiredTiles(res.required_tiles);
+
+        // 有効牌の一覧
+        item.required_tiles = res.required_tiles;
+
+        if (this.isProbCalculated) {
+          // 現状の巡目の期待値
+          item.exp_value = res.exp_values[req.turn - 1];
+          // 現状の巡目の和了確率
+          item.win_prob = res.win_probs[req.turn - 1];
+          // 現状の巡目の聴牌確率
+          item.tenpai_prob = res.tenpai_probs[req.turn - 1];
+        }
+
+        items.push(item);
+      } else {
+        // 打牌の場合
         for (let candidate of res.candidates) {
           let item = {};
 
@@ -551,7 +567,6 @@ export default {
 
           // 向聴戻しは背景を青くする。
           if (candidate.syanten_down) item._cellVariants = { tile: "info" };
-
           item.syanten_down = candidate.syanten_down;
 
           // 受入枚数
@@ -573,16 +588,6 @@ export default {
 
           items.push(item);
         }
-      } else {
-        let item = {};
-
-        // 受入枚数
-        item.n_required_tiles = this.sumRequiredTiles(res.required_tiles);
-
-        // 有効牌の一覧
-        item.required_tiles = res.required_tiles;
-
-        items.push(item);
       }
 
       return items;
@@ -590,7 +595,7 @@ export default {
 
     // 和了確率を最大化したかどうか
     maximizeWinProb() {
-      if (!this.result || !this.result.success) return false;
+      if (!this.isSuccess) return false;
       let req = this.result.request;
 
       return req.flag & 128;
@@ -598,21 +603,24 @@ export default {
 
     // 確率が計算されているかどうか
     isProbCalculated() {
-      if (!this.result || !this.result.success) return false;
+      if (!this.isSuccess) return false;
       let res = this.result.response;
-
-      return res.result_type == 1 && res.syanten.syanten <= 3;
+      return res.syanten.syanten <= 3;
     },
 
     // 計算時間
     calcTime() {
-      if (!this.result || !this.result.success) return "";
+      if (!this.isSuccess) return "";
 
       let time = this.result.response.time;
       if (time.toString().length > 6) return (time / 1000000).toFixed(2) + "s";
       else if (time.toString().length > 3)
         return Math.floor(time / 1000) + "ms";
       else return time.toString() + "us";
+    },
+
+    isSuccess() {
+      return this.result && this.result.success;
     },
   },
   watch: {

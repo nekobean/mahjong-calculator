@@ -245,6 +245,7 @@
             確率計算の不具合修正。(手変わり考慮時の確率値が過大に算出されていた問題等)
           </li>
           <li>version 0.8.1 (2021/10/26): UI を修正。Q & A を追加。</li>
+          <li>version 0.8.2 (2021/11/07): 残り枚数を設定できる機能を追加。</li>
         </ul>
       </b-tab>
     </b-tabs>
@@ -252,7 +253,7 @@
     <hr style="border: 1px solid white" />
 
     <ul>
-      <li>version 0.8.1 (2021/10/26) の更新内容: UI を修正。Q & A を追加。</li>
+      <li>version 0.8.2 (2021/11/07): 残り枚数を設定できる機能を追加。</li>
       <li>
         ご意見、ご質問、不具合報告は<b-link
           href="https://pystyle.info/mahjong-nanikiru-simulator/"

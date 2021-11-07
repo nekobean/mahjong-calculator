@@ -159,7 +159,7 @@
             <b-row class="mt-3">
               <b-col>
                 <HandAndMeldedBlocks
-                  @remove-tile="removeTile"
+                  @remove-tile="removeHandTile"
                   @remove-block="removeMeld"
                   :hand="hand"
                   :melds="melds"
@@ -176,7 +176,7 @@
           <b-tabs>
             <b-tab title="手牌" active>
               <HandTileInput
-                @add-tile="addTile"
+                @add-tile="addHandTile"
                 :tileCounts="tileCounts"
                 :numHandTiles="numHandTiles"
               />
@@ -188,7 +188,7 @@
               <HandTileInput
                 @add-tile="addDora"
                 :tileCounts="tileCounts"
-                :numDoraTiles="doraIndicators.length"
+                :numDoraTiles="numDoraTiles"
               />
             </b-tab>
             <b-tab title="明刻子">
@@ -219,6 +219,15 @@
                 :numHandTiles="numHandTiles"
               />
             </b-tab>
+            <b-tab title="残り枚数">
+              <p class="m-2">
+                手牌、ドラ表示牌以外に場に見えてる枚数を除くことができます。
+              </p>
+              <TileCountsInput
+                :tileCounts="tileCounts"
+                :usedTileCounts="usedTileCounts"
+              />
+            </b-tab>
           </b-tabs>
         </b-col>
       </b-row>
@@ -232,7 +241,7 @@
               variant="primary"
               @click="calculate"
               :disabled="numHandTiles < 13 || isCalculating"
-              >計算を実行
+              >計算を実行 ({{ numHandTiles }}枚)
             </b-button>
             <b-button class="mr-2" variant="primary" @click="clearHand"
               >手牌を初期化
@@ -394,6 +403,7 @@ import MinkotuInput from "@/components/mahjong/MinkotuInput.vue";
 import MinsyuntuInput from "@/components/mahjong/MinsyuntuInput.vue";
 import MinkantuInput from "@/components/mahjong/MinkantuInput.vue";
 import AnkantuInput from "@/components/mahjong/AnkantuInput.vue";
+import TileCountsInput from "@/components/mahjong/TileCountsInput.vue";
 import Result from "./Result.vue";
 
 export default {
@@ -406,22 +416,28 @@ export default {
     MinsyuntuInput,
     MinkantuInput,
     AnkantuInput,
+    TileCountsInput,
     Result,
+  },
+  created() {
+    this.clearAll();
   },
   data: function () {
     return {
-      isMobile: isMobile,
-      version: version,
-      bakaze: Tile.Ton, // 場風
-      zikaze: Tile.Ton, // 自風
-      turn: 3, // 現在の巡目
-      syantenType: SyantenType.Normal, // 手牌の種類
-      doraIndicators: [Tile.Ton], // ドラ
-      flag: [1, 2, 4, 8, 16, 32, 64], // フラグ
-      maximize_target: 0,
-      hand: [], // 手牌
-      melds: [], // 副露ブロックの一覧
+      bakaze: null, // 場風
+      zikaze: null, // 自風
+      turn: null, // 現在の巡目
+      syantenType: null, // 手牌の種類
+      doraIndicators: null, // ドラ
+      flag: null, // フラグ
+      maximize_target: null,
+      hand: null, // 手牌
+      melds: null, // 副露ブロックの一覧
       result: null, // 結果
+      tileCounts: null, // 牌の残り枚数
+
+      version: version,
+      isMobile: isMobile,
       isCalculating: false,
       Tile2String: Tile2String,
 
@@ -483,25 +499,27 @@ export default {
       return this.hand.length + this.melds.length * 3;
     },
 
-    // 各牌の残り枚数
-    tileCounts: function () {
+    // ドラの枚数
+    numDoraTiles: function () {
+      return this.doraIndicators.length;
+    },
+
+    // 使用中の牌の枚数
+    usedTileCounts: function () {
       // 初期化する。
       let counts = Array(34).fill(4).concat([1, 1, 1]);
-
-      let minus_tile = (tile) => {
-        counts[tile] -= 1;
-        // 赤ドラの場合は対応する牌も減らす。
-        if (tile == Tile.AkaManzu5) counts[Tile.Manzu5] -= 1;
-        else if (tile == Tile.AkaPinzu5) counts[Tile.Pinzu5] -= 1;
-        else if (tile == Tile.AkaSozu5) counts[Tile.Sozu5] -= 1;
-      };
+      counts[Tile.Manzu5] = 3;
+      counts[Tile.Pinzu5] = 3;
+      counts[Tile.Sozu5] = 3;
 
       // ドラ表示牌を除く
-      this.doraIndicators.forEach(minus_tile);
+      this.doraIndicators.forEach((tile) => (counts[tile] -= 1));
       // 手牌を除く
-      this.hand.forEach(minus_tile);
+      this.hand.forEach((tile) => (counts[tile] -= 1));
       // 副露ブロックを除く
-      this.melds.forEach((block) => block.tiles.forEach(minus_tile));
+      this.melds.forEach((block) =>
+        block.tiles.forEach((tile) => (counts[tile] -= 1))
+      );
 
       return counts;
     },
@@ -524,6 +542,12 @@ export default {
       this.isCalculating = true;
       this.result = null;
 
+      // シミュレーターでは残り牌の五萬、五筒、五索は赤牌を含む。
+      let counts = this.tileCounts.slice();
+      counts[Tile.Manzu5] += counts[Tile.AkaManzu5];
+      counts[Tile.Pinzu5] += counts[Tile.AkaPinzu5];
+      counts[Tile.Sozu5] += counts[Tile.AkaSozu5];
+
       // JSON を作成する。
       let data = JSON.stringify({
         version: this.version,
@@ -535,6 +559,7 @@ export default {
         flag: this.flag.reduce((a, x) => (a += x), 0) + this.maximize_target,
         hand_tiles: this.hand,
         melded_blocks: this.melds,
+        counts: counts,
       });
 
       let url =
@@ -565,11 +590,11 @@ export default {
       this.hand = [];
       this.melds = [];
       this.result = null;
+      this.tileCounts = this.usedTileCounts;
     },
 
     /// 設定を初期化する。
     clearAll() {
-      this.clearHand();
       this.zikaze = Tile.Ton;
       this.bakaze = Tile.Ton;
       this.turn = 3;
@@ -577,23 +602,32 @@ export default {
       this.doraIndicators = [Tile.Ton];
       this.flag = [1, 2, 4, 8, 16, 32, 64];
       this.maximize_target = 0;
+      this.hand = [];
+      this.melds = [];
+      this.result = null;
+      this.tileCounts = this.usedTileCounts;
     },
 
     /// 牌を手牌に追加する。
-    addTile(tile) {
+    addHandTile(tile) {
       this.hand.push(tile);
+      this.removeTileFromTileCounts(tile);
       sort_tiles(this.hand);
     },
 
     /// 牌を手牌から削除する。
-    removeTile(tile) {
+    removeHandTile(tile) {
       let i = this.hand.indexOf(tile);
-      if (i > -1) this.hand.splice(i, 1);
+      if (i > -1) {
+        this.hand.splice(i, 1);
+        this.addTileToTileCounts(tile);
+      }
     },
 
     /// 牌を副露ブロックの一覧に追加する。
     addMeld(block) {
       this.melds.push(block);
+      block.tiles.forEach((tile) => this.removeTileFromTileCounts(tile));
     },
 
     /// 牌を副露ブロックの一覧から削除する。
@@ -601,18 +635,35 @@ export default {
       let i = this.melds.findIndex(
         (x) => JSON.stringify(x) == JSON.stringify(block)
       );
-      if (i > -1) this.melds.splice(i, 1);
+      if (i > -1) {
+        this.melds.splice(i, 1);
+        block.tiles.forEach((tile) => this.addTileToTileCounts(tile));
+      }
     },
 
     /// 牌をドラ表示牌の一覧に追加する。
     addDora(tile) {
       this.doraIndicators.push(tile);
+      this.removeTileFromTileCounts(tile);
     },
 
     /// 牌をドラ表示牌の一覧から削除する。
     removeDora(tile) {
       let i = this.doraIndicators.indexOf(tile);
-      if (i > -1) this.doraIndicators.splice(i, 1);
+      if (i > -1) {
+        this.doraIndicators.splice(i, 1);
+        this.addTileToTileCounts(tile);
+      }
+    },
+
+    /// 牌を残り牌に追加する。
+    addTileToTileCounts(tile) {
+      this.$set(this.tileCounts, tile, this.tileCounts[tile] + 1);
+    },
+
+    /// 牌を残り牌から削除する。
+    removeTileFromTileCounts(tile) {
+      this.$set(this.tileCounts, tile, this.tileCounts[tile] - 1);
     },
 
     /// ランダムな手牌を設定する。
@@ -624,9 +675,6 @@ export default {
         }
         return array;
       };
-
-      // 手牌をクリアする。
-      this.clearHand();
 
       // 牌山を作成する。
       let yama = [];
@@ -650,7 +698,9 @@ export default {
       // 理牌する。
       sort_tiles(hand);
 
-      this.hand = hand;
+      // 手牌をクリアする。
+      this.clearHand();
+      for (let tile of hand) this.addHandTile(tile);
     },
 
     // 牌姿をダウンロードする。
@@ -698,7 +748,11 @@ export default {
       let tumo_tile = Aka2Normal(this.hand[this.hand.length - 1]);
       text += this.turn + " " + tumo_tile + "\n";
       // 2行目: 各牌の残り枚数
-      text += this.tileCounts.slice(0, -3).join("") + "\n";
+      let counts = this.tileCounts.slice();
+      counts[Tile.Manzu5] += counts[Tile.AkaManzu5];
+      counts[Tile.Pinzu5] += counts[Tile.AkaPinzu5];
+      counts[Tile.Sozu5] += counts[Tile.AkaSozu5];
+      text += counts.slice(0, -3).join("") + "\n";
       // 3行目: 手牌の各牌の枚数
       text += toTiles34(this.hand).join("") + "\n";
       // 4行目: ドラ
