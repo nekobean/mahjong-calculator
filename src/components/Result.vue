@@ -33,12 +33,7 @@
           <span v-if="result.request.melded_blocks.length > 0">
             <br />■ 役なしの和了は点数0として計算します。
           </span>
-          <span
-            v-if="
-              result.response.result_type == 1 &&
-              result.response.syanten.syanten > 3
-            "
-          >
+          <span v-if="!isProbCalculated">
             <br />■ 4向聴以上のため、有効牌のみ表示します。
           </span>
         </b-col>
@@ -55,6 +50,18 @@
         <b-col cols="2"> 向聴数 </b-col>
         <b-col>
           {{ this.syantenStr }}
+        </b-col>
+      </b-row>
+
+      <!-- 残り自摸数 -->
+      <b-row>
+        <b-col cols="2"> 残り自摸数 </b-col>
+        <b-col>
+          {{
+            result.response.result_type == 0
+              ? 19 - result.request.turn
+              : 18 - result.request.turn
+          }}回
         </b-col>
       </b-row>
 
