@@ -221,7 +221,7 @@
             </b-tab>
             <b-tab title="残り枚数">
               <p class="m-2">
-                手牌、ドラ表示牌以外に場に見えてる枚数を除くことができます。
+                手牌、ドラ表示牌以外の場に見えてる牌を減らすことができます。
               </p>
               <TileCountsInput
                 :tileCounts="tileCounts"
