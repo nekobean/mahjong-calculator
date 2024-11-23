@@ -1,9 +1,9 @@
 <template>
   <b-jumbotron
     class="pt-2 pb-2"
-    :header="`麻雀何切るシミュレーター version ${version}`"
+    :header="`麻雀何切るシミュレーター version ${version} (2024/11/25更新)`"
     header-level="5"
-    bg-variant="dark"
+    style="background-color: #003300"
     text-variant="light"
   >
     <b-tabs content-class="mt-3" v-model="tabIndex" justified>
@@ -13,7 +13,7 @@
         :title-link-class="tabIndex == 0 ? 'text-dark' : 'text-light'"
       >
         <p>
-          「何切るシミュレーター」は入力された手牌の受入枚数、点数期待値、和了確率、聴牌確率を計算するツールです。
+          「何切るシミュレーター」は入力された手牌の有効牌、点数期待値、和了確率、聴牌確率を計算するツールです。
         </p>
         <ul>
           <li>牌画像のボタンをクリックすると、牌を追加できます。</li>
@@ -249,16 +249,51 @@
             version 0.9.0 (2021/11/07):
             残り枚数を設定できる機能を追加。牌の枚数が13枚の場合も期待値を計算するように変更。
           </li>
+          <li>
+            version 0.9.0 (2024/11/25):
+            計算アルゴリズムを全体的に見直し。
+          </li>
         </ul>
       </b-tab>
     </b-tabs>
 
     <hr style="border: 1px solid white" />
 
+    <p>
+      version 0.9.1 (2024/11/25):<br/>
+      計算アルゴリズムを全体的に見直しました。以下に前バージョンとの違いを記載しています。<br/>
+      不具合を見つけた方は <b-link
+          href="https://pystyle.info/mahjong-nanikiru-simulator/"
+          target="_blank"
+          class="text-info"
+          >ブログ記事</b-link
+        >のコメント欄にお願いします。
+    </p>
+
     <ul>
       <li>
-        version 0.9.0 (2021/11/07):
-        残り枚数を設定できる機能を追加。牌の枚数が13枚の場合も期待値を計算するように変更。
+        一部の手牌で向聴数が正しく計算できていなかった問題を修正
+      </li>
+      <li>
+        聴牌、和了時の手変わりを考慮するように変更 (そのため、立直なしの点数になっています)
+      </li>
+      <li>
+        一般形、七対子、国士無双を考慮して計算するように変更しました。(前バージョンでは七対子との両天秤は見れなかった)
+      </li>
+      <li>
+        点数計算時のダブル立直、一発、海底撈月の考慮は一旦無効にしています。
+      </li>
+      <li>
+        期待値、和了確率、聴牌確率の計算は、それぞれ最大化するように打牌した場合の値を表示するように変更。
+      </li>
+    </ul>
+
+    <hr style="border: 1px solid white" />
+
+    <ul>
+      <li>
+        version 0.9.1 (2024/11/25):
+        計算アルゴリズムを全体的に見直し。
       </li>
       <li>
         ご意見、ご質問、不具合報告は<b-link
