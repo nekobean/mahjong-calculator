@@ -49,89 +49,14 @@
             </b-form-select>
           </b-form-group>
 
-          <!-- 手牌の種類 -->
-          <b-form-group label-cols="2" label="手牌の種類" label-align="right">
-            <b-form-radio-group
-              id="input-syanten-type"
-              v-model="syantenType"
-              :options="syantenTypeOptions"
-              button-variant="outline-primary"
-              buttons
-            ></b-form-radio-group>
-
-            <b-tooltip
-              target="input-syanten-type"
-              triggers="hover"
-              custom-class="custom-tooltip"
-              placement="topright"
-            >
-              手牌の種類を選択します。現在の実装では、「一般手」を選択した場合、七対子は考慮されません。
-            </b-tooltip>
-          </b-form-group>
-
-          <!-- 考慮項目 -->
-          <b-form-group label-cols="2" label="考慮項目" label-align="right">
+          <!-- 設定 -->
+          <b-form-group label-cols="2" label="設定" label-align="right">
             <b-form-checkbox-group
               id="input-flag"
               v-model="flag"
               :options="flagOptions"
               switches
             ></b-form-checkbox-group>
-
-            <b-tooltip
-              target="input-flag"
-              triggers="hover"
-              custom-class="custom-tooltip"
-              placement="topright"
-            >
-              <ul>
-                <li>
-                  向聴戻し:
-                  向聴戻しの打牌も計算対象に含めるかどうかを設定します。
-                </li>
-                <li>
-                  手変わり:
-                  向聴数が変化しない手変わりも計算対象に含めるかどうかを設定します。
-                </li>
-                <li>
-                  ダブル立直:
-                  有効の場合、1巡目で聴牌の場合はダブル立直になります。
-                </li>
-                <li>
-                  一発、海底撈月:
-                  有効の場合、一発、海底撈月が点数期待値に考慮されます。
-                </li>
-                <li>裏ドラ: 有効の場合、裏ドラが点数期待値に考慮されます。</li>
-              </ul>
-            </b-tooltip>
-          </b-form-group>
-
-          <!-- 最大化対象 -->
-          <b-form-group label-cols="2" label="最大化対象" label-align="right">
-            <b-form-radio-group
-              id="input-maximize-target"
-              v-model="maximize_target"
-              :options="maximizeTargetOptions"
-              button-variant="outline-primary"
-              buttons
-            ></b-form-radio-group>
-
-            <b-tooltip
-              target="input-maximize-target"
-              triggers="hover"
-              custom-class="custom-tooltip"
-              placement="topright"
-            >
-              一向聴以上の手牌の場合に、シミュレーション途中の打牌選択の方針を設定します。
-
-              <ul>
-                <li>期待値最大化: 期待値が最大となる打牌を選択します。</li>
-                <li>
-                  和了確率最大化:
-                  和了確率が最大となる打牌を選択します。オーラストップなど和了率を重視する場合はこちらを選択してください。
-                </li>
-              </ul>
-            </b-tooltip>
           </b-form-group>
         </b-col>
       </b-row>
@@ -346,28 +271,6 @@
               </li>
             </ol>
           </b-tooltip>
-          <!-- ツモアガリ確率計算機 -->
-          <b-button
-            :disabled="numHandTiles != 14 || melds.length != 0"
-            variant="success"
-            size="sm"
-            v-clipboard:copy="tumoProbStr"
-            id="tooltip-tumoprob"
-            >ツモアガリ確率計算機</b-button
-          >
-          <b-tooltip
-            target="tooltip-tumoprob"
-            triggers="hover"
-            custom-class="custom-tooltip"
-            placement="topright"
-          >
-            <b-link
-              href="http://critter.sakura.ne.jp/agari_keisan.html"
-              target="_blank"
-              class="text-info"
-              >ツモアガリ確率計算機</b-link
-            >の「手牌」入力欄にコピペできる手牌形式をクリップボードにコピーします。
-          </b-tooltip>
         </b-col>
       </b-row>
     </b-container>
@@ -389,10 +292,8 @@ import {
   Tile2String,
   Hand2String,
   SyantenType,
-  SyantenType2String,
   Hand2TenhoString,
   Aka2Normal,
-  Tile2TumoProbString,
   Problem2String,
 } from "@/mahjong.js";
 
@@ -427,10 +328,8 @@ export default {
       bakaze: null, // 場風
       zikaze: null, // 自風
       turn: null, // 現在の巡目
-      syantenType: null, // 手牌の種類
       doraIndicators: null, // ドラ
-      flag: null, // フラグ
-      maximize_target: null,
+      flag: [1, 2, 3, 4], // 設定
       hand: null, // 手牌
       melds: null, // 副露ブロックの一覧
       result: null, // 結果
@@ -444,51 +343,22 @@ export default {
       // オプション
       // 場風
       bakazeOptions: [
-        { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
-        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
+        { value: Tile.Ton, text: "東" },
+        { value: Tile.Nan, text: "南" },
       ],
       // 自風
       zikazeOptions: [
-        { value: Tile.Ton, text: Tile2String.get(Tile.Ton) },
-        { value: Tile.Nan, text: Tile2String.get(Tile.Nan) },
-        { value: Tile.Sya, text: Tile2String.get(Tile.Sya) },
-        { value: Tile.Pe, text: Tile2String.get(Tile.Pe) },
+        { value: Tile.Ton, text: "東" },
+        { value: Tile.Nan, text: "南" },
+        { value: Tile.Sya, text: "西" },
+        { value: Tile.Pe, text: "北" },
       ],
-      // 手牌の種類
-      syantenTypeOptions: [
-        {
-          value: SyantenType.Normal,
-          text: SyantenType2String.get(SyantenType.Normal),
-        },
-        {
-          value: SyantenType.Tiitoi,
-          text: SyantenType2String.get(SyantenType.Tiitoi),
-        },
-        {
-          value: SyantenType.Kokusi,
-          text: SyantenType2String.get(SyantenType.Kokusi),
-        },
-      ],
-      // 考慮項目
+      // 設定
       flagOptions: [
-        { value: 1, text: "向聴戻し" },
-        { value: 2, text: "手変わり" },
-        { value: 4, text: "ダブル立直" },
-        { value: 8, text: "一発" },
-        { value: 16, text: "海底自摸" },
-        { value: 32, text: "裏ドラ" },
-        { value: 64, text: "赤牌自摸" },
-      ],
-      // 最大化対象
-      maximizeTargetOptions: [
-        {
-          value: 0,
-          text: "期待値最大化",
-        },
-        {
-          value: 128,
-          text: "和了確率最大化",
-        },
+        { value: 1, text: "赤ドラ" },
+        { value: 2, text: "裏ドラ" },
+        { value: 3, text: "向聴戻し" },
+        { value: 4, text: "手変わり" },
       ],
     };
   },
@@ -528,13 +398,6 @@ export default {
     tenhoURL: function () {
       return "https://tenhou.net/2/?q=" + Hand2TenhoString(this.hand);
     },
-
-    // 「ツモアガリ確率計算機」用の文字列
-    tumoProbStr: function () {
-      let hand = this.hand.map((x) => Tile2TumoProbString.get(x)).join(",");
-
-      return hand;
-    },
   },
 
   methods: {
@@ -542,24 +405,35 @@ export default {
       this.isCalculating = true;
       this.result = null;
 
+      const enable_reddora = this.flag.includes(1);
+      const enable_uradora = this.flag.includes(2);
+      const enable_shanten_down = this.flag.includes(3);
+      const enable_tegawari = this.flag.includes(4);
+
       // シミュレーターでは残り牌の五萬、五筒、五索は赤牌を含む。
       let counts = this.tileCounts.slice();
       counts[Tile.Manzu5] += counts[Tile.AkaManzu5];
       counts[Tile.Pinzu5] += counts[Tile.AkaPinzu5];
       counts[Tile.Sozu5] += counts[Tile.AkaSozu5];
+      if (!enable_reddora ) {
+        counts[Tile.AkaManzu5] = 0;
+        counts[Tile.AkaPinzu5] = 0;
+        counts[Tile.AkaSozu5] = 0;
+      }
 
       // JSON を作成する。
-      let data = JSON.stringify({
-        version: this.version,
-        zikaze: this.zikaze,
-        bakaze: this.bakaze,
-        turn: this.turn,
-        syanten_type: this.syantenType,
+      const data = JSON.stringify({
+        enable_reddora: enable_reddora,
+        enable_uradora: enable_uradora,
+        enable_shanten_down: enable_shanten_down,
+        enable_tegawari: enable_tegawari,
+        round_wind: this.bakaze,
         dora_indicators: this.doraIndicators,
-        flag: this.flag.reduce((a, x) => (a += x), 0) + this.maximize_target,
-        hand_tiles: this.hand,
-        melded_blocks: this.melds,
-        counts: counts,
+        hand: this.hand,
+        melds: this.melds,
+        seat_wind: this.zikaze,
+        wall: counts,
+        version: this.version,
       });
 
       let url =
@@ -567,6 +441,7 @@ export default {
           ? "http://localhost:8888"
           : "/apps/mahjong-nanikiru-simulator/post.py";
 
+      console.log(data)
       // POST する。
       axios
         .post(url, data)
@@ -577,7 +452,7 @@ export default {
           this.result = {
             success: false,
             err_msg:
-              "サーバーとの通信に失敗しました。サービス停止中は利用できません。",
+              "サーバーとの通信に失敗しました。エラーが続く場合は、お手数ですが管理者までお問い合わせください。",
           };
         })
         .finally(() => {
@@ -598,10 +473,11 @@ export default {
       this.zikaze = Tile.Ton;
       this.bakaze = Tile.Ton;
       this.turn = 3;
-      this.syantenType = SyantenType.Normal;
       this.doraIndicators = [Tile.Ton];
-      this.flag = [1, 2, 4, 8, 16, 32, 64];
-      this.maximize_target = 0;
+      this.enable_reddora = true;
+      this.enable_uradora = true;
+      this.enable_shanten_down = true;
+      this.enable_tegawari = true;
       this.hand = [];
       this.melds = [];
       this.result = null;
