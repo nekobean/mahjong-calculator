@@ -1,9 +1,15 @@
 <template>
   <b-container fluid class="border border-gray">
-    <!-- 成功時 -->
-    <template v-if="result && result.success">
-      <!-- 保存 -->
-      <b-row class="mt-2" align-v="center">
+    <!-- Error -->
+    <b-row v-if="result?.success === false">
+      <b-col
+        ><b-alert show variant="danger">{{ result.err_msg }}</b-alert></b-col
+      >
+    </b-row>
+
+    <!-- Success -->
+    <template v-else-if="result?.success === true">
+      <b-row class="mt-2 mb-2" align-v="center">
         <b-col cols="2"> 結果の出力 </b-col>
         <b-col>
           <!-- 画像で保存するボタン -->
@@ -23,82 +29,135 @@
             v-clipboard:copy="copyResultAsText()"
             >テキストでコピー
           </b-button>
+          <!-- <pre>{{ copyResultAsText() }}</pre> -->
         </b-col>
       </b-row>
 
-      <!-- 注意 -->
+      <!-- Infomation -->
       <b-row>
-        <b-col>
-          <span>■ 青色は向聴戻しとなる打牌です。</span>
-          <span v-if="result.request.melded_blocks.length > 0">
-            <br />■ 役なしの和了は点数0として計算します。
-          </span>
-          <span v-if="!isProbCalculated">
-            <br />■ 4向聴以上のため、有効牌のみ表示します。
-          </span>
-        </b-col>
+        <b-col cols="2"> mpsz 表記 </b-col>
+        <b-col>{{ problemString }}</b-col>
       </b-row>
-
-      <!-- 計算時間 -->
       <b-row>
-        <b-col cols="2"> 計算時間 </b-col>
-        <b-col>{{ calcTime }}</b-col>
+        <b-col cols="2"> 自摸数 </b-col>
+        <b-col>{{ result.response.config.t_max - turn + 1 }}回</b-col>
       </b-row>
-
-      <!-- 向聴数 -->
+      <b-row>
+        <b-col cols="2"> 山の枚数 </b-col>
+        <b-col>{{ result.response.config.sum }}</b-col>
+      </b-row>
+      <b-col>
+        <span v-if="!result.response.config.calc_stats">
+          4向聴以上のため、有効牌のみ表示します。
+        </span>
+      </b-col>
       <b-row>
         <b-col cols="2"> 向聴数 </b-col>
         <b-col>
-          {{ this.syantenStr }}
-        </b-col>
+          {{ formatShanten(result.response.shanten.all) }} (一般形:
+          {{ formatShanten(result.response.shanten.regular) }}, 七対子:
+          {{ formatShanten(result.response.shanten.seven_pairs) }}, 国士無双:
+          {{ formatShanten(result.response.shanten.thirteen_orphans) }})</b-col
+        >
       </b-row>
-
-      <!-- 残り自摸数 -->
       <b-row>
-        <b-col cols="2"> 残り自摸数 </b-col>
-        <b-col>
-          {{
-            result.response.result_type == 0
-              ? 19 - result.request.turn
-              : 18 - result.request.turn
-          }}回
-        </b-col>
+        <b-col cols="2"> 探索した手牌 </b-col>
+        <b-col>{{ result.response.searched }}手</b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="2"> 計算時間 </b-col>
+        <b-col>{{ formatTime(result.response.time) }}</b-col>
       </b-row>
 
-      <!-- 打牌一覧 -->
-      <b-row class="mt-2" id="result">
-        <b-col>
-          <b-table
-            :fields="fields"
-            :items="items"
-            :sort-compare="sortCompare"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-          >
-            <!-- 打牌 -->
-            <template #cell(tile)="data">
-              <TileImage :tile="data.item.tile" />
-            </template>
-            <!-- 受入枚数 -->
-            <template #cell(n_required_tiles)="data">
-              <div class="mb-2">
-                {{ data.item.required_tiles.length }}種
-                {{ data.item.n_required_tiles }}枚
-              </div>
-              <div class="yukohai">
-                <TileImage
-                  v-for="(tile, i) in data.item.required_tiles"
-                  :key="i"
-                  :tile="tile.tile"
-                />
-              </div>
-            </template>
-          </b-table>
-        </b-col>
-      </b-row>
+      <!-- hand and melds -->
+      <div id="result">
+        <div class="ml-2 mt-3 mb-2">
+          <b-row>
+            <b-col
+              ><div class="h6">
+                Powered by 麻雀何切るシミュレーター ver 0.9.1
+                (https://pystyle.info/apps/mahjong-nanikiru-simulator/)
+              </div></b-col
+            >
+          </b-row>
+          <b-row class="mb-3">
+            <b-col cols="auto">
+              <b-container id="problem" class="ml-0 p-2">
+                <b-row>
+                  <b-col>
+                    <ul>
+                      <li>
+                        {{ Tile2String.get(result.request.round_wind) }}一局
+                      </li>
+                      <li class="ml-2">0本場</li>
+                      <li class="ml-3">
+                        {{ Tile2String.get(result.request.seat_wind) }}家
+                      </li>
+                      <li class="ml-3">{{ turn }}巡目</li>
+                      <li class="ml-3">
+                        <DoraTiles
+                          :DoraIndicators="result.request.dora_indicators"
+                        />
+                      </li>
+                    </ul>
+                  </b-col>
+                </b-row>
+                <b-row class="mt-3">
+                  <b-col>
+                    <HandAndMeldedBlocks
+                      :hand="result.request.hand"
+                      :melds="result.request.melds"
+                    />
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-col>
+          </b-row>
 
-      <!-- グラフ -->
-      <template v-if="showGraph">
+          <!-- Stats -->
+          <b-row class="mt-2">
+            <b-col>
+              <b-table
+                :fields="fields"
+                :items="items"
+                :sort-compare="sortCompare"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                sort-icon-left
+              >
+                <!-- tile -->
+                <template #cell(tile)="data">
+                  <TileImage :tile="data.item.tile" />
+                </template>
+                <!-- necessary tiles -->
+                <template #cell(sum_necessary_tiles)="data">
+                  <div class="mb-2">
+                    {{ data.item.necessary_tiles.length }}種{{
+                      data.item.sum_necessary_tiles
+                    }}枚
+                    <span
+                      v-if="data.item.shanten != result.response.shanten.all"
+                      style="color: darkblue"
+                    >
+                      (向聴戻し)</span
+                    >
+                  </div>
+                  <div class="yukohai">
+                    <TileImage
+                      v-for="(tile, i) in data.item.necessary_tiles"
+                      :key="i"
+                      :tile="tile.tile"
+                    />
+                  </div>
+                </template>
+              </b-table>
+            </b-col>
+          </b-row>
+        </div>
+      </div>
+
+      <!-- Graph -->
+      <template v-if="result.response.config.calc_stats">
         <b-row class="mt-2">
           <b-col
             >デフォルトで上位5つの牌を表示しています。<br />
@@ -110,8 +169,8 @@
           <b-col>
             <LineChart
               class="chart"
-              :chartData="lineData"
               :options="lineOptions"
+              :chartData="lineData"
             ></LineChart>
           </b-col>
         </b-row>
@@ -135,15 +194,10 @@
             </b-form-group>
           </b-col>
         </b-row>
+
+        <!-- Graph end -->
       </template>
     </template>
-
-    <!-- 失敗時 -->
-    <b-row v-else-if="result && !result.success">
-      <b-col
-        ><b-alert show variant="danger">{{ result.err_msg }} </b-alert></b-col
-      >
-    </b-row>
   </b-container>
 </template>
 
@@ -151,13 +205,14 @@
 import { isMobile } from "mobile-device-detect";
 import html2canvas from "html2canvas";
 import TileImage from "@/components/mahjong/TileImage.vue";
+import HandAndMeldedBlocks from "@/components/mahjong/HandAndMeldedBlocks.vue";
+import DoraTiles from "@/components/mahjong/DoraTiles.vue";
 import {
   TileOrder,
   TilePriority,
   Tile2String,
   Hand2String,
   Problem2String,
-  Syanten2String,
 } from "@/mahjong.js";
 import LineChart from "@/components/LineChart.js";
 
@@ -165,136 +220,130 @@ export default {
   name: "Result",
   components: {
     TileImage,
+    DoraTiles,
+    HandAndMeldedBlocks,
     LineChart,
   },
-  props: ["result"],
+  props: ["result", "turn"],
   data() {
     return {
       isMobile: isMobile,
       sortDesc: true,
       sortBy: "",
+      Tile2String: Tile2String,
+      Problem2String: Problem2String,
       line_options: [
         {
-          value: "exp_values",
+          value: "exp_score",
           text: "期待値",
         },
         {
-          value: "win_probs",
+          value: "win_prob",
           text: "和了確率",
         },
         {
-          value: "tenpai_probs",
+          value: "tenpai_prob",
           text: "聴牌確率",
         },
       ],
-      lineType: "exp_values",
-      Syanten2String: Syanten2String,
+      lineType: "exp_score",
     };
   },
 
   methods: {
+    // マイクロ秒を人間が読みやすい形式に変換する。
+    formatTime(time_us) {
+      if (time_us < 1000) {
+        return `${time_us}μs`;
+      } else if (time_us < 1000000) {
+        return `${(time_us / 1000).toFixed(2)}ms`;
+      } else {
+        return `${(time_us / 1000000).toFixed(2)}s`;
+      }
+    },
+
+    formatShanten(shanten) {
+      if (shanten == -1) return "和了";
+      else if (shanten == 0) return "聴牌";
+
+      return `${shanten}向聴`;
+    },
+
     // 画像でダウンロードする。
     downloadResultAsImage() {
-      let target = document.querySelector("#result");
-      let config = { useCORS: true };
-      let req = this.result.request;
+      const target = document.querySelector("#result");
+      const config = { useCORS: true };
+      const req = this.result.request;
 
       html2canvas(target, config).then((canvas) => {
         var a = document.createElement("a");
         a.href = canvas
           .toDataURL("image/png")
           .replace("image/png", "image/octet-stream");
-        a.download = `${Hand2String(req.hand_tiles, req.melded_blocks)}.png`;
+        a.download = `${Hand2String(req.hand, req.melds)}.png`;
         a.click();
       });
     },
 
     // テキストでコピーする。
     copyResultAsText() {
-      let req = this.result.request;
-      let res = this.result.response;
+      const req = this.result.request;
+      const res = this.result.response;
 
       // 場況
       let str = "";
       str += `## 場況\n`;
-      str += Problem2String(
-        req.bakaze,
-        req.zikaze,
-        req.turn,
-        req.dora_indicators,
-        req.hand_tiles,
-        req.melded_blocks
-      );
-      str += ` ${this.syantenStr}\n\n`;
+      str +=
+        Problem2String(
+          req.round_wind,
+          req.seat_wind,
+          this.turn,
+          req.dora_indicators,
+          req.hand,
+          req.melds
+        ) + "\n";
+
+      str +=
+        `${this.formatShanten(res.shanten.all)} ` +
+        `(一般形: ${this.formatShanten(res.shanten.all)} ` +
+        `七対子: ${this.formatShanten(res.shanten.seven_pairs)} ` +
+        `国士無双: ${this.formatShanten(res.shanten.thirteen_orphans)})\n\n`;
 
       str += `## 計算結果\n`;
 
-      if (res.result_type == 1) {
-        for (let candidate of res.candidates) {
-          // 有効牌の合計枚数
-          let n_required_tiles = this.sumRequiredTiles(
-            candidate.required_tiles
-          );
-
-          str += `打: ${Tile2String.get(candidate.tile)}, `;
-          str += `受入枚数: ${candidate.required_tiles.length}種${n_required_tiles}枚, `;
-          str += `有効牌: ${Hand2String(
-            candidate.required_tiles.map((x) => x.tile)
-          )}`;
-          str += candidate.syanten_down ? " (向聴戻し)" : "";
-          str += "\n";
-
-          if (this.isProbCalculated) {
-            let exp_value = candidate.exp_values[req.turn - 1].toFixed(0);
-            let win_prob = (candidate.win_probs[req.turn - 1] * 100).toFixed(2);
-            let tenpai_prob = (
-              candidate.tenpai_probs[req.turn - 1] * 100
-            ).toFixed(2);
-
-            str += `期待値: ${exp_value}点, `;
-            str += `和了確率: ${win_prob}%, `;
-            str += `聴牌確率: ${tenpai_prob}%\n`;
-          }
-          str += "\n";
+      for (let stat of res.stats) {
+        const sum = stat.necessary_tiles.reduce((a, c) => a + c.count, 0);
+        if (res.config.num_tiles == 14) {
+          str += `打: ${Tile2String.get(stat.tile)}, `;
         }
-      } else if (res.result_type == 0) {
-        // 受入枚数
-        let n_required_tiles = this.sumRequiredTiles(res.required_tiles);
-
-        str += `受入枚数: ${res.required_tiles.length}種${n_required_tiles}枚 `;
-        str += `有効牌: ${Hand2String(
-          res.required_tiles.map((x) => x.tile)
-        )}\n`;
-
-        if (this.isProbCalculated) {
-          let exp_value = res.exp_values[req.turn - 1].toFixed(0);
-          let win_prob = (res.win_probs[req.turn - 1] * 100).toFixed(2);
-          let tenpai_prob = (res.tenpai_probs[req.turn - 1] * 100).toFixed(2);
-
-          str += `期待値: ${exp_value}点, `;
+        str += `有効牌: ${stat.necessary_tiles.length}種${sum}枚, `;
+        str += `${Hand2String(stat.necessary_tiles.map((x) => x.tile))}`;
+        str += (stat.shanten != res.shanten.all ? " (向聴戻し)" : "") + "\n";
+        if (res.config.calc_stats) {
+          const exp_score = stat.exp_score[this.turn].toFixed(0);
+          const win_prob = (stat.win_prob[this.turn] * 100).toFixed(2);
+          const tenpai_prob = (stat.tenpai_prob[this.turn] * 100).toFixed(2);
+          str += `期待値: ${exp_score}点, `;
           str += `和了確率: ${win_prob}%, `;
-          str += `聴牌確率: ${tenpai_prob}%\n`;
+          str += `聴牌確率: ${tenpai_prob}%`;
         }
-
         str += "\n";
       }
-
+      str += "\n";
       str += `Powered by 何切るシミュレーター https://pystyle.info/apps/mahjong-nanikiru-simulator/\n`;
 
       return str;
     },
 
-    // 比較方法
     sortCompare(aRow, bRow, key) {
-      let a = aRow[key];
-      let b = bRow[key];
+      const a = aRow[key];
+      const b = bRow[key];
 
       if (key === "tile") {
-        // 牌の場合
         return TileOrder[a] - TileOrder[b];
       }
 
-      if (key === "exp_value") {
+      if (key === "exp_score") {
         return Math.floor(a) != Math.floor(b)
           ? a - b
           : TilePriority[bRow["tile"]] - TilePriority[aRow["tile"]];
@@ -306,209 +355,41 @@ export default {
           : TilePriority[bRow["tile"]] - TilePriority[aRow["tile"]];
       }
 
-      if (key === "n_required_tiles") {
-        // 向聴戻しは最後にする。
-        if (!aRow.syanten_down) a += 1000;
-        if (!bRow.syanten_down) b += 1000;
-        return a - b;
+      if (key === "sum_necessary_tiles") {
+        return aRow.shanten != bRow.shanten
+          ? bRow.shanten - aRow.shanten
+          : a - b;
       }
 
       return null;
     },
-
-    // ソートする項目を設定する。
-    setSortBy() {
-      if (!this.isSuccess) {
-        this.sortDesc = true;
-        this.sortBy = "";
-        return;
-      }
-
-      let res = this.result.response;
-
-      this.sortDesc = true;
-      if (res.result_type == 1) {
-        // 14枚
-        if (this.isProbCalculated && this.maximizeWinProb) {
-          // 「3向聴以上、和了確率最大化」の場合は和了確率が高い順にソートする。
-          this.sortBy = "win_prob";
-          this.lineType = "win_probs";
-        } else if (this.isProbCalculated && !this.maximizeWinProb) {
-          // 「3向聴以上かつ期待値最大化」の場合は期待値が高い順にソートする。
-          this.sortBy = "exp_value";
-          this.lineType = "exp_values";
-        } else {
-          // 「4向聴以上」の場合は受入枚数が多い順にソートする。
-          this.sortBy = "n_required_tiles";
-        }
-      } else {
-        this.sortBy = "";
-      }
-    },
-
-    // 有効牌の合計枚数を数える。
-    sumRequiredTiles(required_tiles) {
-      return required_tiles.reduce((s, e) => s + e.count, 0);
-    },
   },
+
   computed: {
-    showGraph() {
-      if (!this.isSuccess) return false;
-      return this.isProbCalculated;
-    },
-
-    lineOptions() {
-      if (!this.isSuccess) return {};
-
-      let req = this.result.request;
-
-      let xlabel = this.line_options.find((x) => x.value == this.lineType).text;
-
-      let options = {
-        annotation: {
-          annotations: [
-            {
-              type: "line",
-              id: "vLine",
-              mode: "vertical",
-              scaleID: "x-axis-0",
-              value: req.turn,
-              borderWidth: 2,
-              borderColor: "darkred",
-              borderDash: [2, 2],
-              label: {
-                enabled: true,
-                position: "top",
-                content: "現在",
-              },
-            },
-          ],
-        },
-
-        tooltips: {
-          callbacks: {
-            title: function (tooltipItems) {
-              return tooltipItems[0].xLabel + "巡目";
-            },
-
-            label: function (tooltipItem, data) {
-              let label = data.datasets[tooltipItem.datasetIndex].label;
-
-              let value = tooltipItem.yLabel;
-
-              if (value <= 1) {
-                value = (value * 100).toFixed(2) + "%";
-              } else {
-                value = Math.round(value) + "点";
-              }
-
-              return label + ": " + value;
-            },
-          },
-        },
-
-        legend: {
-          align: "start",
-        },
-
-        animation: false,
-
-        scales: {
-          xAxes: [
-            {
-              scaleLabel: {
-                display: true,
-                labelString: "巡目",
-              },
-            },
-          ],
-          yAxes: [
-            {
-              scaleLabel: {
-                display: true,
-                labelString: xlabel,
-              },
-
-              ticks: {
-                callback: function (x) {
-                  // 確率は%、期待値は点を末尾に付ける。
-                  return x <= 1 ? Math.round(x * 100) + "%" : x + "点";
-                },
-              },
-            },
-          ],
-        },
-      };
-
-      return options;
-    },
-
-    lineData() {
-      if (!this.isSuccess) return {};
-
-      let colors = [
-        "#e351d1",
-        "#00973d",
-        "#646df8",
-        "#f1bf4b",
-        "#104db2",
-        "#ef7310",
-        "#d199ff",
-        "#7f7400",
-        "#c50057",
-        "#86d7ab",
-        "#a11d28",
-        "#705685",
-        "#6c4d23",
-        "#ffadcc",
-      ];
-
-      let res = this.result.response;
-
-      let turns;
-      let datasets = [];
-
-      if (res.result_type == 0) {
-        turns = Array.from({ length: res.exp_values.length }, (_, i) => i + 1);
-        datasets.push({
-          label: "各巡目の値",
-          data: res[this.lineType],
-          fill: false,
-          lineTension: 0,
-          borderColor: colors[0],
-        });
-      } else {
-        for (let [i, candidate] of res.candidates.entries()) {
-          turns = Array.from(
-            { length: candidate.exp_values.length },
-            (_, i) => i + 1
-          );
-          datasets.push({
-            label: Tile2String.get(candidate.tile),
-            data: candidate[this.lineType],
-            fill: false,
-            lineTension: 0,
-            borderColor: colors[i],
-            hidden: i >= 5,
-          });
-        }
+    problemString() {
+      if (this.result?.success !== true) {
+        return [];
       }
 
-      return {
-        labels: turns,
-        datasets: datasets,
-      };
+      return Problem2String(
+        this.result.request.round_wind,
+        this.result.request.seat_wind,
+        this.turn,
+        this.result.request.dora_indicators,
+        this.result.request.hand,
+        this.result.request.melds
+      );
     },
 
-    // 打牌一覧のヘッダー
     fields() {
-      if (!this.isSuccess) return [];
-      let res = this.result.response;
+      if (this.result?.success !== true) {
+        return [];
+      }
 
-      let fields = [];
+      const fields = [];
+      const res = this.result.response;
 
-      if (res.result_type == 1) {
-        // 打牌時
+      if (res.config.num_tiles == 14) {
         fields.push({
           key: "tile",
           label: "打牌",
@@ -518,18 +399,18 @@ export default {
       }
 
       fields.push({
-        key: "n_required_tiles",
-        label: "受入枚数",
-        sortable: false,
+        key: "sum_necessary_tiles",
+        label: "有効牌",
+        sortable: true,
       });
 
-      if (this.isProbCalculated) {
+      if (res.config.calc_stats) {
         fields.push(
           {
-            key: "exp_value",
+            key: "exp_score",
             label: "期待値",
             sortable: true,
-            thStyle: "width: 90px;",
+            thStyle: "width: 100px;",
             formatter: (x) => x.toFixed(0) + "点",
           },
           {
@@ -552,155 +433,185 @@ export default {
       return fields;
     },
 
-    // 打牌一覧のコンテンツ
     items() {
-      if (!this.isSuccess) return [];
-      let req = this.result.request;
-      let res = this.result.response;
+      if (this.result?.success !== true) {
+        return [];
+      }
 
-      let items = [];
-      if (res.result_type == 0) {
-        // 自摸の場合
+      const res = this.result.response;
+      const items = [];
+      for (const stat of res.stats) {
         let item = {};
-
-        // 受入枚数
-        item.n_required_tiles = this.sumRequiredTiles(res.required_tiles);
-
-        // 有効牌の一覧
-        item.required_tiles = res.required_tiles;
-
-        if (this.isProbCalculated) {
-          // 現状の巡目の期待値
-          item.exp_value = res.exp_values[req.turn - 1];
-          // 現状の巡目の和了確率
-          item.win_prob = res.win_probs[req.turn - 1];
-          // 現状の巡目の聴牌確率
-          item.tenpai_prob = res.tenpai_probs[req.turn - 1];
+        item.tile = stat.tile;
+        item.necessary_tiles = stat.necessary_tiles;
+        item.sum_necessary_tiles = stat.necessary_tiles.reduce(
+          (a, c) => a + c.count,
+          0
+        );
+        item.shanten = stat.shanten;
+        if (res.config.calc_stats) {
+          item.exp_score = stat.exp_score[this.turn];
+          item.win_prob = stat.win_prob[this.turn];
+          item.tenpai_prob = stat.tenpai_prob[this.turn];
         }
 
         items.push(item);
-      } else {
-        // 打牌の場合
-        for (let candidate of res.candidates) {
-          let item = {};
-
-          // 打牌
-          item.tile = candidate.tile;
-
-          // 向聴戻しは背景を青くする。
-          if (candidate.syanten_down) item._cellVariants = { tile: "info" };
-          item.syanten_down = candidate.syanten_down;
-
-          // 受入枚数
-          item.n_required_tiles = this.sumRequiredTiles(
-            candidate.required_tiles
-          );
-
-          // 有効牌の一覧
-          item.required_tiles = candidate.required_tiles;
-
-          if (this.isProbCalculated) {
-            // 現状の巡目の期待値
-            item.exp_value = candidate.exp_values[req.turn - 1];
-            // 現状の巡目の和了確率
-            item.win_prob = candidate.win_probs[req.turn - 1];
-            // 現状の巡目の聴牌確率
-            item.tenpai_prob = candidate.tenpai_probs[req.turn - 1];
-          }
-
-          items.push(item);
-        }
       }
 
       return items;
     },
 
-    // 和了確率を最大化したかどうか
-    maximizeWinProb() {
-      if (!this.isSuccess) return false;
-      let req = this.result.request;
+    lineOptions() {
+      if (this.result?.success !== true) {
+        return {};
+      }
 
-      return req.flag & 128;
+      const xlabel = this.line_options.find(
+        (x) => x.value == this.lineType
+      ).text;
+      const options = {
+        annotation: {
+          annotations: [
+            {
+              type: "line",
+              id: "vLine",
+              mode: "vertical",
+              scaleID: "x-axis-0",
+              value: this.turn,
+              borderWidth: 2,
+              borderColor: "darkred",
+              borderDash: [2, 2],
+              label: {
+                enabled: true,
+                position: "top",
+                content: "現在",
+              },
+            },
+          ],
+        },
+        tooltips: {
+          callbacks: {
+            title: function (tooltipItems) {
+              return tooltipItems[0].xLabel + "巡目";
+            },
+            label: function (tooltipItem, data) {
+              let label = data.datasets[tooltipItem.datasetIndex].label;
+              let value = tooltipItem.yLabel;
+              if (value <= 1) {
+                value = (value * 100).toFixed(2) + "%";
+              } else {
+                value = Math.round(value) + "点";
+              }
+              return label + ": " + value;
+            },
+          },
+        },
+        legend: {
+          align: "start",
+        },
+        animation: false,
+        scales: {
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "巡目",
+              },
+            },
+          ],
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: xlabel,
+              },
+              ticks: {
+                callback: function (x) {
+                  // 確率は%、期待値は点を末尾に付ける。
+                  return x <= 1 ? Math.round(x * 100) + "%" : x + "点";
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      return options;
     },
 
-    // 確率が計算されているかどうか
-    isProbCalculated() {
-      if (!this.isSuccess) return false;
-      let res = this.result.response;
-      return res.syanten.syanten <= 3;
-    },
+    lineData() {
+      if (this.result?.success !== true) {
+        return {};
+      }
 
-    // 計算時間
-    calcTime() {
-      if (!this.isSuccess) return "";
+      if (!this.result.response.config.calc_stats) {
+        return {};
+      }
 
-      let time = this.result.response.time;
-      if (time.toString().length > 6) return (time / 1000000).toFixed(2) + "s";
-      else if (time.toString().length > 3)
-        return Math.floor(time / 1000) + "ms";
-      else return time.toString() + "us";
-    },
+      let colors = [
+        "#e351d1",
+        "#00973d",
+        "#646df8",
+        "#f1bf4b",
+        "#104db2",
+        "#ef7310",
+        "#d199ff",
+        "#7f7400",
+        "#c50057",
+        "#86d7ab",
+        "#a11d28",
+        "#705685",
+        "#6c4d23",
+        "#ffadcc",
+      ];
+      const res = this.result.response;
 
-    isSuccess() {
-      return this.result && this.result.success;
-    },
+      const t_min = res.config.t_min;
+      const t_max = res.config.t_max;
+      const turns = Array.from(
+        { length: t_max - t_min + 1 },
+        (_, i) => t_min + i
+      );
 
-    syantenStr() {
-      if (!this.isSuccess) return "";
+      const stats = JSON.parse(JSON.stringify(res.stats));
+      stats.sort(
+        (a, b) => b[this.lineType][this.turn] - a[this.lineType][this.turn]
+      );
 
-      let res = this.result.response;
+      const datasets = [];
+      for (const [i, stat] of stats.entries()) {
+        const values = stat[this.lineType].slice(t_min, t_max + 1);
+        const label =
+          res.config.num_tiles == 14 ? Tile2String.get(stat.tile) : "値";
+        datasets.push({
+          label: label,
+          data: values,
+          fill: false,
+          lineTension: 0,
+          borderColor: colors[i],
+          hidden: i >= 5,
+        });
+      }
 
-      let str = "";
-      str += `${Syanten2String(res.syanten.syanten)} `;
-      str += `(一般手: ${Syanten2String(res.syanten.normal)} `;
-      str += `七対子: ${Syanten2String(res.syanten.tiitoi)} `;
-      str += `国士無双: ${Syanten2String(res.syanten.kokusi)})`;
-
-      return str;
+      return {
+        labels: turns,
+        datasets: datasets,
+      };
     },
   },
+
   watch: {
     result: function (result) {
-      if (!result || !result.success) return;
+      if (this.result?.success !== true) {
+        return;
+      }
 
-      this.setSortBy();
-
-      let req = result.request;
-      let res = result.response;
-
-      if (res.result_type != 1) return;
-
-      // 14枚
-      if (this.isProbCalculated && this.maximizeWinProb) {
-        // 「3向聴以下かつ和了確率最大化」の場合は和了確率が高い順にソートする。
-        res.candidates.sort((a, b) =>
-          Math.floor(a.win_probs[req.turn - 1] * 10000) !=
-          Math.floor(b.win_probs[req.turn - 1] * 10000)
-            ? b.win_probs[req.turn - 1] - a.win_probs[req.turn - 1]
-            : TilePriority[a.tile] - TilePriority[b.tile]
-        );
-      } else if (this.isProbCalculated && !this.maximizeWinProb) {
-        // 「3向聴以下かつ期待値最大化」の場合は期待値が高い順にソートする。
-        res.candidates.sort((a, b) =>
-          Math.floor(a.exp_values[req.turn - 1]) !=
-          Math.floor(b.exp_values[req.turn - 1])
-            ? b.exp_values[req.turn - 1] - a.exp_values[req.turn - 1]
-            : TilePriority[a.tile] - TilePriority[b.tile]
-        );
+      if (this.result.response.config.calc_stats) {
+        this.sortDesc = true;
+        this.sortBy = "exp_score";
       } else {
-        let sumRequiredTiles = this.sumRequiredTiles;
-        // 「4向聴以上」の場合は受入枚数が多い順にソートする。
-        res.candidates.sort(function (a, b) {
-          let a_sum = sumRequiredTiles(a.required_tiles);
-          let b_sum = sumRequiredTiles(b.required_tiles);
-
-          if (!a.syanten_down) a_sum += 1000;
-          if (!b.syanten_down) b_sum += 1000;
-
-          return a_sum != b_sum
-            ? b_sum - a_sum
-            : TilePriority[a.tile] - TilePriority[b.tile];
-        });
+        this.sortDesc = true;
+        this.sortBy = "sum_necessary_tiles";
       }
     },
   },

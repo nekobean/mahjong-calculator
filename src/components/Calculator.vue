@@ -8,8 +8,8 @@
           <b-form-group label-cols="2" label="場風" label-align="right">
             <b-form-radio-group
               id="input-bakaze"
-              v-model="bakaze"
-              :options="bakazeOptions"
+              v-model="roundWind"
+              :options="roundWindOptions"
               button-variant="outline-primary"
               buttons
             ></b-form-radio-group>
@@ -19,8 +19,8 @@
           <b-form-group label-cols="2" label="自風" label-align="right">
             <b-form-radio-group
               id="input-zikaze"
-              v-model="zikaze"
-              :options="zikazeOptions"
+              v-model="seatWind"
+              :options="seatWindOptions"
               button-variant="outline-primary"
               buttons
             ></b-form-radio-group>
@@ -53,8 +53,8 @@
           <b-form-group label-cols="2" label="設定" label-align="right">
             <b-form-checkbox-group
               id="input-flag"
-              v-model="flag"
-              :options="flagOptions"
+              v-model="config"
+              :options="configOptions"
               switches
             ></b-form-checkbox-group>
           </b-form-group>
@@ -68,9 +68,9 @@
             <b-row>
               <b-col>
                 <ul>
-                  <li>{{ Tile2String.get(bakaze) }}一局</li>
+                  <li>{{ Tile2String.get(roundWind) }}一局</li>
                   <li class="ml-2">0本場</li>
-                  <li class="ml-3">{{ Tile2String.get(zikaze) }}家</li>
+                  <li class="ml-3">{{ Tile2String.get(seatWind) }}家</li>
                   <li class="ml-3">{{ turn }}巡目</li>
                   <li class="ml-3">
                     <DoraTiles
@@ -276,7 +276,7 @@
     </b-container>
 
     <!-- 計算結果 -->
-    <Result :result="result" />
+    <Result :result="result" :turn="turn" />
   </div>
 </template>
 
@@ -320,41 +320,40 @@ export default {
     TileCountsInput,
     Result,
   },
+
   created() {
     this.clearAll();
   },
+
   data: function () {
     return {
-      bakaze: null, // 場風
-      zikaze: null, // 自風
+      roundWind: null, // 場風
+      seatWind: null, // 自風
       turn: null, // 現在の巡目
       doraIndicators: null, // ドラ
-      flag: [1, 2, 3, 4], // 設定
+      config: [1, 2, 3, 4], // 設定
       hand: null, // 手牌
       melds: null, // 副露ブロックの一覧
+
       result: null, // 結果
       tileCounts: null, // 牌の残り枚数
-
       version: version,
       isMobile: isMobile,
       isCalculating: false,
       Tile2String: Tile2String,
 
       // オプション
-      // 場風
-      bakazeOptions: [
+      roundWindOptions: [
         { value: Tile.Ton, text: "東" },
         { value: Tile.Nan, text: "南" },
       ],
-      // 自風
-      zikazeOptions: [
+      seatWindOptions: [
         { value: Tile.Ton, text: "東" },
         { value: Tile.Nan, text: "南" },
         { value: Tile.Sya, text: "西" },
         { value: Tile.Pe, text: "北" },
       ],
-      // 設定
-      flagOptions: [
+      configOptions: [
         { value: 1, text: "赤ドラ" },
         { value: 2, text: "裏ドラ" },
         { value: 3, text: "向聴戻し" },
@@ -405,12 +404,11 @@ export default {
       this.isCalculating = true;
       this.result = null;
 
-      const enable_reddora = this.flag.includes(1);
-      const enable_uradora = this.flag.includes(2);
-      const enable_shanten_down = this.flag.includes(3);
-      const enable_tegawari = this.flag.includes(4);
-
       // シミュレーターでは残り牌の五萬、五筒、五索は赤牌を含む。
+      const enable_reddora = this.config.includes(1);
+      const enable_uradora = this.config.includes(2);
+      const enable_shanten_down = this.config.includes(3);
+      const enable_tegawari = this.config.includes(4);
       let counts = this.tileCounts.slice();
       counts[Tile.Manzu5] += counts[Tile.AkaManzu5];
       counts[Tile.Pinzu5] += counts[Tile.AkaPinzu5];
@@ -427,13 +425,13 @@ export default {
         enable_uradora: enable_uradora,
         enable_shanten_down: enable_shanten_down,
         enable_tegawari: enable_tegawari,
-        round_wind: this.bakaze,
+        round_wind: this.roundWind,
         dora_indicators: this.doraIndicators,
         hand: this.hand,
         melds: this.melds,
-        seat_wind: this.zikaze,
+        seat_wind: this.seatWind,
         wall: counts,
-        version: this.version,
+        version: version,
       });
 
       let url =
@@ -441,7 +439,6 @@ export default {
           ? "http://localhost:8888"
           : "/apps/mahjong-nanikiru-simulator/post.py";
 
-      console.log(data)
       // POST する。
       axios
         .post(url, data)
@@ -470,9 +467,9 @@ export default {
 
     /// 設定を初期化する。
     clearAll() {
-      this.zikaze = Tile.Ton;
-      this.bakaze = Tile.Ton;
-      this.turn = 3;
+      this.seatWind = Tile.Ton;
+      this.roundWind = Tile.Ton;
+      this.turn = 1;
       this.doraIndicators = [Tile.Ton];
       this.enable_reddora = true;
       this.enable_uradora = true;
@@ -598,8 +595,8 @@ export default {
     // 牌姿をテキストでコピーする。
     copyProblemAsText() {
       return Problem2String(
-        this.bakaze,
-        this.zikaze,
+        this.roundWind,
+        this.seatWind,
         this.turn,
         this.doraIndicators,
         this.hand,
