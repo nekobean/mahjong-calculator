@@ -440,7 +440,7 @@ export default {
       let url =
         location.hostname === "localhost"
           ? "http://localhost:50000"
-          : "/apps/mahjong-nanikiru-simulator/post.py";
+          : "/apps/mahjong-cpp_0.9.1/post.py";
 
       // POST する。
       axios
