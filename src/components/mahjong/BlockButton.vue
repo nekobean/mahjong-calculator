@@ -1,12 +1,12 @@
 <template>
   <div
-    :class="disabled ? 'disabled' : 'enabled'"
+    :class="disabled ? 'disabled' : show_only ? '' : 'enabled'"
     @click="$emit('click-block', block)"
   >
     <MeldedBlock :block="block" :seat="0" />
   </div>
 </template>
- 
+
 <script>
 import MeldedBlock from "./MeldedBlock.vue";
 
@@ -21,6 +21,10 @@ export default {
     },
     // 無効にするかどうか
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    show_only: {
       type: Boolean,
       default: false,
     },

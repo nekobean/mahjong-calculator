@@ -97,6 +97,7 @@
                       <li class="ml-3">
                         <DoraTiles
                           :DoraIndicators="result.request.dora_indicators"
+                          :show_only="true"
                         />
                       </li>
                     </ul>
@@ -107,6 +108,7 @@
                     <HandAndMeldedBlocks
                       :hand="result.request.hand"
                       :melds="result.request.melds"
+                      :show_only="true"
                     />
                   </b-col>
                 </b-row>

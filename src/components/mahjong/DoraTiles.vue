@@ -1,8 +1,14 @@
 <template>
   <div class="dora_indicators">
     <template v-for="(tile, i) in Wanpai">
-      <TileImage v-if="tile == -1" :key="i" :tile="tile" />
-      <TileButton v-else :key="i" :tile="tile" @click-tile="removeDora" />
+      <template v-if="show_only">
+        <TileImage v-if="tile == -1" :key="i" :tile="tile" />
+        <TileImage v-else :key="i" :tile="tile" />
+      </template>
+      <template v-else>
+        <TileImage v-if="tile == -1" :key="i" :tile="tile" />
+        <TileButton v-else :key="i" :tile="tile" @click-tile="removeDora" />
+      </template>
     </template>
   </div>
 </template>
@@ -21,6 +27,10 @@ export default {
     DoraIndicators: {
       type: Array,
       required: true,
+    },
+    show_only: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
