@@ -257,9 +257,9 @@
 
     <p>
       version 0.9.1 (2024/11/25):<br />
-      計算アルゴリズムを全体的に見直しました。
+      計算アルゴリズムを全体的に見直しました。一部報告されていた不自然な計算結果は改善したと思います。
       <br />
-      不具合あったら前のバージョンに戻します。不具合を見つけた方は
+      不具合を見つけた方は
       <b-link
         href="https://pystyle.info/mahjong-nanikiru-simulator/"
         target="_blank"
@@ -270,10 +270,13 @@
 
     <ul>
       <li>
+        聴牌時に立直するか、ダマで待つかを選択できるように変更しました。<br />ダマで待つ場合、聴牌時の手変わり、和了時の向聴戻しを考慮します。
+      </li>
+      <li>
         一部の手牌で向聴数が正しく計算できていなかった問題を修正しました。
       </li>
       <li>
-        一般形、七対子、国士無双を考慮して計算するように変更しました。(前バージョンでは七対子との両天秤は見れなかった)
+        一般形、七対子、国士無双を同時に考慮して計算するように変更しました。(前バージョンでは七対子との両天秤は見れなかった)
       </li>
       <li>
         点数計算時のダブル立直、一発、海底撈月の考慮は一旦無効にしています。
@@ -286,15 +289,12 @@
     <hr style="border: 1px solid white" />
 
     <ul>
-      <li>version 0.9.1 (2024/11/25): 計算アルゴリズムを全体的に見直し。</li>
-      <li>
-        ご意見、ご質問、不具合報告は<b-link
-          href="https://pystyle.info/mahjong-nanikiru-simulator/"
-          target="_blank"
-          class="text-info"
-          >ブログ記事</b-link
-        >のコメント欄にお願いします。
-      </li>
+      ご意見、ご質問、不具合報告は<b-link
+        href="https://pystyle.info/mahjong-nanikiru-simulator/"
+        target="_blank"
+        class="text-info"
+        >ブログ記事</b-link
+      >のコメント欄にお願いします。
     </ul>
 
     <p>
