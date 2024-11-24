@@ -331,7 +331,7 @@ export default {
       seatWind: null, // 自風
       turn: null, // 現在の巡目
       doraIndicators: null, // ドラ
-      config: [1, 2, 3, 4], // 設定
+      config: [1, 2, 3, 4, 5], // 設定
       hand: null, // 手牌
       melds: null, // 副露ブロックの一覧
 
@@ -358,6 +358,7 @@ export default {
         { value: 2, text: "裏ドラ" },
         { value: 3, text: "向聴戻し" },
         { value: 4, text: "手変わり" },
+        { value: 5, text: "聴牌時立直" },
       ],
     };
   },
@@ -409,11 +410,12 @@ export default {
       const enable_uradora = this.config.includes(2);
       const enable_shanten_down = this.config.includes(3);
       const enable_tegawari = this.config.includes(4);
+      const enable_riichi = this.config.includes(5);
       let counts = this.tileCounts.slice();
       counts[Tile.Manzu5] += counts[Tile.AkaManzu5];
       counts[Tile.Pinzu5] += counts[Tile.AkaPinzu5];
       counts[Tile.Sozu5] += counts[Tile.AkaSozu5];
-      if (!enable_reddora ) {
+      if (!enable_reddora) {
         counts[Tile.AkaManzu5] = 0;
         counts[Tile.AkaPinzu5] = 0;
         counts[Tile.AkaSozu5] = 0;
@@ -425,6 +427,7 @@ export default {
         enable_uradora: enable_uradora,
         enable_shanten_down: enable_shanten_down,
         enable_tegawari: enable_tegawari,
+        enable_riichi: enable_riichi,
         round_wind: this.roundWind,
         dora_indicators: this.doraIndicators,
         hand: this.hand,
@@ -436,7 +439,7 @@ export default {
 
       let url =
         location.hostname === "localhost"
-          ? "http://localhost:8888"
+          ? "http://localhost:50000"
           : "/apps/mahjong-nanikiru-simulator/post.py";
 
       // POST する。
@@ -471,10 +474,7 @@ export default {
       this.roundWind = Tile.Ton;
       this.turn = 1;
       this.doraIndicators = [Tile.Ton];
-      this.enable_reddora = true;
-      this.enable_uradora = true;
-      this.enable_shanten_down = true;
-      this.enable_tegawari = true;
+      this.config = [1, 2, 3, 4, 5];
       this.hand = [];
       this.melds = [];
       this.result = null;
