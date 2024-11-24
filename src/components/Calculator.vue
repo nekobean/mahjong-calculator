@@ -474,7 +474,7 @@ export default {
       this.roundWind = Tile.Ton;
       this.turn = 1;
       this.doraIndicators = [Tile.Ton];
-      this.config = [1, 2, 3, 4, 5];
+      this.config = [1, 2, 3, 4];
       this.hand = [];
       this.melds = [];
       this.result = null;
