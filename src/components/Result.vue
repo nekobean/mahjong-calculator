@@ -32,6 +32,18 @@
           <!-- <pre>{{ copyResultAsText() }}</pre> -->
         </b-col>
       </b-row>
+      <b-row>
+        <b-col cols="2">巡目設定 ({{ turn }}) </b-col>
+        <b-col cols="4">
+          <b-form-input
+            type="range"
+            v-model="turn"
+            :min="result.response.config.t_min"
+            :max="result.response.config.t_max"
+            step="1"
+          ></b-form-input>
+        </b-col>
+      </b-row>
 
       <!-- Infomation -->
       <b-row>
@@ -75,7 +87,7 @@
           <b-row>
             <b-col
               ><div class="h6">
-                Powered by 麻雀何切るシミュレーター ver 0.9.2
+                Powered by 麻雀何切るシミュレーター ver {{ version }}
                 (https://pystyle.info/apps/mahjong-nanikiru-simulator/)
               </div></b-col
             >
@@ -204,6 +216,7 @@
 </template>
 
 <script>
+import { version } from "@/../package.json";
 import { isMobile } from "mobile-device-detect";
 import html2canvas from "html2canvas";
 import TileImage from "@/components/mahjong/TileImage.vue";
@@ -229,6 +242,7 @@ export default {
   props: ["result", "turn"],
   data() {
     return {
+      version: version,
       isMobile: isMobile,
       sortDesc: true,
       sortBy: "",

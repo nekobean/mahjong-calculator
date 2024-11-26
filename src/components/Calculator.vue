@@ -54,12 +54,17 @@
             content-cols="3"
             label="現在の巡目"
             label-align="right"
+            class="mb-0"
           >
             <b-form-select v-model="turn" id="input-turn">
               <b-form-select-option v-for="i in 17" :key="i" :value="i"
                 >{{ i }} 巡目</b-form-select-option
               >
             </b-form-select>
+          </b-form-group>
+          <b-form-group label-cols="2" label-align="right" class="mb-0">
+            (バージョン0.9.3)
+            同条件で巡目のみ変更する場合、結果画面から変更できるため、再計算不要です。
           </b-form-group>
 
           <!-- 設定 -->
@@ -465,7 +470,7 @@ export default {
           this.result = {
             success: false,
             err_msg:
-              "サーバーとの通信に失敗しました。エラーが続く場合は、お手数ですが管理者までお問い合わせください。",
+              "サーバーとの通信に失敗しました。1分ほど時間をおいてからお試しください。",
           };
         })
         .finally(() => {
