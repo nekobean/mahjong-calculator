@@ -75,7 +75,7 @@
           <b-row>
             <b-col
               ><div class="h6">
-                Powered by 麻雀何切るシミュレーター ver 0.9.1
+                Powered by 麻雀何切るシミュレーター ver 0.9.2
                 (https://pystyle.info/apps/mahjong-nanikiru-simulator/)
               </div></b-col
             >

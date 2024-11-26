@@ -1,6 +1,19 @@
 <template>
   <div>
     <b-container fluid class="border border-gray p-3">
+      <b-row class="mt-2 ml-2 mb-2" style="font-size: 20px">
+        新バージョンは試験運用中です。以前のバージョンは<b-link
+          href="https://pystyle.info/apps/mahjong-nanikiru-simulator_090/"
+          target="_blank"
+          class="text-info"
+          >バージョン 0.9.0</b-link
+        >から利用できます。ご質問やフィードバックは<b-link
+          href="https://pystyle.info/mahjong-nanikiru-simulator/#comments"
+          target="_blank"
+          class="text-info"
+          >こちらのコメント欄</b-link
+        >にお願いします。
+      </b-row>
       <!-- 設定入力欄 -->
       <b-row>
         <b-col>
@@ -358,7 +371,7 @@ export default {
         { value: 2, text: "裏ドラ" },
         { value: 3, text: "向聴戻し" },
         { value: 4, text: "手変わり" },
-        { value: 5, text: "聴牌時立直" },
+        // { value: 5, text: "聴牌時立直" },
       ],
     };
   },
@@ -434,7 +447,7 @@ export default {
         melds: this.melds,
         seat_wind: this.seatWind,
         wall: counts,
-        version: version,
+        version: "0.9.1",
       });
 
       let url =
@@ -472,7 +485,7 @@ export default {
     clearAll() {
       this.seatWind = Tile.Ton;
       this.roundWind = Tile.Ton;
-      this.turn = 1;
+      this.turn = 3;
       this.doraIndicators = [Tile.Ton];
       this.config = [1, 2, 3, 4];
       this.hand = [];

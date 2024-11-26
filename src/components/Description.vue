@@ -3,7 +3,7 @@
     class="pt-2 pb-2"
     :header="`麻雀何切るシミュレーター version ${version} (2024/11/25更新)`"
     header-level="5"
-    style="background-color: #003300"
+    style="background-color: #003775"
     text-variant="light"
   >
     <b-tabs content-class="mt-3" v-model="tabIndex" justified>
@@ -113,7 +113,7 @@
             <h6 class="mb-1 text-warning">
               Q. 対子が多い手牌ですが、七対子は考慮されますか。
             </h6>
-            <p>0.9.1 より七対子、国士無双も考慮されるようになりました。</p>
+            <p>0.9.2 より七対子、国士無双も考慮されるようになりました。</p>
           </div>
 
           <div class="mb-1">
@@ -138,7 +138,7 @@
             <p>
               ロンや副露がない等4人麻雀とは異なる条件でのシミュレーション結果であることに留意する必要があります。
               ただし、プログラムの不具合の可能性もありますので、不自然な結果が表示された牌姿を<b-link
-                href="https://pystyle.info/mahjong-nanikiru-simulator/"
+                href="https://pystyle.info/mahjong-nanikiru-simulator/#comments"
                 target="_blank"
                 class="text-info"
                 >コメント欄</b-link
@@ -247,7 +247,7 @@
             残り枚数を設定できる機能を追加。牌の枚数が13枚の場合も期待値を計算するように変更。
           </li>
           <li>
-            version 0.9.1 (2024/11/25): 計算アルゴリズムを全体的に見直し。
+            version 0.9.2 (2024/11/25): 計算アルゴリズムを全体的に見直し。
           </li>
         </ul>
       </b-tab>
@@ -256,30 +256,39 @@
     <hr style="border: 1px solid white" />
 
     <p>
-      version 0.9.1 (2024/11/25):<br />
+      version 0.9.2 (2024/11/25):<br />
       計算アルゴリズムを全体的に見直しました。一部報告されていた不自然な計算結果は改善したと思います。
       <br />
-      不具合を見つけた方は
+      新バージョンは試験運用中です。以前のバージョンは、
       <b-link
-        href="https://pystyle.info/mahjong-nanikiru-simulator/"
+        href="https://pystyle.info/apps/mahjong-nanikiru-simulator_090/"
+        target="_blank"
+        class="text-info"
+        >バージョン 0.9.0</b-link
+      >
+      から使えるようにしています。
+      <br />
+      不具合や使ってみた感想は、
+      <b-link
+        href="https://pystyle.info/mahjong-nanikiru-simulator/#comments"
         target="_blank"
         class="text-info"
         >ブログ記事</b-link
-      >のコメント欄にお願いします。<br />以下に前バージョンとの違いを記載しています。
+      >のコメント欄にお願いします。<br />
     </p>
 
+    <hr style="border: 1px solid white" />
+    以下に前バージョンとの違いを記載しています。
     <ul>
+      <li>計算アルゴリズムの変更による精度の向上。</li>
       <li>
-        聴牌時に立直するか、ダマで待つかを選択できるように変更しました。(デフォルトは立直なし)<br />ダマの場合、聴牌時の手変わり、和了時の向聴戻しを考慮します。
-      </li>
-      <li>
-        一部の手牌で向聴数が正しく計算できていなかった問題を修正しました。
+        一部の手牌で向聴数が正しく計算できていなかった問題を修正しました。(4枚持ちを含む手牌など)
       </li>
       <li>
         一般形、七対子、国士無双を同時に考慮して計算するように変更しました。(前バージョンでは七対子との両天秤は見れなかった)
       </li>
       <li>
-        点数計算時のダブル立直、一発、海底撈月の考慮は一旦無効にしています。
+        前バージョンに合った点数計算時のダブル立直、一発、海底撈月の考慮は一旦無効にしています。
       </li>
       <li>
         期待値、和了確率、聴牌確率の計算は、それぞれ最大化するように打牌した場合の値を表示するように変更しました。
@@ -290,7 +299,7 @@
 
     <ul>
       ご意見、ご質問、不具合報告は<b-link
-        href="https://pystyle.info/mahjong-nanikiru-simulator/"
+        href="https://pystyle.info/mahjong-nanikiru-simulator/#comments"
         target="_blank"
         class="text-info"
         >ブログ記事</b-link
